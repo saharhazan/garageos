@@ -1,0 +1,38 @@
+{
+  "name": "GarageOS",
+  "short_name": "GarageOS",
+  "description": "מערכת ניהול מוסכים מקצועית",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "orientation": "portrait-primary",
+  "lang": "he",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "עבודה חדשה",
+      "url": "/orders/new",
+      "description": "פתח פקודת עבודה חדשה"
+    },
+    {
+      "name": "דשבורד",
+      "url": "/dashboard",
+      "description": "חזרה לדשבורד"
+    }
+  ]
+}
