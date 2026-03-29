@@ -1,0 +1,97 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+
+type RouteContext = { params: Promise<{ id: string }> }
+
+export async function GET(_request: NextRequest, context: RouteContext) {
+  const { id } = await context.params
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
+  if (authError || !user) {
+    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
+  }
+
+  const { data: customer, error: customerError } = await supabase
+    .from('customers')
+    .select('*')
+    .eq('id', id)
+    .single()
+
+  if (customerError) {
+    if (customerError.code === 'PGRST116') {
+      return NextResponse.json({ error: 'לקוח לא נמצא' }, { status: 404 })
+    }
+    console.error('Error fetching customer:', customerError)
+    return NextResponse.json({ error: 'שגיאה בטעינת לקוח' }, { status: 500 })
+  }
+
+  const { data: vehicles, error: vehiclesError } = await supabase
+    .from('vehicles')
+    .select('*')
+    .eq('customer_id', id)
+    .order('created_at', { ascending: false })
+
+  if (vehiclesError) {
+    console.error('Error fetching vehicles:', vehiclesError)
+    return NextResponse.json({ error: 'שגיאה בטעינת כלי רכב' }, { status: 500 })
+  }
+
+  return NextResponse.json({ data: { ...customer, vehicles: vehicles ?? [] } })
+}
+
+export async function PATCH(request: NextRequest, context: RouteContext) {
+  const { id } = await context.params
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
+  if (authError || !user) {
+    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
+  }
+
+  let body: Partial<{
+    full_name: string
+    phone: string
+    email: string | null
+    notes: string | null
+  }>
+
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'גוף הבקשה אינו תקין' }, { status: 400 })
+  }
+
+  const updates: Record<string, unknown> = {}
+  if (body.full_name !== undefined) updates.full_name = body.full_name
+  if (body.phone !== undefined) updates.phone = body.phone
+  if ('email' in body) updates.email = body.email
+  if ('notes' in body) updates.notes = body.notes
+
+  if (Object.keys(updates).length === 0) {
+    return NextResponse.json({ error: 'אין שדות לעדכון' }, { status: 400 })
+  }
+
+  const { data, error } = await supabase
+    .from('customers')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single()
+
+  if (error) {
+    if (error.code === 'PGRST116') {
+      return NextResponse.json({ error: 'לקוח לא נמצא' }, { status: 404 })
+    }
+    console.error('Error updating customer:', error)
+    return NextResponse.json({ error: 'שגיאה בעדכון לקוח' }, { status: 500 })
+  }
+
+  return NextResponse.json({ data })
+}
