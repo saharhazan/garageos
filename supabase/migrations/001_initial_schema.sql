@@ -4,7 +4,7 @@ CREATE EXTENSION IF NOT EXISTS "pg_trgm"; -- for full-text search
 
 -- ─── Garages ────────────────────────────────────────────
 CREATE TABLE garages (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
   address TEXT,
   phone TEXT,
@@ -37,7 +37,7 @@ CREATE TABLE users (
 
 -- ─── Customers ──────────────────────────────────────────
 CREATE TABLE customers (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   garage_id UUID NOT NULL REFERENCES garages(id) ON DELETE CASCADE,
   full_name TEXT NOT NULL,
   phone TEXT NOT NULL,
@@ -52,7 +52,7 @@ CREATE INDEX idx_customers_name_trgm ON customers USING gin(full_name gin_trgm_o
 
 -- ─── Vehicles ───────────────────────────────────────────
 CREATE TABLE vehicles (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   garage_id UUID NOT NULL REFERENCES garages(id) ON DELETE CASCADE,
   customer_id UUID NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
   license_plate TEXT NOT NULL,
@@ -94,7 +94,7 @@ $$ LANGUAGE plpgsql;
 
 -- ─── Work Orders ────────────────────────────────────────
 CREATE TABLE work_orders (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   garage_id UUID NOT NULL REFERENCES garages(id) ON DELETE CASCADE,
   job_number TEXT NOT NULL,
   customer_id UUID NOT NULL REFERENCES customers(id),
@@ -139,7 +139,7 @@ CREATE TRIGGER trigger_orders_updated_at
 
 -- ─── Inventory ──────────────────────────────────────────
 CREATE TABLE inventory (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   garage_id UUID NOT NULL REFERENCES garages(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   sku TEXT,
@@ -156,7 +156,7 @@ CREATE INDEX idx_inventory_garage ON inventory(garage_id);
 
 -- ─── Notifications log ──────────────────────────────────
 CREATE TABLE notifications (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   garage_id UUID NOT NULL REFERENCES garages(id) ON DELETE CASCADE,
   order_id UUID REFERENCES work_orders(id) ON DELETE SET NULL,
   type TEXT NOT NULL CHECK (type IN ('sms', 'whatsapp', 'email')),

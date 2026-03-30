@@ -30,7 +30,7 @@ $$ LANGUAGE plpgsql;
 
 -- ─── Quotes ─────────────────────────────────────────────
 CREATE TABLE quotes (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   garage_id UUID NOT NULL REFERENCES garages(id) ON DELETE CASCADE,
   quote_number TEXT NOT NULL,
   customer_id UUID NOT NULL REFERENCES customers(id),
