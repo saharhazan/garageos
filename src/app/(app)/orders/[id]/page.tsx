@@ -161,7 +161,6 @@ export default async function OrderDetailPage({ params }: PageProps) {
               {STATUS_FLOW.map((status, index) => {
                 const isDone = index < currentStepIndex
                 const isCurrent = index === currentStepIndex
-                const isLast = index === STATUS_FLOW.length - 1
 
                 return (
                   <div key={status} className="relative z-10 flex flex-col items-center gap-2 flex-1">
@@ -211,7 +210,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                       <th className="px-6 py-4">תיאור פריט / עבודה</th>
                       <th className="px-6 py-4 text-center">כמות</th>
                       <th className="px-6 py-4">מחיר יחידה</th>
-                      <th className="px-6 py-4 text-left">סה"כ</th>
+                      <th className="px-6 py-4 text-left">{"סה\"כ"}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -242,15 +241,15 @@ export default async function OrderDetailPage({ params }: PageProps) {
               <div className="p-6 bg-surface-highest/30 border-t border-white/5 space-y-2">
                 <div className="flex justify-between text-sm text-on-surface-variant">
                   <span className="tabular-nums">{formatCurrency(typedOrder.subtotal)}</span>
-                  <span>סה"כ לפני מע"מ:</span>
+                  <span>{"סה\"כ לפני מע\"מ:"}</span>
                 </div>
                 <div className="flex justify-between text-sm text-on-surface-variant">
                   <span className="tabular-nums">{formatCurrency(typedOrder.tax_amount)}</span>
-                  <span>מע"מ (17%):</span>
+                  <span>{"מע\"מ (17%):"}</span>
                 </div>
                 <div className="flex justify-between text-primary font-black text-2xl mt-2 border-t border-white/10 pt-3">
                   <span className="tabular-nums">{formatCurrency(typedOrder.total_amount)}</span>
-                  <span>סה"כ לתשלום:</span>
+                  <span>{"סה\"כ לתשלום:"}</span>
                 </div>
               </div>
             </div>
@@ -294,9 +293,9 @@ export default async function OrderDetailPage({ params }: PageProps) {
                 </div>
                 {typedOrder.mileage && (
                   <div className="bg-surface-low p-3 rounded-lg border border-white/5">
-                    <p className="text-[10px] text-on-surface-variant uppercase mb-1">קילומטראז' בקבלה</p>
+                    <p className="text-[10px] text-on-surface-variant uppercase mb-1">{"קילומטראז' בקבלה"}</p>
                     <p className="text-lg font-bold tabular-nums text-on-surface">
-                      {typedOrder.mileage.toLocaleString('he-IL')} <span className="text-xs font-normal text-on-surface-variant">ק"מ</span>
+                      {typedOrder.mileage.toLocaleString('he-IL')} <span className="text-xs font-normal text-on-surface-variant">{"ק\"מ"}</span>
                     </p>
                   </div>
                 )}

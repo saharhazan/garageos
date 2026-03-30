@@ -214,12 +214,12 @@ export default async function DashboardPage() {
               <table className="w-full text-right">
                 <thead>
                   <tr className="text-on-surface-variant text-xs uppercase tracking-wider font-bold border-b border-white/5">
-                    <th className="px-6 py-4">מס' עבודה</th>
+                    <th className="px-6 py-4">{"מס' עבודה"}</th>
                     <th className="px-6 py-4">לקוח</th>
                     <th className="px-6 py-4">רכב</th>
                     <th className="px-6 py-4 text-center">לוחית רישוי</th>
                     <th className="px-6 py-4">סטטוס</th>
-                    <th className="px-6 py-4">סה"כ</th>
+                    <th className="px-6 py-4">{"סה\"כ"}</th>
                     <th className="px-6 py-4">נוצר</th>
                   </tr>
                 </thead>

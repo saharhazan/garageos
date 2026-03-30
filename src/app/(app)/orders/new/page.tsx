@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, Trash2, ChevronDown } from 'lucide-react'
+import { Plus, Trash2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Topbar } from '@/components/layout/topbar'
 import { Button } from '@/components/ui/button'
@@ -379,7 +379,7 @@ export default function NewOrderPage() {
               <span className="text-xs text-on-surface-variant font-bold uppercase tracking-wider">תיאור</span>
               <span className="text-xs text-on-surface-variant font-bold uppercase tracking-wider text-center">כמות</span>
               <span className="text-xs text-on-surface-variant font-bold uppercase tracking-wider text-center">מחיר</span>
-              <span className="text-xs text-on-surface-variant font-bold uppercase tracking-wider text-center">סה"כ</span>
+              <span className="text-xs text-on-surface-variant font-bold uppercase tracking-wider text-center">{"סה\"כ"}</span>
               <span />
             </div>
 
@@ -445,7 +445,7 @@ export default function NewOrderPage() {
 
                 {/* Mobile total */}
                 <div className="md:hidden flex items-center justify-between pt-2 border-t border-white/5 mt-1">
-                  <span className="text-xs text-on-surface-variant">סה"כ פריט</span>
+                  <span className="text-xs text-on-surface-variant">{"סה\"כ פריט"}</span>
                   <span className="text-sm font-bold text-on-surface tabular-nums">
                     {formatCurrency(item.quantity * item.unit_price)}
                   </span>
@@ -472,11 +472,11 @@ export default function NewOrderPage() {
               <span className="text-on-surface tabular-nums">{formatCurrency(subtotal)}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-on-surface-variant">מע"מ 17%</span>
+              <span className="text-on-surface-variant">{"מע\"מ 17%"}</span>
               <span className="text-on-surface tabular-nums">{formatCurrency(taxAmount)}</span>
             </div>
             <div className="flex items-center justify-between pt-3 border-t border-white/5">
-              <span className="text-sm font-black text-on-surface">סה"כ לתשלום</span>
+              <span className="text-sm font-black text-on-surface">{"סה\"כ לתשלום"}</span>
               <span className="text-xl font-black text-primary tabular-nums">
                 {formatCurrency(total)}
               </span>

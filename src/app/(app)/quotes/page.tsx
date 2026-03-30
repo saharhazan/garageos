@@ -291,7 +291,7 @@ export default function QuotesPage() {
       {/* Mobile FAB */}
       <div className="md:hidden fixed bottom-20 left-4 z-30">
         <Link href="/quotes/new">
-          <button className="flex items-center justify-center w-12 h-12 rounded-full bg-primary-container shadow-lg shadow-secondary-container/30 text-white transition-transform active:scale-95">
+          <button className="flex items-center justify-center w-14 h-14 rounded-full bg-secondary-container shadow-[0_0_16px_rgba(232,114,12,0.3)] text-white transition-transform active:scale-95">
             <Plus size={20} />
           </button>
         </Link>
