@@ -23,12 +23,17 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
+  const { pathname } = request.nextUrl
+  const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/signup') || pathname.startsWith('/verify') || pathname.startsWith('/select-garage') || pathname.startsWith('/onboarding')
+  const isPublicRoute = pathname === '/' || pathname === '/pricing'
+
+  // In demo mode (placeholder keys) — bypass auth, allow all routes
+  const isDemo = process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('placeholder')
+  if (isDemo) return supabaseResponse
+
   const { data: { user } } = await supabase.auth.getUser()
 
-  const { pathname } = request.nextUrl
-  const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/verify') || pathname.startsWith('/select-garage')
-
-  if (!user && !isAuthRoute) {
+  if (!user && !isAuthRoute && !isPublicRoute) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)

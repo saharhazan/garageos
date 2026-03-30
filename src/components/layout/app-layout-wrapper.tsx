@@ -3,22 +3,23 @@ import { AppLayout } from './app-layout'
 import { CommandPalette } from '@/components/command-palette'
 
 export async function AppLayoutWrapper({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  let userName = 'יוסי כהן'
+  let userRole = 'מנהל מוסך'
 
-  let userName = 'משתמש'
-  let userRole = 'מנהל'
-
-  if (user) {
-    const { data: profile } = await supabase
-      .from('garage_users')
-      .select('full_name, role')
-      .eq('id', user.id)
-      .single()
-
-    if (profile) {
-      userName = profile.full_name ?? userName
-      userRole = profile.role ?? userRole
+  const isDemo = process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('placeholder')
+  if (!isDemo) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      const { data: profile } = await supabase
+        .from('users')
+        .select('full_name, role')
+        .eq('id', user.id)
+        .single()
+      if (profile) {
+        userName = profile.full_name ?? userName
+        userRole = profile.role ?? userRole
+      }
     }
   }
 

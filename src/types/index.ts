@@ -114,6 +114,28 @@ export interface InventoryItem {
   created_at: string
 }
 
+// ─── Quote ────────────────────────────────────────────
+export type QuoteStatus = 'draft' | 'sent' | 'accepted' | 'rejected' | 'expired'
+
+export interface Quote {
+  id: string
+  garage_id: string
+  quote_number: string
+  customer_id: string
+  vehicle_id: string
+  items: OrderItem[]
+  notes: string | null
+  subtotal: number
+  tax_amount: number
+  total_amount: number
+  status: QuoteStatus
+  valid_until: string | null
+  created_at: string
+  updated_at: string
+  customer?: Customer
+  vehicle?: Vehicle
+}
+
 // ─── Dashboard ─────────────────────────────────────────
 export interface DashboardStats {
   open_orders: number
