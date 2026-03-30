@@ -1,23 +1,41 @@
 @import "tailwindcss";
 
-:root {
-  --bg: #09090b;
-  --surface: #18181b;
-  --border: #27272a;
-  --border2: #3f3f46;
-  --t1: #fafafa;
-  --t2: #a1a1aa;
-  --t3: #52525b;
-  --blue: #3b82f6;
-  --green: #22c55e;
-  --yellow: #eab308;
-  --red: #ef4444;
+@theme {
+  /* ─── Iron Amber Color Tokens ─── */
+  --color-surface-lowest: #0c0f0f;
+  --color-surface-low: #1a1c1c;
+  --color-surface: #121414;
+  --color-surface-container: #1e2020;
+  --color-surface-high: #282a2a;
+  --color-surface-highest: #333535;
+
+  --color-primary: #8fd1d9;
+  --color-primary-container: #0d5c63;
+  --color-on-primary: #00363b;
+  --color-on-primary-container: #90d2da;
+
+  --color-secondary: #ffb68a;
+  --color-secondary-container: #e57007;
+  --color-on-secondary-container: #471e00;
+
+  --color-tertiary: #e8c400;
+  --color-tertiary-container: #c8a900;
+
+  --color-on-surface: #e2e2e2;
+  --color-on-surface-variant: #bfc8c9;
+  --color-outline: #899294;
+  --color-outline-variant: #3f484a;
+
+  --color-error: #ffb4ab;
+  --color-error-container: #93000a;
+  --color-success: #4ade80;
+  --color-brand: #e8720c;
 }
 
 html {
   direction: rtl;
-  background: var(--bg);
-  color: var(--t1);
+  background: var(--color-surface);
+  color: var(--color-on-surface);
   -webkit-font-smoothing: antialiased;
   height: 100%;
 }
@@ -25,13 +43,31 @@ html {
 body {
   min-height: 100%;
   min-height: 100dvh;
+  font-family: var(--font-heebo), system-ui, sans-serif;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+::selection {
+  background: rgba(229, 112, 7, 0.3);
+}
 
-/* Input font-size fix for iOS (prevents zoom) */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #121414; }
+::-webkit-scrollbar-thumb { background: #333535; border-radius: 10px; }
+
 input, select, textarea { font-size: 16px; }
 @media (min-width: 640px) { input, select, textarea { font-size: 14px; } }
+
+/* ─── Iron Amber Utilities ─── */
+.machined-button {
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+}
+
+.glass-panel {
+  backdrop-filter: blur(12px);
+  background: rgba(30, 32, 32, 0.8);
+}
+
+.license-plate {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.05em;
+}

@@ -2,35 +2,28 @@ import * as React from 'react'
 import { cn } from '@/lib/utils'
 import type { OrderStatus } from '@/types'
 
-const STATUS_CONFIG: Record<OrderStatus, { label: string; className: string }> = {
+const STATUS_CONFIG: Record<OrderStatus, { label: string; className: string; animatedDot?: boolean }> = {
   received: {
     label: 'התקבל',
-    className: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+    className: 'bg-primary/20 text-primary border-primary/20',
   },
   in_progress: {
     label: 'בטיפול',
-    className: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
+    className: 'bg-secondary-container/20 text-secondary border-secondary/20',
+    animatedDot: true,
   },
   ready: {
     label: 'מוכן',
-    className: 'bg-green-500/10 text-green-400 border-green-500/20',
+    className: 'bg-success/20 text-success border-success/20',
   },
   delivered: {
     label: 'נמסר',
-    className: 'bg-zinc-500/10 text-zinc-400 border-zinc-700',
+    className: 'bg-on-surface-variant/20 text-on-surface-variant border-on-surface-variant/20',
   },
   cancelled: {
     label: 'בוטל',
-    className: 'bg-red-500/10 text-red-400 border-red-500/20',
+    className: 'bg-error/20 text-error border-error/20',
   },
-}
-
-const DOT_COLOR: Record<OrderStatus, string> = {
-  received: 'bg-blue-400',
-  in_progress: 'bg-yellow-400',
-  ready: 'bg-green-400',
-  delivered: 'bg-zinc-400',
-  cancelled: 'bg-red-400',
 }
 
 interface StatusBadgeProps {
@@ -45,13 +38,19 @@ export function StatusBadge({ status, dot = true, className }: StatusBadgeProps)
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-[4px] border px-2 py-0.5 text-xs font-medium',
+        'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold',
         config.className,
         className
       )}
     >
-      {dot && (
-        <span className={cn('inline-block h-1.5 w-1.5 rounded-full shrink-0', DOT_COLOR[status])} />
+      {dot && config.animatedDot && (
+        <span className="relative flex h-1.5 w-1.5 shrink-0">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-current opacity-75" />
+          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-current" />
+        </span>
+      )}
+      {dot && !config.animatedDot && (
+        <span className="inline-block h-1.5 w-1.5 rounded-full bg-current shrink-0" />
       )}
       {config.label}
     </span>

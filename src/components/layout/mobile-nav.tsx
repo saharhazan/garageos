@@ -36,7 +36,7 @@ export function MobileNav({ className }: MobileNavProps) {
   return (
     <nav
       className={cn(
-        'fixed bottom-0 inset-x-0 z-40 bg-[#111113] border-t border-[#27272a]',
+        'fixed bottom-0 inset-x-0 z-40 bg-surface border-t border-white/5',
         className
       )}
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
@@ -50,7 +50,7 @@ export function MobileNav({ className }: MobileNavProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex items-center justify-center w-11 h-11 rounded-full bg-[#3b82f6] shadow-lg shadow-blue-500/20 active:bg-[#2563eb] transition-colors"
+                className="flex items-center justify-center w-11 h-11 rounded-full bg-secondary-container shadow-[0_0_16px_rgba(232,114,12,0.3)] active:scale-95 transition-all"
                 aria-label="עבודה חדשה"
               >
                 <item.icon size={20} className="text-white" />
@@ -65,20 +65,20 @@ export function MobileNav({ className }: MobileNavProps) {
               className="flex flex-col items-center gap-1 min-w-[44px] min-h-[44px] justify-center relative"
             >
               {active && (
-                <span className="absolute top-1 w-1 h-1 rounded-full bg-[#3b82f6]" />
+                <span className="absolute top-1 w-1 h-1 rounded-full bg-primary" />
               )}
               <item.icon
                 size={20}
                 className={cn(
                   'transition-colors',
-                  active ? 'text-[#3b82f6]' : 'text-[#52525b]'
+                  active ? 'text-primary' : 'text-on-surface-variant/50'
                 )}
               />
               {item.label && (
                 <span
                   className={cn(
-                    'text-[10px] font-medium leading-none transition-colors',
-                    active ? 'text-[#3b82f6]' : 'text-[#52525b]'
+                    'text-[10px] font-bold leading-none transition-colors',
+                    active ? 'text-primary' : 'text-on-surface-variant/50'
                   )}
                 >
                   {item.label}

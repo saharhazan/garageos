@@ -30,7 +30,7 @@ export function TableHeader({ className, children, ...props }: React.HTMLAttribu
 
 export function TableBody({ className, children, ...props }: React.HTMLAttributes<HTMLTableSectionElement>) {
   return (
-    <tbody className={cn('[&_tr:last-child]:border-0', className)} {...props}>
+    <tbody className={cn('divide-y divide-white/5 [&_tr:last-child]:border-0', className)} {...props}>
       {children}
     </tbody>
   )
@@ -40,7 +40,7 @@ export function TableRow({ className, children, ...props }: React.HTMLAttributes
   return (
     <tr
       className={cn(
-        'border-b border-[#27272a] transition-colors hover:bg-white/[0.02] data-[state=selected]:bg-white/[0.04]',
+        'transition-colors hover:bg-primary/5 data-[state=selected]:bg-primary/10',
         className
       )}
       {...props}
@@ -54,7 +54,7 @@ export function TableHead({ className, children, ...props }: React.ThHTMLAttribu
   return (
     <th
       className={cn(
-        'h-9 px-4 text-start text-xs font-medium text-[#52525b] bg-[#09090b] border-b border-[#27272a] whitespace-nowrap',
+        'h-10 px-6 text-start text-xs font-bold uppercase tracking-wider text-on-surface-variant bg-surface-high/50 whitespace-nowrap',
         className
       )}
       {...props}
@@ -68,7 +68,7 @@ export function TableCell({ className, children, ...props }: React.TdHTMLAttribu
   return (
     <td
       className={cn(
-        'h-11 px-4 text-start text-sm text-[#a1a1aa] align-middle',
+        'px-6 py-5 text-start text-sm text-on-surface-variant align-middle',
         className
       )}
       {...props}
@@ -82,7 +82,7 @@ export function TableFooter({ className, children, ...props }: React.HTMLAttribu
   return (
     <tfoot
       className={cn(
-        'border-t border-[#27272a] bg-[#18181b] font-medium text-[#fafafa]',
+        'border-t border-white/5 bg-surface-high font-bold text-on-surface',
         className
       )}
       {...props}
@@ -95,7 +95,7 @@ export function TableFooter({ className, children, ...props }: React.HTMLAttribu
 export function TableCaption({ className, children, ...props }: React.HTMLAttributes<HTMLTableCaptionElement>) {
   return (
     <caption
-      className={cn('mt-4 text-sm text-[#52525b]', className)}
+      className={cn('mt-4 text-sm text-outline', className)}
       {...props}
     >
       {children}

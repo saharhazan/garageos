@@ -13,7 +13,7 @@ interface AppLayoutProps {
 
 export function AppLayout({ children, className, userName, userRole }: AppLayoutProps) {
   return (
-    <div className={cn('flex h-dvh bg-[#09090b]', className)}>
+    <div className={cn('flex h-dvh bg-surface', className)}>
       {/* Desktop Sidebar — hidden on mobile */}
       <Sidebar
         className="hidden md:flex"

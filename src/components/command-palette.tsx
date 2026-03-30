@@ -127,27 +127,27 @@ function CommandPaletteContent({ open, onClose }: CommandPaletteProps) {
 
       {/* Panel — full-screen bottom sheet on mobile, floating on desktop */}
       <div className={cn(
-        'absolute inset-x-0 bottom-0 rounded-t-2xl bg-[#18181b] border-t border-[#27272a]',
-        'md:relative md:inset-auto md:rounded-xl md:border md:border-[#27272a] md:max-w-lg md:w-full md:mx-auto md:top-[20vh]',
+        'absolute inset-x-0 bottom-0 rounded-t-2xl bg-surface-high border-t border-white/5',
+        'md:relative md:inset-auto md:rounded-xl md:border md:border-white/5 md:max-w-lg md:w-full md:mx-auto md:top-[20vh]',
         'overflow-hidden shadow-2xl',
       )}>
         {/* Drag handle mobile */}
         <div className="flex justify-center pt-3 pb-0 md:hidden">
-          <div className="w-8 h-1 rounded-full bg-[#3f3f46]" />
+          <div className="w-8 h-1 rounded-full bg-outline-variant" />
         </div>
 
         {/* Search input */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-[#27272a]">
-          <Search size={16} className="text-[#52525b] shrink-0" />
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-white/5">
+          <Search size={16} className="text-outline shrink-0" />
           <input
             ref={inputRef}
             type="text"
             placeholder="חפש פעולה או עמוד..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="flex-1 bg-transparent text-sm text-[#fafafa] placeholder:text-[#52525b] outline-none"
+            className="flex-1 bg-transparent text-sm text-on-surface placeholder:text-outline outline-none"
           />
-          <kbd className="hidden md:flex items-center gap-1 text-[10px] text-[#52525b] bg-[#27272a] rounded px-1.5 py-0.5">
+          <kbd className="hidden md:flex items-center gap-1 text-[10px] text-outline bg-surface-highest rounded px-1.5 py-0.5">
             ESC
           </kbd>
         </div>
@@ -155,14 +155,14 @@ function CommandPaletteContent({ open, onClose }: CommandPaletteProps) {
         {/* Results */}
         <div ref={listRef} className="overflow-y-auto max-h-[60dvh] md:max-h-[50dvh] py-2">
           {flatItems.length === 0 ? (
-            <div className="px-4 py-8 text-center text-sm text-[#52525b]">
+            <div className="px-4 py-8 text-center text-sm text-outline">
               לא נמצאו תוצאות עבור &quot;{query}&quot;
             </div>
           ) : (
             Object.entries(groups).map(([groupName, items]) => (
               <div key={groupName} className="mb-1">
                 <div className="px-4 py-1.5">
-                  <span className="text-[10px] font-semibold text-[#3f3f46] uppercase tracking-wider">
+                  <span className="text-[10px] font-semibold text-outline-variant uppercase tracking-wider">
                     {groupName}
                   </span>
                 </div>
@@ -183,20 +183,20 @@ function CommandPaletteContent({ open, onClose }: CommandPaletteProps) {
                     >
                       <div className={cn(
                         'flex items-center justify-center w-7 h-7 rounded-[6px] shrink-0 transition-colors',
-                        isActive ? 'bg-[#3b82f6]/20 text-[#3b82f6]' : 'bg-[#27272a] text-[#52525b]'
+                        isActive ? 'bg-primary-container/20 text-primary' : 'bg-surface-highest text-outline'
                       )}>
                         <item.icon size={14} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className={cn('text-sm font-medium truncate', isActive ? 'text-[#fafafa]' : 'text-[#a1a1aa]')}>
+                        <p className={cn('text-sm font-medium truncate', isActive ? 'text-on-surface' : 'text-on-surface-variant')}>
                           {item.label}
                         </p>
                         {item.description && (
-                          <p className="text-xs text-[#52525b] truncate">{item.description}</p>
+                          <p className="text-xs text-outline truncate">{item.description}</p>
                         )}
                       </div>
                       {isActive && (
-                        <ArrowRight size={14} className="text-[#3b82f6] shrink-0" />
+                        <ArrowRight size={14} className="text-primary shrink-0" />
                       )}
                     </button>
                   )
@@ -207,10 +207,10 @@ function CommandPaletteContent({ open, onClose }: CommandPaletteProps) {
         </div>
 
         {/* Footer hint */}
-        <div className="flex items-center gap-4 px-4 py-2.5 border-t border-[#27272a]">
-          <span className="text-[10px] text-[#3f3f46]">↑↓ ניווט</span>
-          <span className="text-[10px] text-[#3f3f46]">↵ בחר</span>
-          <span className="text-[10px] text-[#3f3f46]">ESC סגור</span>
+        <div className="flex items-center gap-4 px-4 py-2.5 border-t border-white/5">
+          <span className="text-[10px] text-outline-variant">↑↓ ניווט</span>
+          <span className="text-[10px] text-outline-variant">↵ בחר</span>
+          <span className="text-[10px] text-outline-variant">ESC סגור</span>
         </div>
       </div>
     </div>

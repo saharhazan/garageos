@@ -43,14 +43,14 @@ export default async function ReportsPage() {
           <Card>
             <CardHeader><CardTitle>עבודות החודש</CardTitle></CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-[#3b82f6]">{totalOrders}</p>
-              <p className="text-xs text-[#52525b] mt-1">{deliveredOrders} נמסרו</p>
+              <p className="text-2xl font-bold text-primary">{totalOrders}</p>
+              <p className="text-xs text-outline mt-1">{deliveredOrders} נמסרו</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader><CardTitle>ממוצע לעבודה</CardTitle></CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-[#fafafa]">
+              <p className="text-2xl font-bold text-on-surface">
                 {deliveredOrders > 0 ? formatCurrency(Math.round(monthRevenue / deliveredOrders)) : '—'}
               </p>
             </CardContent>
@@ -61,16 +61,16 @@ export default async function ReportsPage() {
           <Card>
             <CardHeader><CardTitle>לקוחות מובילים החודש</CardTitle></CardHeader>
             <CardContent className="p-0">
-              <div className="divide-y divide-[#27272a]">
+              <div className="divide-y divide-white/5">
                 {topCustomers.map((row, i) => (
                   <div key={i} className="flex items-center justify-between px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <span className="text-xs text-[#52525b] w-4">{i + 1}</span>
-                      <span className="text-sm text-[#fafafa]">
+                      <span className="text-xs text-outline w-4">{i + 1}</span>
+                      <span className="text-sm text-on-surface">
                         {(row.customer as { full_name: string }[] | null)?.[0]?.full_name ?? '—'}
                       </span>
                     </div>
-                    <span className="text-sm font-semibold text-[#fafafa] tabular-nums">
+                    <span className="text-sm font-semibold text-on-surface tabular-nums">
                       {formatCurrency(row.total_amount)}
                     </span>
                   </div>

@@ -126,10 +126,10 @@ export default function VerifyPage() {
     : ''
 
   return (
-    <div className="rounded-xl border border-[#27272a] bg-[#18181b] p-6">
+    <div className="rounded-xl border border-white/5 bg-surface-high p-6">
       <div className="mb-6 text-center">
-        <h1 className="text-lg font-semibold text-[#fafafa]">אימות מספר טלפון</h1>
-        <p className="text-sm text-[#71717a] mt-1">
+        <h1 className="text-lg font-semibold text-on-surface">אימות מספר טלפון</h1>
+        <p className="text-sm text-on-surface-variant mt-1">
           {phone
             ? `שלחנו קוד אימות ל-${phone}`
             : 'הזן את קוד האימות שנשלח אליך'}
@@ -151,12 +151,12 @@ export default function VerifyPage() {
             onKeyDown={(e) => handleKeyDown(index, e)}
             onFocus={(e) => e.target.select()}
             className={cn(
-              'w-11 h-12 text-center text-lg font-semibold rounded-[6px] border bg-[#09090b] text-[#fafafa]',
+              'w-11 h-12 text-center text-lg font-semibold rounded-[6px] border bg-surface-lowest text-on-surface',
               'outline-none transition-all',
               digit
-                ? 'border-[#3b82f6] ring-2 ring-blue-500/10'
-                : 'border-[#27272a]',
-              'focus:border-[#3b82f6] focus:ring-2 focus:ring-blue-500/10',
+                ? 'border-primary/40 ring-2 ring-blue-500/10'
+                : 'border-white/5',
+              'focus:border-primary/40 focus:ring-2 focus:ring-primary/10',
             )}
             disabled={loading}
             autoFocus={index === 0}
@@ -165,21 +165,21 @@ export default function VerifyPage() {
       </div>
 
       {error && (
-        <div className="rounded-[6px] border border-red-500/20 bg-red-500/10 px-3 py-2 mb-4">
-          <p className="text-sm text-red-400 text-center">{error}</p>
+        <div className="rounded-[6px] border border-error/20 bg-error/10 px-3 py-2 mb-4">
+          <p className="text-sm text-error text-center">{error}</p>
         </div>
       )}
 
       {loading && (
         <div className="flex justify-center mb-4">
-          <p className="text-sm text-[#71717a]">מאמת...</p>
+          <p className="text-sm text-on-surface-variant">מאמת...</p>
         </div>
       )}
 
       {/* Resend */}
       <div className="text-center">
         {countdown > 0 ? (
-          <p className="text-sm text-[#52525b]">
+          <p className="text-sm text-outline">
             שליחה מחדש בעוד {countdown} שניות
           </p>
         ) : (

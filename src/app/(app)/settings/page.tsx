@@ -41,7 +41,7 @@ export default function SettingsPage() {
         <div className="px-4 py-4 max-w-lg mx-auto">
           <button
             onClick={() => setView('main')}
-            className="flex items-center gap-1 text-xs text-[#52525b] hover:text-[#a1a1aa] transition-colors mb-4"
+            className="flex items-center gap-1 text-xs text-outline hover:text-on-surface-variant transition-colors mb-4"
           >
             <ChevronLeft size={14} />
             חזרה להגדרות
@@ -82,25 +82,25 @@ export default function SettingsPage() {
       <div className="px-4 py-4 max-w-lg mx-auto space-y-4">
         {sections.map((section) => (
           <div key={section.title}>
-            <p className="text-xs font-semibold text-[#3f3f46] uppercase tracking-wider mb-2 px-1">
+            <p className="text-xs font-semibold text-outline-variant uppercase tracking-wider mb-2 px-1">
               {section.title}
             </p>
-            <div className="rounded-xl border border-[#27272a] overflow-hidden divide-y divide-[#27272a]">
+            <div className="rounded-xl border border-white/5 overflow-hidden divide-y divide-white/5">
               {section.items.map((item) => (
                 <button
                   key={item.label}
                   type="button"
                   onClick={() => setView(item.view)}
-                  className="flex items-center gap-3 w-full px-4 py-3 hover:bg-white/[0.02] transition-colors text-right"
+                  className="flex items-center gap-3 w-full px-4 py-3 hover:bg-white/5 transition-colors text-right"
                 >
-                  <div className="flex items-center justify-center w-8 h-8 rounded-[8px] bg-[#27272a] shrink-0">
-                    <item.icon size={15} className="text-[#71717a]" />
+                  <div className="flex items-center justify-center w-8 h-8 rounded-[8px] bg-surface-highest shrink-0">
+                    <item.icon size={15} className="text-on-surface-variant" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[#fafafa]">{item.label}</p>
-                    <p className="text-xs text-[#52525b] mt-0.5">{item.description}</p>
+                    <p className="text-sm font-medium text-on-surface">{item.label}</p>
+                    <p className="text-xs text-outline mt-0.5">{item.description}</p>
                   </div>
-                  <ChevronLeft size={14} className="text-[#3f3f46] shrink-0" />
+                  <ChevronLeft size={14} className="text-outline-variant shrink-0" />
                 </button>
               ))}
             </div>
@@ -108,28 +108,28 @@ export default function SettingsPage() {
         ))}
 
         {/* Sign out */}
-        <div className="rounded-xl border border-[#27272a] overflow-hidden">
+        <div className="rounded-xl border border-white/5 overflow-hidden">
           <button
             type="button"
             onClick={handleSignOut}
             disabled={signingOut}
-            className="flex items-center gap-3 w-full px-4 py-3 hover:bg-white/[0.02] transition-colors text-right"
+            className="flex items-center gap-3 w-full px-4 py-3 hover:bg-white/5 transition-colors text-right"
           >
-            <div className="flex items-center justify-center w-8 h-8 rounded-[8px] bg-red-500/10 shrink-0">
+            <div className="flex items-center justify-center w-8 h-8 rounded-[8px] bg-error/10 shrink-0">
               {signingOut ? (
-                <Loader2 size={15} className="text-red-400 animate-spin" />
+                <Loader2 size={15} className="text-error animate-spin" />
               ) : (
-                <LogOut size={15} className="text-red-400" />
+                <LogOut size={15} className="text-error" />
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-red-400">התנתק</p>
-              <p className="text-xs text-[#52525b] mt-0.5">צא מהמערכת</p>
+              <p className="text-sm font-medium text-error">התנתק</p>
+              <p className="text-xs text-outline mt-0.5">צא מהמערכת</p>
             </div>
           </button>
         </div>
 
-        <p className="text-center text-xs text-[#3f3f46] pt-2">
+        <p className="text-center text-xs text-outline-variant pt-2">
           GarageOS v0.1.0
         </p>
       </div>
@@ -246,15 +246,15 @@ function NotificationSettings() {
   return (
     <div className="space-y-3">
       {toggles.map((t) => (
-        <div key={t.key} className="flex items-center justify-between rounded-xl border border-[#27272a] px-4 py-3">
+        <div key={t.key} className="flex items-center justify-between rounded-xl border border-white/5 px-4 py-3">
           <div>
-            <p className="text-sm font-medium text-[#fafafa]">{t.label}</p>
-            <p className="text-xs text-[#52525b] mt-0.5">{t.desc}</p>
+            <p className="text-sm font-medium text-on-surface">{t.label}</p>
+            <p className="text-xs text-outline mt-0.5">{t.desc}</p>
           </div>
           <button
             onClick={() => setSettings((s) => ({ ...s, [t.key]: !s[t.key] }))}
             className={`relative w-10 h-5 rounded-full transition-colors ${
-              settings[t.key] ? 'bg-[#3b82f6]' : 'bg-[#27272a]'
+              settings[t.key] ? 'bg-primary-container' : 'bg-surface-highest'
             }`}
           >
             <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${
@@ -325,13 +325,13 @@ function SecurityForm() {
         autoComplete="new-password"
       />
       {error && (
-        <div className="rounded-[6px] border border-red-500/20 bg-red-500/10 px-3 py-2">
-          <p className="text-sm text-red-400">{error}</p>
+        <div className="rounded-[6px] border border-error/20 bg-error/10 px-3 py-2">
+          <p className="text-sm text-error">{error}</p>
         </div>
       )}
       {success && (
-        <div className="rounded-[6px] border border-green-500/20 bg-green-500/10 px-3 py-2">
-          <p className="text-sm text-green-400">הסיסמה עודכנה בהצלחה</p>
+        <div className="rounded-[6px] border border-success/20 bg-success/10 px-3 py-2">
+          <p className="text-sm text-success">הסיסמה עודכנה בהצלחה</p>
         </div>
       )}
       <Button variant="primary" size="lg" className="w-full" onClick={handleSave} loading={saving}>
@@ -431,14 +431,14 @@ function BillingSection() {
     <div className="space-y-4">
       <div className="grid gap-3">
         {plans.map((p) => (
-          <div key={p.plan} className="rounded-xl border border-[#27272a] p-4">
+          <div key={p.plan} className="rounded-xl border border-white/5 p-4">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-semibold text-[#fafafa]">{p.name}</h3>
-              <span className="text-sm font-bold text-[#3b82f6]">{p.price}/חודש</span>
+              <h3 className="text-sm font-semibold text-on-surface">{p.name}</h3>
+              <span className="text-sm font-bold text-primary">{p.price}/חודש</span>
             </div>
             <ul className="space-y-1">
               {p.features.map((f) => (
-                <li key={f} className="text-xs text-[#52525b]">• {f}</li>
+                <li key={f} className="text-xs text-outline">• {f}</li>
               ))}
             </ul>
           </div>
@@ -459,8 +459,8 @@ function FormSkeleton() {
     <div className="space-y-4 animate-pulse">
       {[1, 2, 3].map((i) => (
         <div key={i}>
-          <div className="h-3 w-16 bg-[#27272a] rounded mb-2" />
-          <div className="h-10 bg-[#27272a] rounded-[6px]" />
+          <div className="h-3 w-16 bg-surface-highest rounded mb-2" />
+          <div className="h-10 bg-surface-highest rounded-[6px]" />
         </div>
       ))}
     </div>

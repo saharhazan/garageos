@@ -68,10 +68,10 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="rounded-xl border border-[#27272a] bg-[#18181b] p-6">
+    <div className="rounded-xl border border-white/5 bg-surface-high p-6">
       <div className="mb-6">
-        <h1 className="text-lg font-semibold text-[#fafafa]">יצירת חשבון חדש</h1>
-        <p className="text-sm text-[#71717a] mt-1">הצטרף ל-GarageOS וניהול המוסך שלך</p>
+        <h1 className="text-lg font-semibold text-on-surface">יצירת חשבון חדש</h1>
+        <p className="text-sm text-on-surface-variant mt-1">הצטרף ל-GarageOS וניהול המוסך שלך</p>
       </div>
 
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
@@ -129,8 +129,8 @@ export default function SignupPage() {
         />
 
         {error && (
-          <div className="rounded-[6px] border border-red-500/20 bg-red-500/10 px-3 py-2">
-            <p className="text-sm text-red-400">{error}</p>
+          <div className="rounded-[6px] border border-error/20 bg-error/10 px-3 py-2">
+            <p className="text-sm text-error">{error}</p>
           </div>
         )}
 
@@ -144,11 +144,11 @@ export default function SignupPage() {
           הרשמה
         </Button>
 
-        <p className="text-center text-sm text-[#52525b]">
+        <p className="text-center text-sm text-outline">
           כבר יש לך חשבון?{' '}
           <Link
             href="/login"
-            className="text-[#3b82f6] hover:text-[#60a5fa] transition-colors"
+            className="text-primary hover:text-[#60a5fa] transition-colors"
           >
             התחבר
           </Link>

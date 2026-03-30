@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 
 const navLinks = [
-  { href: '/', label: 'ראשי' },
+  { href: '/', label: 'בית' },
   { href: '/#features', label: 'תכונות' },
   { href: '/pricing', label: 'מחירים' },
 ]
@@ -20,128 +20,88 @@ export default async function MarketingLayout({
   if (user) {
     redirect('/dashboard')
   }
-  return (
-    <div className="min-h-dvh flex flex-col bg-[#09090b]">
-      {/* Navbar */}
-      <header className="sticky top-0 z-50 border-b border-[#27272a] bg-[#09090b]/80 backdrop-blur-xl">
-        <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="flex items-center justify-center w-8 h-8 rounded-[6px] bg-[#3b82f6]">
-              <span className="text-white text-base font-bold leading-none">G</span>
-            </div>
-            <span className="text-lg font-semibold text-[#fafafa]">GarageOS</span>
-          </Link>
 
-          {/* Desktop nav links */}
-          <div className="hidden md:flex items-center gap-6">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-sm text-[#a1a1aa] hover:text-[#fafafa] transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
+  return (
+    <div className="min-h-dvh flex flex-col bg-surface">
+      {/* Navbar */}
+      <header className="fixed top-0 right-0 left-0 h-16 z-50 bg-surface/80 backdrop-blur-md border-b border-white/5 flex items-center px-6 md:px-8">
+        <div className="w-full max-w-7xl mx-auto flex flex-row-reverse justify-between items-center">
+          {/* Logo + Nav */}
+          <div className="flex items-center gap-6 flex-row-reverse">
+            <Link href="/" className="text-2xl font-black text-brand uppercase tracking-tighter">
+              GarageOS
+            </Link>
+            <nav className="hidden md:flex flex-row-reverse gap-8 items-center">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="font-bold text-lg text-on-surface-variant/60 hover:text-primary transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
           </div>
 
           {/* Auth buttons */}
-          <div className="flex items-center gap-2">
-            <Link href="/login">
-              <Button variant="ghost" size="sm">
+          <div className="flex items-center gap-4 flex-row-reverse">
+            <Link href="/login" className="hidden sm:inline-flex">
+              <Button variant="ghost" size="sm" className="text-on-surface-variant hover:text-primary">
                 כניסה
               </Button>
             </Link>
             <Link href="/login">
-              <Button variant="primary" size="sm">
+              <button className="bg-primary-container text-white px-6 py-2 font-bold rounded-md machined-button active:scale-95 transition-transform">
                 התחל בחינם
-              </Button>
+              </button>
             </Link>
           </div>
-        </nav>
+        </div>
       </header>
 
       {/* Main content */}
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 pt-16">{children}</main>
 
       {/* Footer */}
-      <footer className="border-t border-[#27272a] bg-[#09090b]">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 py-12">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {/* Brand */}
-            <div className="sm:col-span-2 lg:col-span-1">
-              <Link href="/" className="flex items-center gap-2.5 mb-4">
-                <div className="flex items-center justify-center w-8 h-8 rounded-[6px] bg-[#3b82f6]">
-                  <span className="text-white text-base font-bold leading-none">G</span>
-                </div>
-                <span className="text-lg font-semibold text-[#fafafa]">GarageOS</span>
-              </Link>
-              <p className="text-sm text-[#52525b] max-w-xs">
-                מערכת ניהול מוסך מקצועית שנבנתה כדי לפשט את העבודה היומיומית שלך.
+      <footer className="bg-surface-lowest py-16 border-t border-white/5">
+        <div className="max-w-7xl mx-auto px-6 md:px-8">
+          <div className="flex flex-col md:flex-row-reverse justify-between items-center gap-8">
+            {/* Logo */}
+            <Link href="/" className="text-2xl font-black text-brand uppercase tracking-tighter">
+              GarageOS
+            </Link>
+
+            {/* Footer links */}
+            <div className="flex gap-12 flex-row-reverse text-right">
+              <div>
+                <h5 className="font-bold text-on-surface mb-4">מוצר</h5>
+                <ul className="text-on-surface-variant space-y-2 text-sm">
+                  <li><Link className="hover:text-primary transition-colors" href="/#features">תכונות</Link></li>
+                  <li><Link className="hover:text-primary transition-colors" href="/pricing">מחירים</Link></li>
+                  <li><Link className="hover:text-primary transition-colors" href="/#features">אבטחה</Link></li>
+                </ul>
+              </div>
+              <div>
+                <h5 className="font-bold text-on-surface mb-4">חברה</h5>
+                <ul className="text-on-surface-variant space-y-2 text-sm">
+                  <li><Link className="hover:text-primary transition-colors" href="#">עלינו</Link></li>
+                  <li><Link className="hover:text-primary transition-colors" href="#">תמיכה</Link></li>
+                  <li><Link className="hover:text-primary transition-colors" href="#">בלוג</Link></li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Copyright */}
+            <div className="text-center md:text-right">
+              <p className="text-on-surface-variant mb-2">
+                {'\u00A9'} {new Date().getFullYear()} GarageOS. כל הזכויות שמורות.
+              </p>
+              <p className="font-bold text-on-surface flex items-center justify-center md:justify-end gap-2">
+                <span>נבנה בישראל</span>
+                <span className="text-lg">🇮🇱</span>
               </p>
             </div>
-
-            {/* Product */}
-            <div>
-              <h4 className="text-sm font-medium text-[#fafafa] mb-3">מוצר</h4>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="/#features" className="text-sm text-[#52525b] hover:text-[#a1a1aa] transition-colors">
-                    תכונות
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/pricing" className="text-sm text-[#52525b] hover:text-[#a1a1aa] transition-colors">
-                    מחירים
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            {/* Support */}
-            <div>
-              <h4 className="text-sm font-medium text-[#fafafa] mb-3">תמיכה</h4>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="/login" className="text-sm text-[#52525b] hover:text-[#a1a1aa] transition-colors">
-                    כניסה למערכת
-                  </Link>
-                </li>
-                <li>
-                  <span className="text-sm text-[#52525b]">
-                    support@garageos.co.il
-                  </span>
-                </li>
-              </ul>
-            </div>
-
-            {/* Legal */}
-            <div>
-              <h4 className="text-sm font-medium text-[#fafafa] mb-3">משפטי</h4>
-              <ul className="space-y-2">
-                <li>
-                  <span className="text-sm text-[#52525b]">
-                    תנאי שימוש
-                  </span>
-                </li>
-                <li>
-                  <span className="text-sm text-[#52525b]">
-                    מדיניות פרטיות
-                  </span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          {/* Bottom bar */}
-          <div className="mt-10 pt-6 border-t border-[#27272a] flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-[#52525b]">
-              {'\u00A9'} {new Date().getFullYear()} GarageOS. כל הזכויות שמורות.
-            </p>
-            <p className="text-xs text-[#52525b]">
-              נבנה באהבה לבעלי מוסכים בישראל
-            </p>
           </div>
         </div>
       </footer>

@@ -10,11 +10,11 @@ export function Chip({ active, className, children, ...props }: ChipProps) {
     <button
       type="button"
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-all',
+        'inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition-all',
         'min-h-[28px] select-none cursor-pointer',
         active
-          ? 'bg-[#3b82f6]/10 text-[#3b82f6] border-[#3b82f6]/30'
-          : 'bg-transparent text-[#71717a] border-[#27272a] hover:text-[#a1a1aa] hover:border-[#3f3f46]',
+          ? 'bg-primary-container text-white'
+          : 'bg-surface-high text-on-surface-variant hover:bg-surface-highest',
         className
       )}
       {...props}

@@ -9,11 +9,11 @@ export default function GlobalError({
   reset: () => void
 }) {
   return (
-    <div className="min-h-dvh flex flex-col items-center justify-center bg-[#09090b] px-4">
-      <div className="w-full max-w-sm rounded-xl border border-[#27272a] bg-[#18181b] p-6 text-center">
-        <div className="flex items-center justify-center w-14 h-14 rounded-full bg-red-500/10 mx-auto mb-4">
+    <div className="min-h-dvh flex flex-col items-center justify-center bg-surface px-4">
+      <div className="w-full max-w-sm rounded-xl bg-surface-high border border-white/5 p-6 text-center">
+        <div className="flex items-center justify-center w-14 h-14 rounded-full bg-error/10 mx-auto mb-4">
           <svg
-            className="w-7 h-7 text-red-400"
+            className="w-7 h-7 text-error"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -26,8 +26,8 @@ export default function GlobalError({
             />
           </svg>
         </div>
-        <h1 className="text-lg font-semibold text-[#fafafa] mb-2">משהו השתבש</h1>
-        <p className="text-sm text-[#71717a] mb-6">
+        <h1 className="text-lg font-black text-on-surface mb-2 tracking-tight">משהו השתבש</h1>
+        <p className="text-sm text-on-surface-variant mb-6">
           אירעה שגיאה בלתי צפויה. נסה שוב.
         </p>
         <Button

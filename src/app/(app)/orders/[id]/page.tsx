@@ -4,15 +4,15 @@ import {
   MessageCircle,
   FileDown,
   Edit3,
-  CheckCircle2,
-  Circle,
+  Check,
   ArrowRight,
+  Phone,
+  Mail,
+  Car,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Topbar } from '@/components/layout/topbar'
-import { StatusBadge } from '@/components/ui/status-badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatCurrency, formatDateTime, formatDate, PRIORITY_LABELS } from '@/lib/utils'
 import type { WorkOrder, OrderStatus } from '@/types'
 
@@ -25,6 +25,14 @@ const STATUS_STEP_LABELS: Record<OrderStatus, string> = {
   cancelled: 'בוטל',
 }
 
+const STATUS_ICONS: Record<OrderStatus, string> = {
+  received: 'check',
+  in_progress: 'build',
+  ready: 'done_all',
+  delivered: 'local_shipping',
+  cancelled: 'cancel',
+}
+
 const NEXT_STATUS: Partial<Record<OrderStatus, OrderStatus>> = {
   received: 'in_progress',
   in_progress: 'ready',
@@ -35,6 +43,17 @@ const NEXT_STATUS_LABEL: Partial<Record<OrderStatus, string>> = {
   received: 'התחל טיפול',
   in_progress: 'סמן כמוכן',
   ready: 'מסור ללקוח',
+}
+
+function LicensePlate({ plate }: { plate: string }) {
+  return (
+    <div className="bg-[#F5D015] text-black inline-flex items-center rounded-sm overflow-hidden shadow-[0_0_15px_rgba(232,196,0,0.2)] border border-black/10 h-10">
+      <div className="bg-blue-700 w-5 h-full flex flex-col items-center justify-center text-[8px] text-white font-bold">
+        <span>IL</span>
+      </div>
+      <div className="px-3 text-center font-mono font-bold text-xl tracking-[0.15em] tabular-nums">{plate}</div>
+    </div>
+  )
 }
 
 interface PageProps {
@@ -72,8 +91,13 @@ export default async function OrderDetailPage({ params }: PageProps) {
     ? `https://wa.me/972${typedOrder.customer.phone.replace(/^0/, '').replace(/[-\s]/g, '')}?text=${whatsappMessage}`
     : '#'
 
+  // Calculate the timeline progress width
+  const progressPercent = currentStepIndex >= 0
+    ? Math.min(100, (currentStepIndex / (STATUS_FLOW.length - 1)) * 100)
+    : 0
+
   return (
-    <div className="min-h-full pb-6">
+    <div className="min-h-full pb-6 bg-surface">
       <Topbar
         title={typedOrder.job_number}
         backHref="/orders"
@@ -87,272 +111,261 @@ export default async function OrderDetailPage({ params }: PageProps) {
         }
       />
 
-      <div className="px-4 py-5 max-w-3xl mx-auto space-y-4">
-        {/* Header card */}
-        <Card>
-          <CardContent className="pt-4">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <h2 className="text-lg font-bold text-[#fafafa]">
-                    {typedOrder.vehicle?.make} {typedOrder.vehicle?.model}
-                  </h2>
-                  <span className="font-mono text-sm bg-[#27272a] px-2 py-0.5 rounded text-[#a1a1aa]">
-                    {typedOrder.vehicle?.license_plate}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3 flex-wrap">
-                  <StatusBadge status={typedOrder.status} />
-                  <span className="text-xs text-[#52525b]">
-                    עדיפות: {PRIORITY_LABELS[typedOrder.priority]}
-                  </span>
-                  {typedOrder.technician && (
-                    <span className="text-xs text-[#52525b]">
-                      טכנאי: {typedOrder.technician.full_name}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 flex-wrap">
-                {nextStatus && nextLabel && (
-                  <form action={`/api/orders/${id}/status`} method="POST">
-                    <input type="hidden" name="status" value={nextStatus} />
-                    <Button variant="primary" size="default" type="submit">
-                      <ArrowRight size={14} />
-                      {nextLabel}
-                    </Button>
-                  </form>
-                )}
-                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-                  <Button variant="default" size="default">
-                    <MessageCircle size={14} />
-                    <span className="hidden md:inline">WhatsApp</span>
-                  </Button>
-                </a>
-                <Button variant="default" size="default">
-                  <FileDown size={14} />
-                  <span className="hidden md:inline">PDF</span>
-                </Button>
-              </div>
+      <div className="px-4 py-6 max-w-4xl mx-auto space-y-6">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+          <div className="text-right">
+            <div className="flex items-center gap-3 justify-end mb-2">
+              <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold border border-primary/20 font-mono tracking-widest">
+                {typedOrder.job_number}
+              </span>
             </div>
-          </CardContent>
-        </Card>
+            <h2 className="text-3xl font-black text-on-surface tracking-tighter">
+              {typedOrder.vehicle?.make} {typedOrder.vehicle?.model}
+            </h2>
+            <div className="flex items-center gap-3 mt-1 flex-wrap">
+              <span className="text-xs text-on-surface-variant">
+                עדיפות: {PRIORITY_LABELS[typedOrder.priority]}
+              </span>
+              {typedOrder.technician && (
+                <span className="text-xs text-on-surface-variant">
+                  טכנאי: {typedOrder.technician.full_name}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-3">
+            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+              <Button variant="default" size="default">
+                <MessageCircle size={14} className="text-emerald-400" />
+                <span className="hidden md:inline">שלח WhatsApp</span>
+              </Button>
+            </a>
+            {nextStatus && nextLabel && (
+              <form action={`/api/orders/${id}/status`} method="POST">
+                <input type="hidden" name="status" value={nextStatus} />
+                <Button variant="primary" size="default" type="submit">
+                  <ArrowRight size={14} />
+                  {nextLabel}
+                </Button>
+              </form>
+            )}
+          </div>
+        </div>
 
         {/* Status Timeline */}
         {typedOrder.status !== 'cancelled' && (
-          <Card>
-            <CardHeader>
-              <CardTitle>מעקב סטטוס</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-0 overflow-x-auto">
-                {STATUS_FLOW.map((status, index) => {
-                  const isDone = index < currentStepIndex
-                  const isCurrent = index === currentStepIndex
-                  const isLast = index === STATUS_FLOW.length - 1
+          <div className="bg-surface-low rounded-xl p-8 relative overflow-hidden">
+            <div className="flex justify-between items-center relative">
+              {/* Progress Line Background */}
+              <div className="absolute top-5 left-0 right-0 h-1 bg-surface-highest" />
+              {/* Progress Line Active */}
+              <div
+                className="absolute top-5 right-0 h-1 bg-primary"
+                style={{ width: `${progressPercent}%` }}
+              />
+              {/* Steps */}
+              {STATUS_FLOW.map((status, index) => {
+                const isDone = index < currentStepIndex
+                const isCurrent = index === currentStepIndex
+                const isLast = index === STATUS_FLOW.length - 1
 
-                  return (
-                    <div key={status} className="flex items-center flex-1 min-w-0">
-                      <div className="flex flex-col items-center gap-1.5 flex-shrink-0">
-                        {isDone ? (
-                          <CheckCircle2 size={20} className="text-[#22c55e]" />
-                        ) : isCurrent ? (
-                          <div className="w-5 h-5 rounded-full bg-[#3b82f6] flex items-center justify-center">
-                            <div className="w-2 h-2 rounded-full bg-white" />
-                          </div>
-                        ) : (
-                          <Circle size={20} className="text-[#3f3f46]" />
-                        )}
-                        <span
-                          className={`text-[10px] font-medium text-center whitespace-nowrap ${
-                            isCurrent
-                              ? 'text-[#3b82f6]'
-                              : isDone
-                              ? 'text-[#22c55e]'
-                              : 'text-[#52525b]'
-                          }`}
-                        >
-                          {STATUS_STEP_LABELS[status]}
-                        </span>
+                return (
+                  <div key={status} className="relative z-10 flex flex-col items-center gap-2 flex-1">
+                    {isDone ? (
+                      <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-[0_0_15px_rgba(143,209,217,0.4)]">
+                        <Check size={18} />
                       </div>
-                      {!isLast && (
-                        <div
-                          className={`flex-1 h-px mx-2 ${
-                            isDone ? 'bg-[#22c55e]/40' : 'bg-[#27272a]'
-                          }`}
-                        />
-                      )}
-                    </div>
-                  )
-                })}
-              </div>
-            </CardContent>
-          </Card>
+                    ) : isCurrent ? (
+                      <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-[0_0_15px_rgba(143,209,217,0.4)]">
+                        <div className="w-3 h-3 rounded-full bg-on-primary" />
+                      </div>
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-surface-highest border-2 border-outline-variant flex items-center justify-center text-on-surface-variant">
+                        <div className="w-2 h-2 rounded-full bg-current opacity-50" />
+                      </div>
+                    )}
+                    <span
+                      className={`text-xs font-bold text-center whitespace-nowrap ${
+                        isCurrent
+                          ? 'text-primary'
+                          : isDone
+                          ? 'text-on-surface'
+                          : 'text-on-surface-variant/50'
+                      }`}
+                    >
+                      {STATUS_STEP_LABELS[status]}
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
         )}
 
-        <div className="grid md:grid-cols-2 gap-4">
-          {/* Customer info */}
-          <Card>
-            <CardHeader>
-              <CardTitle>פרטי לקוח</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div>
-                  <p className="text-xs text-[#52525b]">שם</p>
-                  <p className="text-sm text-[#fafafa] font-medium">
-                    {typedOrder.customer?.full_name ?? '—'}
+        <div className="grid grid-cols-12 gap-6">
+          {/* Left Column: Work & Parts */}
+          <div className="col-span-12 lg:col-span-8 flex flex-col gap-6">
+            {/* Items Table */}
+            <div className="bg-surface-high rounded-xl overflow-hidden shadow-lg">
+              <div className="p-6 border-b border-white/5 flex justify-between items-center">
+                <h3 className="font-black text-lg text-on-surface">פירוט עבודה וחלפים</h3>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-right">
+                  <thead>
+                    <tr className="text-on-surface-variant text-xs font-bold uppercase tracking-wider bg-surface-low/50">
+                      <th className="px-6 py-4">תיאור פריט / עבודה</th>
+                      <th className="px-6 py-4 text-center">כמות</th>
+                      <th className="px-6 py-4">מחיר יחידה</th>
+                      <th className="px-6 py-4 text-left">סה"כ</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {typedOrder.items?.map((item, index) => (
+                      <tr
+                        key={item.id}
+                        className={`hover:bg-white/[0.02] transition-colors ${
+                          index % 2 === 1 ? 'bg-surface-low/30' : ''
+                        }`}
+                      >
+                        <td className="px-6 py-5">
+                          <p className="font-bold text-on-surface">{item.description}</p>
+                        </td>
+                        <td className="px-6 py-5 text-center tabular-nums text-on-surface-variant">{item.quantity}</td>
+                        <td className="px-6 py-5 tabular-nums text-on-surface-variant">
+                          {formatCurrency(item.unit_price)}
+                        </td>
+                        <td className="px-6 py-5 text-left font-bold tabular-nums text-on-surface">
+                          {formatCurrency(item.total)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Totals */}
+              <div className="p-6 bg-surface-highest/30 border-t border-white/5 space-y-2">
+                <div className="flex justify-between text-sm text-on-surface-variant">
+                  <span className="tabular-nums">{formatCurrency(typedOrder.subtotal)}</span>
+                  <span>סה"כ לפני מע"מ:</span>
+                </div>
+                <div className="flex justify-between text-sm text-on-surface-variant">
+                  <span className="tabular-nums">{formatCurrency(typedOrder.tax_amount)}</span>
+                  <span>מע"מ (17%):</span>
+                </div>
+                <div className="flex justify-between text-primary font-black text-2xl mt-2 border-t border-white/10 pt-3">
+                  <span className="tabular-nums">{formatCurrency(typedOrder.total_amount)}</span>
+                  <span>סה"כ לתשלום:</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Notes */}
+            {typedOrder.notes && (
+              <div className="bg-surface-high rounded-xl p-6 shadow-lg">
+                <h3 className="font-black text-sm text-on-surface-variant mb-4 flex items-center gap-2 justify-end">
+                  הערות מוסך פנימיות
+                </h3>
+                <p className="text-on-surface text-sm bg-surface-lowest p-4 rounded-lg border-r-4 border-secondary/50 leading-relaxed">
+                  {typedOrder.notes}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Right Column: Vehicle + Customer */}
+          <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
+            {/* Vehicle Card */}
+            <div className="bg-surface-high rounded-xl p-6 shadow-lg border border-white/5">
+              <div className="flex items-center gap-2 text-primary mb-4">
+                <Car size={18} />
+                <span className="text-[10px] font-bold uppercase tracking-wider">רכב</span>
+              </div>
+              <div className="flex flex-col gap-4">
+                {/* License Plate */}
+                <div className="flex justify-center py-2">
+                  {typedOrder.vehicle?.license_plate && (
+                    <LicensePlate plate={typedOrder.vehicle.license_plate} />
+                  )}
+                </div>
+                <div className="text-center">
+                  <h3 className="font-black text-xl text-on-surface">
+                    {typedOrder.vehicle?.make} {typedOrder.vehicle?.model}
+                  </h3>
+                  <p className="text-sm text-on-surface-variant">
+                    {typedOrder.vehicle?.year && `${typedOrder.vehicle.year}`}
+                    {typedOrder.vehicle?.color && ` | ${typedOrder.vehicle.color}`}
                   </p>
                 </div>
-                <div>
-                  <p className="text-xs text-[#52525b]">טלפון</p>
-                  <a
-                    href={`tel:${typedOrder.customer?.phone}`}
-                    className="text-sm text-[#3b82f6] hover:underline"
-                    dir="ltr"
-                  >
-                    {typedOrder.customer?.phone ?? '—'}
-                  </a>
-                </div>
-                {typedOrder.customer?.email && (
-                  <div>
-                    <p className="text-xs text-[#52525b]">אימייל</p>
-                    <a
-                      href={`mailto:${typedOrder.customer.email}`}
-                      className="text-sm text-[#3b82f6] hover:underline"
-                      dir="ltr"
-                    >
-                      {typedOrder.customer.email}
-                    </a>
+                {typedOrder.mileage && (
+                  <div className="bg-surface-low p-3 rounded-lg border border-white/5">
+                    <p className="text-[10px] text-on-surface-variant uppercase mb-1">קילומטראז' בקבלה</p>
+                    <p className="text-lg font-bold tabular-nums text-on-surface">
+                      {typedOrder.mileage.toLocaleString('he-IL')} <span className="text-xs font-normal text-on-surface-variant">ק"מ</span>
+                    </p>
                   </div>
                 )}
               </div>
-            </CardContent>
-          </Card>
+            </div>
 
-          {/* Vehicle info */}
-          <Card>
-            <CardHeader>
-              <CardTitle>פרטי רכב</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div>
-                  <p className="text-xs text-[#52525b]">לוחית רישוי</p>
-                  <p className="text-sm text-[#fafafa] font-mono font-bold tracking-widest">
-                    {typedOrder.vehicle?.license_plate ?? '—'}
-                  </p>
+            {/* Customer Card */}
+            <div className="bg-surface-high rounded-xl p-6 shadow-lg border border-white/5">
+              <div className="flex items-center gap-2 text-secondary mb-4">
+                <Mail size={16} />
+                <span className="text-[10px] font-bold uppercase tracking-wider">לקוח</span>
+              </div>
+              <div className="space-y-4">
+                <div className="text-right">
+                  <h3 className="font-black text-xl text-on-surface">
+                    {typedOrder.customer?.full_name ?? '\u2014'}
+                  </h3>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <p className="text-xs text-[#52525b]">יצרן / דגם</p>
-                    <p className="text-sm text-[#fafafa]">
-                      {typedOrder.vehicle?.make} {typedOrder.vehicle?.model}
-                    </p>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-surface-low/50 hover:bg-surface-low transition-colors cursor-pointer">
+                    <Phone size={14} className="text-on-surface-variant" />
+                    <a
+                      href={`tel:${typedOrder.customer?.phone}`}
+                      className="text-sm font-bold tabular-nums text-primary hover:underline"
+                      dir="ltr"
+                    >
+                      {typedOrder.customer?.phone ?? '\u2014'}
+                    </a>
                   </div>
-                  {typedOrder.vehicle?.year && (
-                    <div>
-                      <p className="text-xs text-[#52525b]">שנה</p>
-                      <p className="text-sm text-[#fafafa]">{typedOrder.vehicle.year}</p>
+                  {typedOrder.customer?.email && (
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-surface-low/50 hover:bg-surface-low transition-colors cursor-pointer">
+                      <Mail size={14} className="text-on-surface-variant" />
+                      <a
+                        href={`mailto:${typedOrder.customer.email}`}
+                        className="text-sm font-bold text-primary hover:underline"
+                        dir="ltr"
+                      >
+                        {typedOrder.customer.email}
+                      </a>
                     </div>
                   )}
                 </div>
-                {typedOrder.mileage && (
-                  <div>
-                    <p className="text-xs text-[#52525b]">קילומטראז' בקבלה</p>
-                    <p className="text-sm text-[#fafafa]">
-                      {typedOrder.mileage.toLocaleString('he-IL')} ק"מ
-                    </p>
-                  </div>
-                )}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
 
-        {/* Items table */}
-        <Card>
-          <CardHeader>
-            <CardTitle>עבודות ופריטים</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
-                <thead>
-                  <tr className="border-b border-[#27272a]">
-                    <th className="text-right px-4 py-3 text-xs font-medium text-[#52525b]">תיאור</th>
-                    <th className="text-center px-3 py-3 text-xs font-medium text-[#52525b] w-16">כמות</th>
-                    <th className="text-center px-3 py-3 text-xs font-medium text-[#52525b] w-24">מחיר יחידה</th>
-                    <th className="text-left px-4 py-3 text-xs font-medium text-[#52525b] w-24">סה"כ</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {typedOrder.items?.map((item) => (
-                    <tr key={item.id} className="border-b border-[#27272a] last:border-0">
-                      <td className="px-4 py-3 text-[#fafafa]">{item.description}</td>
-                      <td className="px-3 py-3 text-center text-[#a1a1aa]">{item.quantity}</td>
-                      <td className="px-3 py-3 text-center text-[#a1a1aa] tabular-nums">
-                        {formatCurrency(item.unit_price)}
-                      </td>
-                      <td className="px-4 py-3 text-[#fafafa] font-medium tabular-nums">
-                        {formatCurrency(item.total)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Totals */}
-            <div className="border-t border-[#27272a] px-4 py-3 space-y-1.5">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-[#71717a]">סכום ביניים</span>
-                <span className="text-[#fafafa] tabular-nums">
-                  {formatCurrency(typedOrder.subtotal)}
-                </span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-[#71717a]">מע"מ 17%</span>
-                <span className="text-[#fafafa] tabular-nums">
-                  {formatCurrency(typedOrder.tax_amount)}
-                </span>
-              </div>
-              <div className="flex items-center justify-between pt-2 border-t border-[#27272a]">
-                <span className="text-sm font-semibold text-[#fafafa]">סה"כ לתשלום</span>
-                <span className="text-base font-bold text-[#fafafa] tabular-nums">
-                  {formatCurrency(typedOrder.total_amount)}
-                </span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Notes */}
-        {typedOrder.notes && (
-          <Card>
-            <CardHeader>
-              <CardTitle>הערות</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-[#a1a1aa] whitespace-pre-wrap">{typedOrder.notes}</p>
-            </CardContent>
-          </Card>
-        )}
-
         {/* Metadata */}
-        <div className="grid grid-cols-2 gap-3 text-xs text-[#52525b]">
-          <div>
-            <span className="block mb-0.5 text-[#3f3f46]">נוצר</span>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs text-on-surface-variant">
+          <div className="bg-surface-high rounded-lg p-3">
+            <span className="block mb-0.5 text-on-surface-variant/50 uppercase text-[10px] font-bold tracking-wider">נוצר</span>
             <span>{formatDateTime(typedOrder.created_at)}</span>
           </div>
-          <div>
-            <span className="block mb-0.5 text-[#3f3f46]">עודכן</span>
+          <div className="bg-surface-high rounded-lg p-3">
+            <span className="block mb-0.5 text-on-surface-variant/50 uppercase text-[10px] font-bold tracking-wider">עודכן</span>
             <span>{formatDateTime(typedOrder.updated_at)}</span>
           </div>
           {typedOrder.completed_at && (
-            <div>
-              <span className="block mb-0.5 text-[#3f3f46]">הושלם</span>
+            <div className="bg-surface-high rounded-lg p-3">
+              <span className="block mb-0.5 text-on-surface-variant/50 uppercase text-[10px] font-bold tracking-wider">הושלם</span>
               <span>{formatDate(typedOrder.completed_at)}</span>
             </div>
           )}

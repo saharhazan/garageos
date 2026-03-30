@@ -94,14 +94,14 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="rounded-xl border border-[#27272a] bg-[#18181b] p-6">
+    <div className="rounded-xl border border-white/5 bg-surface-high p-6">
       {/* Progress indicator */}
       <div className="flex items-center gap-2 mb-6">
         {[1, 2, 3].map((s) => (
           <div
             key={s}
             className={`h-1.5 flex-1 rounded-full transition-colors ${
-              s <= step ? 'bg-[#3b82f6]' : 'bg-[#27272a]'
+              s <= step ? 'bg-primary-container' : 'bg-surface-highest'
             }`}
           />
         ))}
@@ -111,8 +111,8 @@ export default function OnboardingPage() {
       {step === 1 && (
         <>
           <div className="mb-6">
-            <h1 className="text-lg font-semibold text-[#fafafa]">פרטי המוסך</h1>
-            <p className="text-sm text-[#71717a] mt-1">ספר לנו על המוסך שלך</p>
+            <h1 className="text-lg font-semibold text-on-surface">פרטי המוסך</h1>
+            <p className="text-sm text-on-surface-variant mt-1">ספר לנו על המוסך שלך</p>
           </div>
 
           <div className="space-y-4">
@@ -166,8 +166,8 @@ export default function OnboardingPage() {
       {step === 2 && (
         <>
           <div className="mb-6">
-            <h1 className="text-lg font-semibold text-[#fafafa]">בחירת מסלול</h1>
-            <p className="text-sm text-[#71717a] mt-1">בחר את המסלול המתאים לך</p>
+            <h1 className="text-lg font-semibold text-on-surface">בחירת מסלול</h1>
+            <p className="text-sm text-on-surface-variant mt-1">בחר את המסלול המתאים לך</p>
           </div>
 
           <div className="space-y-3 mb-6">
@@ -178,18 +178,18 @@ export default function OnboardingPage() {
                 onClick={() => setSelectedPlan(plan.id)}
                 className={`w-full rounded-lg border p-4 text-right transition-all ${
                   selectedPlan === plan.id
-                    ? 'border-[#3b82f6] bg-[#3b82f6]/5'
-                    : 'border-[#27272a] bg-[#09090b] hover:border-[#3f3f46]'
+                    ? 'border-primary/40 bg-primary-container/5'
+                    : 'border-white/5 bg-surface-lowest hover:bg-surface-highest'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-semibold text-[#fafafa]">{plan.name}</span>
-                  <span className="text-sm font-medium text-[#3b82f6]">{plan.price}</span>
+                  <span className="text-sm font-semibold text-on-surface">{plan.name}</span>
+                  <span className="text-sm font-medium text-primary">{plan.price}</span>
                 </div>
                 <ul className="space-y-1">
                   {plan.features.map((feature) => (
-                    <li key={feature} className="text-xs text-[#71717a] flex items-center gap-1.5">
-                      <span className="text-[#3b82f6]">&#10003;</span>
+                    <li key={feature} className="text-xs text-on-surface-variant flex items-center gap-1.5">
+                      <span className="text-primary">&#10003;</span>
                       {feature}
                     </li>
                   ))}
@@ -199,8 +199,8 @@ export default function OnboardingPage() {
           </div>
 
           {error && (
-            <div className="rounded-[6px] border border-red-500/20 bg-red-500/10 px-3 py-2 mb-4">
-              <p className="text-sm text-red-400">{error}</p>
+            <div className="rounded-[6px] border border-error/20 bg-error/10 px-3 py-2 mb-4">
+              <p className="text-sm text-error">{error}</p>
             </div>
           )}
 
@@ -231,9 +231,9 @@ export default function OnboardingPage() {
       {/* Step 3: Success */}
       {step === 3 && (
         <div className="text-center py-4">
-          <div className="flex items-center justify-center w-14 h-14 rounded-full bg-[#3b82f6]/10 mx-auto mb-4">
+          <div className="flex items-center justify-center w-14 h-14 rounded-full bg-primary-container/10 mx-auto mb-4">
             <svg
-              className="w-7 h-7 text-[#3b82f6]"
+              className="w-7 h-7 text-primary"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -242,8 +242,8 @@ export default function OnboardingPage() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h1 className="text-lg font-semibold text-[#fafafa] mb-2">המוסך שלך מוכן!</h1>
-          <p className="text-sm text-[#71717a] mb-6">
+          <h1 className="text-lg font-semibold text-on-surface mb-2">המוסך שלך מוכן!</h1>
+          <p className="text-sm text-on-surface-variant mb-6">
             הכל מוכן. אפשר להתחיל לנהל את המוסך.
           </p>
           <Button

@@ -29,9 +29,20 @@ const STATUS_FILTERS: { label: string; value: OrderStatus | 'all' }[] = [
 ]
 
 const PRIORITY_LABEL: Record<string, { label: string; color: string }> = {
-  normal: { label: 'רגיל', color: '#52525b' },
-  high: { label: 'גבוה', color: '#eab308' },
-  urgent: { label: 'דחוף', color: '#ef4444' },
+  normal: { label: 'רגיל', color: '#bfc8c9' },
+  high: { label: 'גבוה', color: '#e8c400' },
+  urgent: { label: 'דחוף', color: '#ffb4ab' },
+}
+
+function LicensePlate({ plate }: { plate: string }) {
+  return (
+    <div className="bg-[#F5D015] text-black w-28 h-8 rounded-sm flex items-center overflow-hidden shadow-[0_0_15px_rgba(232,196,0,0.2)] mx-auto border border-black/10">
+      <div className="bg-blue-700 w-4 h-full flex flex-col items-center justify-center text-[8px] text-white">
+        <span>IL</span>
+      </div>
+      <div className="flex-grow text-center font-mono font-bold text-lg tracking-widest tabular-nums">{plate}</div>
+    </div>
+  )
 }
 
 export default function OrdersPage() {
@@ -76,7 +87,7 @@ export default function OrdersPage() {
   }, [statusFilter, search, page])
 
   return (
-    <div className="min-h-full">
+    <div className="min-h-full bg-surface">
       <Topbar
         title="עבודות"
         actions={
@@ -94,14 +105,14 @@ export default function OrdersPage() {
         <div className="relative">
           <Search
             size={15}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#52525b] pointer-events-none"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none"
           />
           <input
             type="search"
             placeholder="חפש לפי לוחית, שם, מספר עבודה..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="h-9 w-full rounded-[6px] border border-[#27272a] bg-[#09090b] pr-9 pl-3 text-sm text-[#fafafa] placeholder:text-[#52525b] outline-none focus:border-[#3b82f6] focus:ring-2 focus:ring-blue-500/10 transition-all"
+            className="h-10 w-full rounded-lg border border-outline-variant/20 bg-surface-lowest pr-9 pl-3 text-sm text-on-surface placeholder:text-outline outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all"
           />
         </div>
 
@@ -129,14 +140,14 @@ export default function OrdersPage() {
         {/* Desktop table */}
         {!loading && (
           <>
-            <div className="hidden md:block rounded-xl border border-[#27272a] overflow-hidden">
+            <div className="hidden md:block bg-surface-low rounded-xl overflow-hidden shadow-2xl">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>מספר</TableHead>
                     <TableHead>לקוח</TableHead>
                     <TableHead>רכב</TableHead>
-                    <TableHead>לוחית</TableHead>
+                    <TableHead className="text-center">לוחית</TableHead>
                     <TableHead>סטטוס</TableHead>
                     <TableHead>עדיפות</TableHead>
                     <TableHead>סכום</TableHead>
@@ -146,7 +157,7 @@ export default function OrdersPage() {
                 <TableBody>
                   {orders.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={8} className="text-center py-12 text-[#52525b]">
+                      <TableCell colSpan={8} className="text-center py-12 text-on-surface-variant">
                         {search ? 'לא נמצאו תוצאות לחיפוש' : 'אין עבודות עדיין'}
                       </TableCell>
                     </TableRow>
@@ -158,39 +169,41 @@ export default function OrdersPage() {
                           <TableCell>
                             <Link
                               href={`/orders/${order.id}`}
-                              className="font-mono text-xs text-[#3b82f6] hover:underline"
+                              className="font-mono text-sm text-primary font-medium hover:underline"
                             >
                               {order.job_number}
                             </Link>
                           </TableCell>
-                          <TableCell className="text-[#fafafa] font-medium">
-                            {order.customer?.full_name ?? '—'}
+                          <TableCell className="text-on-surface font-medium">
+                            {order.customer?.full_name ?? '\u2014'}
                           </TableCell>
                           <TableCell>
                             {order.vehicle
                               ? `${order.vehicle.make} ${order.vehicle.model}`
-                              : '—'}
+                              : '\u2014'}
                           </TableCell>
-                          <TableCell>
-                            <span className="font-mono text-xs bg-[#27272a] px-1.5 py-0.5 rounded">
-                              {order.vehicle?.license_plate ?? '—'}
-                            </span>
+                          <TableCell className="text-center">
+                            {order.vehicle?.license_plate ? (
+                              <LicensePlate plate={order.vehicle.license_plate} />
+                            ) : (
+                              '\u2014'
+                            )}
                           </TableCell>
                           <TableCell>
                             <StatusBadge status={order.status} />
                           </TableCell>
                           <TableCell>
                             <span
-                              className="text-xs font-medium"
+                              className="text-xs font-bold"
                               style={{ color: priority.color }}
                             >
                               {priority.label}
                             </span>
                           </TableCell>
-                          <TableCell className="tabular-nums text-[#fafafa]">
+                          <TableCell className="tabular-nums text-on-surface font-bold">
                             {formatCurrency(order.total_amount)}
                           </TableCell>
-                          <TableCell className="text-xs">
+                          <TableCell className="text-xs text-on-surface-variant">
                             {formatDate(order.created_at)}
                           </TableCell>
                         </TableRow>
@@ -202,10 +215,10 @@ export default function OrdersPage() {
             </div>
 
             {/* Mobile card list */}
-            <div className="md:hidden space-y-2">
+            <div className="md:hidden space-y-3">
               {orders.length === 0 ? (
-                <div className="rounded-xl border border-[#27272a] bg-[#18181b] px-4 py-12 text-center">
-                  <p className="text-sm text-[#52525b]">
+                <div className="rounded-xl bg-surface-high px-4 py-12 text-center">
+                  <p className="text-sm text-on-surface-variant">
                     {search ? 'לא נמצאו תוצאות' : 'אין עבודות עדיין'}
                   </p>
                 </div>
@@ -216,16 +229,16 @@ export default function OrdersPage() {
                     <Link
                       key={order.id}
                       href={`/orders/${order.id}`}
-                      className="block rounded-xl border border-[#27272a] bg-[#18181b] p-4 hover:border-[#3f3f46] transition-colors active:bg-white/[0.02]"
+                      className="block rounded-xl bg-surface-high p-4 hover:bg-surface-highest transition-all active:scale-[0.98]"
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <span className="font-mono text-xs text-[#3b82f6]">
+                        <span className="font-mono text-xs text-primary font-medium">
                           {order.job_number}
                         </span>
                         <div className="flex items-center gap-1.5">
                           {order.priority !== 'normal' && (
                             <span
-                              className="text-[10px] font-semibold"
+                              className="text-[10px] font-bold"
                               style={{ color: priority.color }}
                             >
                               {priority.label}
@@ -234,24 +247,25 @@ export default function OrdersPage() {
                           <StatusBadge status={order.status} />
                         </div>
                       </div>
-                      <p className="text-sm font-semibold text-[#fafafa] mb-0.5">
-                        {order.customer?.full_name ?? '—'}
+                      <p className="text-sm font-bold text-on-surface mb-1">
+                        {order.customer?.full_name ?? '\u2014'}
                       </p>
-                      <div className="flex items-center gap-2 text-xs text-[#52525b]">
+                      <div className="flex items-center gap-2 text-xs text-on-surface-variant">
                         {order.vehicle && (
                           <>
-                            <span className="font-mono bg-[#27272a] px-1.5 py-0.5 rounded">
+                            <span className="bg-[#F5D015] text-[#221b00] px-1.5 py-0.5 rounded-sm text-[10px] font-black font-mono flex items-center">
+                              <span className="w-1.5 h-3 bg-blue-700 mr-1 rounded-px" />
                               {order.vehicle.license_plate}
                             </span>
                             <span>{order.vehicle.make} {order.vehicle.model}</span>
                           </>
                         )}
                       </div>
-                      <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#27272a]">
-                        <span className="text-sm font-bold text-[#fafafa]">
+                      <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/5">
+                        <span className="text-sm font-bold text-on-surface tabular-nums">
                           {formatCurrency(order.total_amount)}
                         </span>
-                        <span className="text-xs text-[#52525b]">
+                        <span className="text-xs text-on-surface-variant">
                           {formatDate(order.created_at)}
                         </span>
                       </div>
@@ -272,7 +286,7 @@ export default function OrdersPage() {
                 >
                   הקודם
                 </Button>
-                <span className="text-xs text-[#52525b]">עמוד {page + 1}</span>
+                <span className="text-xs text-on-surface-variant">עמוד {page + 1}</span>
                 <Button
                   variant="default"
                   size="sm"
@@ -290,8 +304,8 @@ export default function OrdersPage() {
       {/* Mobile FAB */}
       <div className="md:hidden fixed bottom-20 left-4 z-30">
         <Link href="/orders/new">
-          <button className="flex items-center justify-center w-12 h-12 rounded-full bg-[#3b82f6] shadow-lg shadow-blue-500/30 text-white transition-transform active:scale-95">
-            <Plus size={20} />
+          <button className="flex items-center justify-center w-14 h-14 rounded-full bg-secondary-container shadow-[0_0_16px_rgba(232,114,12,0.3)] text-white transition-transform active:scale-95">
+            <Plus size={22} />
           </button>
         </Link>
       </div>

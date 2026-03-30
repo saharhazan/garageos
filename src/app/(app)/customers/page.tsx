@@ -57,14 +57,14 @@ export default function CustomersPage() {
         <div className="relative">
           <Search
             size={15}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#52525b] pointer-events-none"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none"
           />
           <input
             type="search"
             placeholder="חפש לפי שם או טלפון..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="h-9 w-full rounded-[6px] border border-[#27272a] bg-[#09090b] pr-9 pl-3 text-sm text-[#fafafa] placeholder:text-[#52525b] outline-none focus:border-[#3b82f6] focus:ring-2 focus:ring-blue-500/10 transition-all"
+            className="h-9 w-full rounded-[6px] border border-white/5 bg-surface-lowest pr-9 pl-3 text-sm text-on-surface placeholder:text-outline outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all"
           />
         </div>
 
@@ -73,13 +73,13 @@ export default function CustomersPage() {
             <Spinner size="lg" />
           </div>
         ) : customers.length === 0 ? (
-          <div className="rounded-xl border border-[#27272a] bg-[#18181b] px-4 py-12 text-center">
-            <p className="text-sm text-[#52525b]">
+          <div className="rounded-xl border border-white/5 bg-surface-high px-4 py-12 text-center">
+            <p className="text-sm text-outline">
               {search ? 'לא נמצאו לקוחות' : 'אין לקוחות עדיין'}
             </p>
           </div>
         ) : (
-          <div className="rounded-xl border border-[#27272a] overflow-hidden">
+          <div className="rounded-xl border border-white/5 overflow-hidden">
             {customers.map((customer, index) => {
               const initials = customer.full_name
                 .split(' ')
@@ -92,27 +92,27 @@ export default function CustomersPage() {
                 <Link
                   key={customer.id}
                   href={`/customers/${customer.id}`}
-                  className={`flex items-center gap-3 px-4 py-3 hover:bg-white/[0.02] transition-colors ${
-                    index > 0 ? 'border-t border-[#27272a]' : ''
+                  className={`flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors ${
+                    index > 0 ? 'border-t border-white/5' : ''
                   }`}
                 >
                   {/* Avatar */}
-                  <div className="flex items-center justify-center w-9 h-9 rounded-full bg-[#3b82f6]/15 shrink-0">
-                    <span className="text-xs font-semibold text-[#3b82f6]">{initials}</span>
+                  <div className="flex items-center justify-center w-9 h-9 rounded-full bg-primary-container/15 shrink-0">
+                    <span className="text-xs font-semibold text-primary">{initials}</span>
                   </div>
 
                   {/* Info */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[#fafafa] truncate">
+                    <p className="text-sm font-medium text-on-surface truncate">
                       {customer.full_name}
                     </p>
                     <div className="flex items-center gap-3 mt-0.5">
-                      <div className="flex items-center gap-1 text-xs text-[#52525b]">
+                      <div className="flex items-center gap-1 text-xs text-outline">
                         <Phone size={10} />
                         <span dir="ltr">{customer.phone}</span>
                       </div>
                       {(customer.vehicle_count ?? 0) > 0 && (
-                        <div className="flex items-center gap-1 text-xs text-[#52525b]">
+                        <div className="flex items-center gap-1 text-xs text-outline">
                           <Car size={10} />
                           <span>{customer.vehicle_count} רכב</span>
                         </div>
@@ -120,7 +120,7 @@ export default function CustomersPage() {
                     </div>
                   </div>
 
-                  <ChevronLeft size={16} className="text-[#3f3f46] shrink-0" />
+                  <ChevronLeft size={16} className="text-outline-variant shrink-0" />
                 </Link>
               )
             })}
@@ -129,7 +129,7 @@ export default function CustomersPage() {
 
         {/* Count */}
         {!loading && customers.length > 0 && (
-          <p className="text-xs text-[#52525b] text-center">
+          <p className="text-xs text-outline text-center">
             {customers.length} לקוחות
           </p>
         )}

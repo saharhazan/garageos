@@ -28,10 +28,10 @@ const STATUS_FILTERS: { label: string; value: QuoteStatus | 'all' }[] = [
 ]
 
 const STATUS_COLORS: Record<QuoteStatus, { bg: string; text: string; label: string }> = {
-  draft: { bg: 'bg-[#27272a]', text: 'text-[#a1a1aa]', label: 'טיוטה' },
-  sent: { bg: 'bg-blue-500/10', text: 'text-blue-400', label: 'נשלחה' },
-  accepted: { bg: 'bg-green-500/10', text: 'text-green-400', label: 'אושרה' },
-  rejected: { bg: 'bg-red-500/10', text: 'text-red-400', label: 'נדחתה' },
+  draft: { bg: 'bg-surface-highest', text: 'text-on-surface-variant', label: 'טיוטה' },
+  sent: { bg: 'bg-primary/10', text: 'text-primary', label: 'נשלחה' },
+  accepted: { bg: 'bg-success/10', text: 'text-success', label: 'אושרה' },
+  rejected: { bg: 'bg-error/10', text: 'text-error', label: 'נדחתה' },
   expired: { bg: 'bg-yellow-500/10', text: 'text-yellow-400', label: 'פג תוקף' },
 }
 
@@ -95,14 +95,14 @@ export default function QuotesPage() {
         <div className="relative">
           <Search
             size={15}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#52525b] pointer-events-none"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none"
           />
           <input
             type="search"
             placeholder="חפש לפי מספר הצעה, שם לקוח..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="h-9 w-full rounded-[6px] border border-[#27272a] bg-[#09090b] pr-9 pl-3 text-sm text-[#fafafa] placeholder:text-[#52525b] outline-none focus:border-[#3b82f6] focus:ring-2 focus:ring-blue-500/10 transition-all"
+            className="h-9 w-full rounded-[6px] border border-white/5 bg-surface-lowest pr-9 pl-3 text-sm text-on-surface placeholder:text-outline outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all"
           />
         </div>
 
@@ -132,12 +132,12 @@ export default function QuotesPage() {
           <>
             {quotes.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-24 gap-4">
-                <FileText size={40} className="text-[#3f3f46]" />
+                <FileText size={40} className="text-outline-variant" />
                 <div className="text-center">
-                  <h2 className="text-sm font-semibold text-[#fafafa]">
+                  <h2 className="text-sm font-semibold text-on-surface">
                     {search || statusFilter !== 'all' ? 'לא נמצאו תוצאות' : 'אין הצעות מחיר עדיין'}
                   </h2>
-                  <p className="text-xs text-[#52525b] mt-1">
+                  <p className="text-xs text-outline mt-1">
                     {search || statusFilter !== 'all'
                       ? 'נסה לשנות את החיפוש או הסינון'
                       : 'צור הצעת מחיר חדשה ללקוח'}
@@ -155,7 +155,7 @@ export default function QuotesPage() {
             ) : (
               <>
                 {/* Desktop table */}
-                <div className="hidden md:block rounded-xl border border-[#27272a] overflow-hidden">
+                <div className="hidden md:block rounded-xl border border-white/5 overflow-hidden">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -177,17 +177,17 @@ export default function QuotesPage() {
                             <TableCell>
                               <Link
                                 href={`/quotes/${quote.id}`}
-                                className="font-mono text-xs text-[#3b82f6] hover:underline"
+                                className="font-mono text-xs text-primary hover:underline"
                               >
                                 {quote.quote_number}
                               </Link>
                             </TableCell>
-                            <TableCell className="text-[#fafafa] font-medium">
+                            <TableCell className="text-on-surface font-medium">
                               {quote.customer?.full_name ?? '—'}
                             </TableCell>
                             <TableCell>
                               {quote.vehicle ? (
-                                <span className="font-mono text-xs bg-[#27272a] px-1.5 py-0.5 rounded">
+                                <span className="font-mono text-xs bg-surface-highest px-1.5 py-0.5 rounded">
                                   {quote.vehicle.license_plate}
                                 </span>
                               ) : '—'}
@@ -197,7 +197,7 @@ export default function QuotesPage() {
                                 {status.label}
                               </span>
                             </TableCell>
-                            <TableCell className="tabular-nums text-[#fafafa]">
+                            <TableCell className="tabular-nums text-on-surface">
                               {formatCurrency(quote.total_amount)}
                             </TableCell>
                             <TableCell className="text-xs">
@@ -228,32 +228,32 @@ export default function QuotesPage() {
                       <Link
                         key={quote.id}
                         href={`/quotes/${quote.id}`}
-                        className="block rounded-xl border border-[#27272a] bg-[#18181b] p-4 hover:border-[#3f3f46] transition-colors active:bg-white/[0.02]"
+                        className="block rounded-xl border border-white/5 bg-surface-high p-4 hover:bg-surface-highest transition-colors active:bg-white/[0.02]"
                       >
                         <div className="flex items-center justify-between mb-2">
-                          <span className="font-mono text-xs text-[#3b82f6]">
+                          <span className="font-mono text-xs text-primary">
                             {quote.quote_number}
                           </span>
                           <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${status.bg} ${status.text}`}>
                             {status.label}
                           </span>
                         </div>
-                        <p className="text-sm font-semibold text-[#fafafa] mb-0.5">
+                        <p className="text-sm font-semibold text-on-surface mb-0.5">
                           {quote.customer?.full_name ?? '—'}
                         </p>
                         {quote.vehicle && (
-                          <div className="flex items-center gap-2 text-xs text-[#52525b]">
-                            <span className="font-mono bg-[#27272a] px-1.5 py-0.5 rounded">
+                          <div className="flex items-center gap-2 text-xs text-outline">
+                            <span className="font-mono bg-surface-highest px-1.5 py-0.5 rounded">
                               {quote.vehicle.license_plate}
                             </span>
                             <span>{quote.vehicle.make} {quote.vehicle.model}</span>
                           </div>
                         )}
-                        <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#27272a]">
-                          <span className="text-sm font-bold text-[#fafafa]">
+                        <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/5">
+                          <span className="text-sm font-bold text-on-surface">
                             {formatCurrency(quote.total_amount)}
                           </span>
-                          <span className="text-xs text-[#52525b]">
+                          <span className="text-xs text-outline">
                             {formatDate(quote.created_at)}
                           </span>
                         </div>
@@ -272,7 +272,7 @@ export default function QuotesPage() {
                   >
                     הקודם
                   </Button>
-                  <span className="text-xs text-[#52525b]">עמוד {page + 1}</span>
+                  <span className="text-xs text-outline">עמוד {page + 1}</span>
                   <Button
                     variant="default"
                     size="sm"
@@ -291,7 +291,7 @@ export default function QuotesPage() {
       {/* Mobile FAB */}
       <div className="md:hidden fixed bottom-20 left-4 z-30">
         <Link href="/quotes/new">
-          <button className="flex items-center justify-center w-12 h-12 rounded-full bg-[#3b82f6] shadow-lg shadow-blue-500/30 text-white transition-transform active:scale-95">
+          <button className="flex items-center justify-center w-12 h-12 rounded-full bg-primary-container shadow-lg shadow-secondary-container/30 text-white transition-transform active:scale-95">
             <Plus size={20} />
           </button>
         </Link>

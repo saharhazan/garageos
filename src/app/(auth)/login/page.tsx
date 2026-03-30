@@ -55,10 +55,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="rounded-xl border border-[#27272a] bg-[#18181b] p-6">
+    <div className="rounded-xl bg-surface-high p-6 border border-white/5">
       <div className="mb-6">
-        <h1 className="text-lg font-semibold text-[#fafafa]">כניסה למערכת</h1>
-        <p className="text-sm text-[#71717a] mt-1">ברוך הבא חזרה</p>
+        <h1 className="text-lg font-black text-on-surface tracking-tight">כניסה למערכת</h1>
+        <p className="text-sm text-on-surface-variant mt-1">ברוך הבא חזרה</p>
       </div>
 
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
@@ -94,15 +94,15 @@ export default function LoginPage() {
         <div className="flex justify-end">
           <Link
             href="/forgot-password"
-            className="text-xs text-[#52525b] hover:text-[#a1a1aa] transition-colors"
+            className="text-xs text-on-surface-variant hover:text-primary transition-colors"
           >
             שכחתי סיסמה
           </Link>
         </div>
 
         {error && (
-          <div className="rounded-[6px] border border-red-500/20 bg-red-500/10 px-3 py-2">
-            <p className="text-sm text-red-400">{error}</p>
+          <div className="rounded-md bg-error-container/20 border border-error/20 px-3 py-2">
+            <p className="text-sm text-error">{error}</p>
           </div>
         )}
 
@@ -117,9 +117,9 @@ export default function LoginPage() {
         </Button>
 
         <div className="relative flex items-center gap-3 py-1">
-          <div className="flex-1 h-px bg-[#27272a]" />
-          <span className="text-xs text-[#52525b]">או</span>
-          <div className="flex-1 h-px bg-[#27272a]" />
+          <div className="flex-1 h-px bg-white/5" />
+          <span className="text-xs text-on-surface-variant">או</span>
+          <div className="flex-1 h-px bg-white/5" />
         </div>
 
         <Button
@@ -131,6 +131,13 @@ export default function LoginPage() {
         >
           כניסה עם SMS
         </Button>
+
+        <p className="text-center text-xs text-on-surface-variant pt-2">
+          אין לך חשבון?{' '}
+          <Link href="/signup" className="text-primary hover:underline font-bold">
+            הרשמה
+          </Link>
+        </p>
       </form>
     </div>
   )

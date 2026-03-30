@@ -5,7 +5,7 @@ export function Card({ className, children, ...props }: React.HTMLAttributes<HTM
   return (
     <div
       className={cn(
-        'rounded-xl border border-[#27272a] bg-[#18181b] text-[#fafafa]',
+        'rounded-xl border border-white/5 bg-surface-high text-on-surface',
         className
       )}
       {...props}
@@ -29,7 +29,7 @@ export function CardHeader({ className, children, ...props }: React.HTMLAttribut
 export function CardTitle({ className, children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h3
-      className={cn('text-sm font-semibold text-[#fafafa] leading-tight', className)}
+      className={cn('text-sm font-bold text-on-surface leading-tight', className)}
       {...props}
     >
       {children}
@@ -40,7 +40,7 @@ export function CardTitle({ className, children, ...props }: React.HTMLAttribute
 export function CardDescription({ className, children, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
     <p
-      className={cn('text-xs text-[#71717a]', className)}
+      className={cn('text-xs text-on-surface-variant', className)}
       {...props}
     >
       {children}
@@ -60,7 +60,7 @@ export function CardFooter({ className, children, ...props }: React.HTMLAttribut
   return (
     <div
       className={cn(
-        'flex items-center gap-2 p-4 pt-0 border-t border-[#27272a] mt-4',
+        'flex items-center gap-2 p-4 pt-0 border-t border-white/5 mt-4',
         className
       )}
       {...props}

@@ -16,7 +16,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="text-sm font-medium text-[#a1a1aa]"
+            className="text-sm font-bold text-on-surface-variant"
           >
             {label}
           </label>
@@ -25,20 +25,20 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           id={inputId}
           className={cn(
-            'h-9 w-full rounded-[6px] border bg-[#09090b] px-3 text-[#fafafa] placeholder:text-[#52525b]',
-            'border-[#27272a] transition-all outline-none',
-            'focus:border-[#3b82f6] focus:ring-2 focus:ring-blue-500/10',
+            'h-11 w-full rounded-md border bg-surface-lowest px-3 text-on-surface placeholder:text-outline',
+            'border-outline-variant/20 transition-all outline-none',
+            'focus:border-primary/40 focus:ring-2 focus:ring-primary/10',
             'disabled:opacity-40 disabled:cursor-not-allowed',
-            error && 'border-red-500/60 focus:border-red-500 focus:ring-red-500/10',
+            error && 'border-error/60 focus:border-error focus:ring-error/10',
             className
           )}
           {...props}
         />
         {hint && !error && (
-          <p className="text-xs text-[#52525b]">{hint}</p>
+          <p className="text-xs text-outline">{hint}</p>
         )}
         {error && (
-          <p className="text-xs text-red-400">{error}</p>
+          <p className="text-xs text-error">{error}</p>
         )}
       </div>
     )
@@ -61,7 +61,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="text-sm font-medium text-[#a1a1aa]"
+            className="text-sm font-bold text-on-surface-variant"
           >
             {label}
           </label>
@@ -70,20 +70,20 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           ref={ref}
           id={inputId}
           className={cn(
-            'w-full rounded-[6px] border bg-[#09090b] px-3 py-2 text-[#fafafa] placeholder:text-[#52525b]',
-            'border-[#27272a] transition-all outline-none resize-none',
-            'focus:border-[#3b82f6] focus:ring-2 focus:ring-blue-500/10',
+            'w-full rounded-md border bg-surface-lowest px-3 py-2 text-on-surface placeholder:text-outline',
+            'border-outline-variant/20 transition-all outline-none resize-none',
+            'focus:border-primary/40 focus:ring-2 focus:ring-primary/10',
             'disabled:opacity-40 disabled:cursor-not-allowed',
-            error && 'border-red-500/60 focus:border-red-500 focus:ring-red-500/10',
+            error && 'border-error/60 focus:border-error focus:ring-error/10',
             className
           )}
           {...props}
         />
         {hint && !error && (
-          <p className="text-xs text-[#52525b]">{hint}</p>
+          <p className="text-xs text-outline">{hint}</p>
         )}
         {error && (
-          <p className="text-xs text-red-400">{error}</p>
+          <p className="text-xs text-error">{error}</p>
         )}
       </div>
     )
@@ -106,7 +106,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="text-sm font-medium text-[#a1a1aa]"
+            className="text-sm font-bold text-on-surface-variant"
           >
             {label}
           </label>
@@ -115,11 +115,11 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           ref={ref}
           id={inputId}
           className={cn(
-            'h-9 w-full rounded-[6px] border bg-[#09090b] px-3 text-[#fafafa]',
-            'border-[#27272a] transition-all outline-none appearance-none cursor-pointer',
-            'focus:border-[#3b82f6] focus:ring-2 focus:ring-blue-500/10',
+            'h-11 w-full rounded-md border bg-surface-lowest px-3 text-on-surface',
+            'border-outline-variant/20 transition-all outline-none appearance-none cursor-pointer',
+            'focus:border-primary/40 focus:ring-2 focus:ring-primary/10',
             'disabled:opacity-40 disabled:cursor-not-allowed',
-            error && 'border-red-500/60',
+            error && 'border-error/60',
             className
           )}
           {...props}
@@ -127,10 +127,10 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           {children}
         </select>
         {hint && !error && (
-          <p className="text-xs text-[#52525b]">{hint}</p>
+          <p className="text-xs text-outline">{hint}</p>
         )}
         {error && (
-          <p className="text-xs text-red-400">{error}</p>
+          <p className="text-xs text-error">{error}</p>
         )}
       </div>
     )

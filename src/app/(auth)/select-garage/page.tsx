@@ -68,17 +68,17 @@ export default function SelectGaragePage() {
     return (
       <div className="flex flex-col items-center justify-center py-16 gap-3">
         <Spinner size="lg" />
-        <p className="text-sm text-[#71717a]">טוען...</p>
+        <p className="text-sm text-on-surface-variant">טוען...</p>
       </div>
     )
   }
 
   if (memberships.length === 0) {
     return (
-      <div className="rounded-xl border border-[#27272a] bg-[#18181b] p-6 text-center">
-        <Building2 size={32} className="text-[#3f3f46] mx-auto mb-3" />
-        <h2 className="text-sm font-semibold text-[#fafafa] mb-1">אין מוסכים מקושרים</h2>
-        <p className="text-xs text-[#71717a]">פנה למנהל המערכת להוסיף אותך למוסך</p>
+      <div className="rounded-xl border border-white/5 bg-surface-high p-6 text-center">
+        <Building2 size={32} className="text-outline-variant mx-auto mb-3" />
+        <h2 className="text-sm font-semibold text-on-surface mb-1">אין מוסכים מקושרים</h2>
+        <p className="text-xs text-on-surface-variant">פנה למנהל המערכת להוסיף אותך למוסך</p>
       </div>
     )
   }
@@ -86,8 +86,8 @@ export default function SelectGaragePage() {
   return (
     <div>
       <div className="mb-6 text-center">
-        <h1 className="text-lg font-semibold text-[#fafafa]">בחר מוסך</h1>
-        <p className="text-sm text-[#71717a] mt-1">לאיזה מוסך ברצונך להיכנס?</p>
+        <h1 className="text-lg font-semibold text-on-surface">בחר מוסך</h1>
+        <p className="text-sm text-on-surface-variant mt-1">לאיזה מוסך ברצונך להיכנס?</p>
       </div>
 
       <div className="space-y-2">
@@ -103,16 +103,16 @@ export default function SelectGaragePage() {
               onClick={() => handleSelect(m)}
               disabled={isSelecting || !!selecting}
               className={cn(
-                'w-full text-right rounded-xl border bg-[#18181b] p-4 transition-all',
-                'border-[#27272a] hover:border-[#3b82f6]/40 hover:bg-[#3b82f6]/5',
+                'w-full text-right rounded-xl border bg-surface-high p-4 transition-all',
+                'border-white/5 hover:border-primary/40/40 hover:bg-primary-container/5',
                 'disabled:opacity-50 disabled:cursor-not-allowed',
-                isSelecting && 'border-[#3b82f6]/40 bg-[#3b82f6]/5'
+                isSelecting && 'border-primary/40/40 bg-primary-container/5'
               )}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-sm font-semibold text-[#fafafa] truncate">
+                    <span className="text-sm font-semibold text-on-surface truncate">
                       {m.garage?.name}
                     </span>
                     {!m.garage?.is_active && (
@@ -121,7 +121,7 @@ export default function SelectGaragePage() {
                   </div>
 
                   {m.garage?.address && (
-                    <div className="flex items-center gap-1 text-xs text-[#52525b]">
+                    <div className="flex items-center gap-1 text-xs text-outline">
                       <MapPin size={11} />
                       <span className="truncate">{m.garage.address}</span>
                     </div>
@@ -131,7 +131,7 @@ export default function SelectGaragePage() {
                 <div className="flex flex-col items-end gap-1.5 shrink-0">
                   <Badge variant="blue">{roleLabel}</Badge>
                   {isSelecting && (
-                    <div className="flex items-center gap-1.5 text-xs text-[#71717a]">
+                    <div className="flex items-center gap-1.5 text-xs text-on-surface-variant">
                       <Spinner size="sm" />
                       <span>נכנס...</span>
                     </div>

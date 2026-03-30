@@ -15,7 +15,7 @@ export function Topbar({ title, actions, backHref, className }: TopbarProps) {
   return (
     <header
       className={cn(
-        'sticky top-0 z-40 flex items-center h-12 px-4 border-b border-[#27272a] bg-[#09090b]/90 backdrop-blur-sm',
+        'sticky top-0 z-40 flex items-center h-12 px-4 border-b border-white/5 bg-surface/80 backdrop-blur-md',
         className
       )}
     >
@@ -24,19 +24,19 @@ export function Topbar({ title, actions, backHref, className }: TopbarProps) {
         {backHref && (
           <Link
             href={backHref}
-            className="flex items-center justify-center w-7 h-7 -mr-1 rounded-[6px] text-[#52525b] hover:text-[#a1a1aa] hover:bg-white/[0.04] transition-colors md:hidden"
+            className="flex items-center justify-center w-7 h-7 -mr-1 rounded-md text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-colors md:hidden"
           >
             <ChevronRight size={16} />
           </Link>
         )}
-        <h1 className="text-sm font-semibold text-[#fafafa] truncate">{title}</h1>
+        <h1 className="text-sm font-bold text-on-surface truncate">{title}</h1>
       </div>
 
       {/* Left side: actions + notifications */}
       <div className="flex items-center gap-1 shrink-0">
         {actions}
         <button
-          className="flex items-center justify-center w-8 h-8 rounded-[6px] text-[#52525b] hover:text-[#a1a1aa] hover:bg-white/[0.04] transition-colors relative"
+          className="flex items-center justify-center w-8 h-8 rounded-md text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-colors relative"
           aria-label="התראות"
         >
           <Bell size={16} />

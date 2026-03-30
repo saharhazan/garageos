@@ -24,7 +24,7 @@ function genId() {
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="text-sm font-semibold text-[#fafafa] pb-3 border-b border-[#27272a] mb-4">
+    <h2 className="text-sm font-semibold text-on-surface pb-3 border-b border-white/5 mb-4">
       {children}
     </h2>
   )
@@ -223,8 +223,8 @@ export default function NewQuotePage() {
 
       <div className="px-4 py-5 max-w-2xl mx-auto space-y-8">
         {errors.global && (
-          <div className="rounded-[6px] border border-red-500/20 bg-red-500/10 px-3 py-2">
-            <p className="text-sm text-red-400">{errors.global}</p>
+          <div className="rounded-[6px] border border-error/20 bg-error/10 px-3 py-2">
+            <p className="text-sm text-error">{errors.global}</p>
           </div>
         )}
 
@@ -233,7 +233,7 @@ export default function NewQuotePage() {
           <SectionTitle>רכב</SectionTitle>
           <div className="space-y-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-[#a1a1aa]">לוחית רישוי *</label>
+              <label className="text-sm font-medium text-on-surface-variant">לוחית רישוי *</label>
               <div className="relative">
                 <input
                   ref={plateInputRef}
@@ -242,22 +242,22 @@ export default function NewQuotePage() {
                   value={licensePlate}
                   onChange={(e) => setLicensePlate(e.target.value)}
                   onBlur={() => handlePlateLookup(licensePlate)}
-                  className={`h-12 w-full rounded-[6px] border bg-[#09090b] px-4 text-lg font-mono font-bold text-[#fafafa] placeholder:text-[#52525b] uppercase outline-none transition-all tracking-widest ${
+                  className={`h-12 w-full rounded-[6px] border bg-surface-lowest px-4 text-lg font-mono font-bold text-on-surface placeholder:text-outline uppercase outline-none transition-all tracking-widest ${
                     errors.licensePlate
-                      ? 'border-red-500/60 focus:border-red-500'
-                      : 'border-[#27272a] focus:border-[#3b82f6] focus:ring-2 focus:ring-blue-500/10'
+                      ? 'border-error/60 focus:border-error'
+                      : 'border-white/5 focus:border-primary/40 focus:ring-2 focus:ring-primary/10'
                   }`}
                   dir="ltr"
                   autoComplete="off"
                 />
                 {plateLoading && (
                   <div className="absolute left-3 top-1/2 -translate-y-1/2">
-                    <div className="w-4 h-4 border-2 border-[#3b82f6]/30 border-t-[#3b82f6] rounded-full animate-spin" />
+                    <div className="w-4 h-4 border-2 border-primary/40/30 border-t-primary rounded-full animate-spin" />
                   </div>
                 )}
               </div>
               {errors.licensePlate && (
-                <p className="text-xs text-red-400">{errors.licensePlate}</p>
+                <p className="text-xs text-error">{errors.licensePlate}</p>
               )}
             </div>
 
@@ -287,24 +287,24 @@ export default function NewQuotePage() {
           <SectionTitle>עבודות ופריטים</SectionTitle>
 
           {errors.items && (
-            <p className="text-xs text-red-400 mb-3">{errors.items}</p>
+            <p className="text-xs text-error mb-3">{errors.items}</p>
           )}
 
           <div className="space-y-2">
             <div className="hidden md:grid grid-cols-[1fr_80px_100px_80px_36px] gap-2 px-1">
-              <span className="text-xs text-[#52525b]">תיאור</span>
-              <span className="text-xs text-[#52525b] text-center">כמות</span>
-              <span className="text-xs text-[#52525b] text-center">מחיר</span>
-              <span className="text-xs text-[#52525b] text-center">סה"כ</span>
+              <span className="text-xs text-outline">תיאור</span>
+              <span className="text-xs text-outline text-center">כמות</span>
+              <span className="text-xs text-outline text-center">מחיר</span>
+              <span className="text-xs text-outline text-center">סה"כ</span>
               <span />
             </div>
 
             {items.map((item, index) => (
-              <div key={item.id} className="flex flex-col md:grid md:grid-cols-[1fr_80px_100px_80px_36px] gap-2 bg-[#18181b] rounded-[8px] border border-[#27272a] p-3 md:p-0 md:bg-transparent md:border-none md:rounded-none">
+              <div key={item.id} className="flex flex-col md:grid md:grid-cols-[1fr_80px_100px_80px_36px] gap-2 bg-surface-high rounded-[8px] border border-white/5 p-3 md:p-0 md:bg-transparent md:border-none md:rounded-none">
                 <div className="md:hidden flex items-center justify-between mb-2">
-                  <span className="text-xs text-[#52525b]">פריט {index + 1}</span>
+                  <span className="text-xs text-outline">פריט {index + 1}</span>
                   {items.length > 1 && (
-                    <button type="button" onClick={() => removeItem(item.id)} className="text-[#52525b] hover:text-red-400 transition-colors p-1">
+                    <button type="button" onClick={() => removeItem(item.id)} className="text-outline hover:text-error transition-colors p-1">
                       <Trash2 size={14} />
                     </button>
                   )}
@@ -315,7 +315,7 @@ export default function NewQuotePage() {
                   placeholder="תיאור העבודה / פריט"
                   value={item.description}
                   onChange={(e) => updateItem(item.id, 'description', e.target.value)}
-                  className="h-9 rounded-[6px] border border-[#27272a] bg-[#09090b] px-3 text-sm text-[#fafafa] placeholder:text-[#52525b] outline-none focus:border-[#3b82f6] focus:ring-2 focus:ring-blue-500/10 transition-all"
+                  className="h-9 rounded-[6px] border border-white/5 bg-surface-lowest px-3 text-sm text-on-surface placeholder:text-outline outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all"
                 />
 
                 <input
@@ -323,7 +323,7 @@ export default function NewQuotePage() {
                   min="1"
                   value={item.quantity}
                   onChange={(e) => updateItem(item.id, 'quantity', Math.max(1, parseInt(e.target.value) || 1))}
-                  className="h-9 rounded-[6px] border border-[#27272a] bg-[#09090b] px-3 text-sm text-[#fafafa] text-center outline-none focus:border-[#3b82f6] focus:ring-2 focus:ring-blue-500/10 transition-all"
+                  className="h-9 rounded-[6px] border border-white/5 bg-surface-lowest px-3 text-sm text-on-surface text-center outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all"
                   dir="ltr"
                 />
 
@@ -334,25 +334,25 @@ export default function NewQuotePage() {
                   placeholder="0.00"
                   value={item.unit_price || ''}
                   onChange={(e) => updateItem(item.id, 'unit_price', parseFloat(e.target.value) || 0)}
-                  className="h-9 rounded-[6px] border border-[#27272a] bg-[#09090b] px-3 text-sm text-[#fafafa] text-center outline-none focus:border-[#3b82f6] focus:ring-2 focus:ring-blue-500/10 transition-all"
+                  className="h-9 rounded-[6px] border border-white/5 bg-surface-lowest px-3 text-sm text-on-surface text-center outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all"
                   dir="ltr"
                 />
 
-                <div className="hidden md:flex items-center justify-center h-9 text-sm font-medium text-[#fafafa] tabular-nums">
+                <div className="hidden md:flex items-center justify-center h-9 text-sm font-medium text-on-surface tabular-nums">
                   {formatCurrency(item.quantity * item.unit_price)}
                 </div>
 
                 <div className="hidden md:flex items-center justify-center">
                   {items.length > 1 && (
-                    <button type="button" onClick={() => removeItem(item.id)} className="flex items-center justify-center w-9 h-9 rounded-[6px] text-[#52525b] hover:text-red-400 hover:bg-red-500/10 transition-colors">
+                    <button type="button" onClick={() => removeItem(item.id)} className="flex items-center justify-center w-9 h-9 rounded-[6px] text-outline hover:text-error hover:bg-error/10 transition-colors">
                       <Trash2 size={14} />
                     </button>
                   )}
                 </div>
 
-                <div className="md:hidden flex items-center justify-between pt-2 border-t border-[#27272a] mt-1">
-                  <span className="text-xs text-[#52525b]">סה"כ פריט</span>
-                  <span className="text-sm font-medium text-[#fafafa] tabular-nums">
+                <div className="md:hidden flex items-center justify-between pt-2 border-t border-white/5 mt-1">
+                  <span className="text-xs text-outline">סה"כ פריט</span>
+                  <span className="text-sm font-medium text-on-surface tabular-nums">
                     {formatCurrency(item.quantity * item.unit_price)}
                   </span>
                 </div>
@@ -366,18 +366,18 @@ export default function NewQuotePage() {
           </Button>
 
           {/* Totals */}
-          <div className="mt-4 rounded-[8px] border border-[#27272a] bg-[#18181b] p-4 space-y-2">
+          <div className="mt-4 rounded-[8px] border border-white/5 bg-surface-high p-4 space-y-2">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-[#71717a]">סכום ביניים</span>
-              <span className="text-[#fafafa] tabular-nums">{formatCurrency(subtotal)}</span>
+              <span className="text-on-surface-variant">סכום ביניים</span>
+              <span className="text-on-surface tabular-nums">{formatCurrency(subtotal)}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-[#71717a]">מע"מ 17%</span>
-              <span className="text-[#fafafa] tabular-nums">{formatCurrency(taxAmount)}</span>
+              <span className="text-on-surface-variant">מע"מ 17%</span>
+              <span className="text-on-surface tabular-nums">{formatCurrency(taxAmount)}</span>
             </div>
-            <div className="flex items-center justify-between pt-2 border-t border-[#27272a]">
-              <span className="text-sm font-semibold text-[#fafafa]">סה"כ</span>
-              <span className="text-lg font-bold text-[#fafafa] tabular-nums">
+            <div className="flex items-center justify-between pt-2 border-t border-white/5">
+              <span className="text-sm font-semibold text-on-surface">סה"כ</span>
+              <span className="text-lg font-bold text-on-surface tabular-nums">
                 {formatCurrency(total)}
               </span>
             </div>
@@ -410,7 +410,7 @@ export default function NewQuotePage() {
 
       {/* Sticky bottom bar */}
       <div
-        className="fixed bottom-0 inset-x-0 z-40 bg-[#09090b]/90 backdrop-blur border-t border-[#27272a] px-4 py-3 flex items-center justify-end gap-3 md:px-6"
+        className="fixed bottom-0 inset-x-0 z-40 bg-surface-lowest/90 backdrop-blur border-t border-white/5 px-4 py-3 flex items-center justify-end gap-3 md:px-6"
         style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
       >
         <Button

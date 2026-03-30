@@ -51,34 +51,34 @@ export default function InventoryPage() {
         )}
 
         <div className="relative">
-          <Search size={15} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#52525b] pointer-events-none" />
+          <Search size={15} className="absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none" />
           <input
             type="search"
             placeholder="חפש פריט..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="h-9 w-full rounded-[6px] border border-[#27272a] bg-[#09090b] pr-9 pl-3 text-sm text-[#fafafa] placeholder:text-[#52525b] outline-none focus:border-[#3b82f6] focus:ring-2 focus:ring-blue-500/10 transition-all"
+            className="h-9 w-full rounded-[6px] border border-white/5 bg-surface-lowest pr-9 pl-3 text-sm text-on-surface placeholder:text-outline outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all"
           />
         </div>
 
         {loading ? (
           <div className="flex justify-center py-12"><Spinner size="lg" /></div>
         ) : (
-          <div className="rounded-xl border border-[#27272a] overflow-hidden">
+          <div className="rounded-xl border border-white/5 overflow-hidden">
             <table className="w-full text-sm border-collapse">
               <thead>
-                <tr className="border-b border-[#27272a] bg-[#09090b]">
-                  <th className="text-right px-4 h-9 text-xs font-medium text-[#52525b]">שם פריט</th>
-                  <th className="text-right px-4 h-9 text-xs font-medium text-[#52525b]">קטגוריה</th>
-                  <th className="text-right px-4 h-9 text-xs font-medium text-[#52525b]">מלאי</th>
-                  <th className="text-right px-4 h-9 text-xs font-medium text-[#52525b]">מחיר</th>
-                  <th className="text-right px-4 h-9 text-xs font-medium text-[#52525b]">ספק</th>
+                <tr className="border-b border-white/5 bg-surface-lowest">
+                  <th className="text-right px-4 h-9 text-xs font-medium text-outline">שם פריט</th>
+                  <th className="text-right px-4 h-9 text-xs font-medium text-outline">קטגוריה</th>
+                  <th className="text-right px-4 h-9 text-xs font-medium text-outline">מלאי</th>
+                  <th className="text-right px-4 h-9 text-xs font-medium text-outline">מחיר</th>
+                  <th className="text-right px-4 h-9 text-xs font-medium text-outline">ספק</th>
                 </tr>
               </thead>
               <tbody>
                 {items.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-10 text-center text-sm text-[#52525b]">
+                    <td colSpan={5} className="px-4 py-10 text-center text-sm text-outline">
                       {search ? 'לא נמצאו פריטים' : 'אין פריטים במלאי'}
                     </td>
                   </tr>
@@ -86,19 +86,19 @@ export default function InventoryPage() {
                   items.map((item) => {
                     const isLow = item.quantity <= item.min_quantity
                     return (
-                      <tr key={item.id} className="border-b border-[#27272a] hover:bg-white/[0.02] transition-colors">
+                      <tr key={item.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                         <td className="px-4 h-11">
                           <div className="flex items-center gap-2">
-                            <span className="text-[#fafafa] font-medium">{item.name}</span>
+                            <span className="text-on-surface font-medium">{item.name}</span>
                             {item.sku && (
-                              <span className="text-[10px] text-[#52525b] font-mono">{item.sku}</span>
+                              <span className="text-[10px] text-outline font-mono">{item.sku}</span>
                             )}
                           </div>
                         </td>
-                        <td className="px-4 h-11 text-[#71717a]">{item.category ?? '—'}</td>
+                        <td className="px-4 h-11 text-on-surface-variant">{item.category ?? '—'}</td>
                         <td className="px-4 h-11">
                           <div className="flex items-center gap-2">
-                            <span className={isLow ? 'text-yellow-400 font-semibold' : 'text-[#fafafa]'}>
+                            <span className={isLow ? 'text-yellow-400 font-semibold' : 'text-on-surface'}>
                               {item.quantity}
                             </span>
                             {isLow && (
@@ -106,10 +106,10 @@ export default function InventoryPage() {
                             )}
                           </div>
                         </td>
-                        <td className="px-4 h-11 text-[#a1a1aa] tabular-nums">
+                        <td className="px-4 h-11 text-on-surface-variant tabular-nums">
                           {formatCurrency(item.unit_price)}
                         </td>
-                        <td className="px-4 h-11 text-[#71717a]">{item.supplier ?? '—'}</td>
+                        <td className="px-4 h-11 text-on-surface-variant">{item.supplier ?? '—'}</td>
                       </tr>
                     )
                   })
