@@ -4,8 +4,6 @@ import {
   Wrench,
   Plus,
   TrendingUp,
-  Calendar,
-  Star,
   ArrowLeft,
   DollarSign,
   Key,
@@ -82,7 +80,7 @@ function KpiCard({ label, value, icon: Icon, accent, trend, sub }: KpiCardProps)
 function LicensePlate({ plate }: { plate: string }) {
   return (
     <div className="bg-[#F5D015] text-black w-28 h-8 rounded-sm flex items-center overflow-hidden shadow-[0_0_15px_rgba(232,196,0,0.2)] mx-auto border border-black/10">
-      <div className="bg-blue-700 w-4 h-full flex flex-col items-center justify-center text-[8px] text-white">
+      <div className="bg-primary-container w-4 h-full flex flex-col items-center justify-center text-[8px] text-white">
         <span>IL</span>
       </div>
       <div className="flex-grow text-center font-mono font-bold text-lg tracking-widest tabular-nums">{plate}</div>
@@ -147,7 +145,7 @@ export default async function DashboardPage() {
   return (
     <div className="bg-surface min-h-full">
       <Topbar
-        title="דשבורד"
+        title="לוח בקרה"
         actions={
           <Link href="/orders/new">
             <Button variant="primary" size="sm">
@@ -181,7 +179,7 @@ export default async function DashboardPage() {
             trend="+12%"
           />
           <KpiCard
-            label="הזמנות פתוחות"
+            label="עבודות פתוחות"
             value={String(stats.open_orders)}
             icon={Wrench}
             accent="secondary"
@@ -201,7 +199,7 @@ export default async function DashboardPage() {
           {/* Recent Orders Table (Primary Area) */}
           <div className="col-span-12 lg:col-span-9 bg-surface-low rounded-xl overflow-hidden shadow-2xl">
             <div className="p-6 flex flex-row-reverse justify-between items-center bg-surface-high/50">
-              <h3 className="font-black text-xl text-on-surface">הזמנות אחרונות</h3>
+              <h3 className="font-black text-xl text-on-surface">עבודות אחרונות</h3>
               <Link
                 href="/orders"
                 className="flex items-center gap-1 text-xs text-on-surface-variant hover:text-primary transition-colors"
@@ -216,7 +214,7 @@ export default async function DashboardPage() {
               <table className="w-full text-right">
                 <thead>
                   <tr className="text-on-surface-variant text-xs uppercase tracking-wider font-bold border-b border-white/5">
-                    <th className="px-6 py-4">מס' הזמנה</th>
+                    <th className="px-6 py-4">מס' עבודה</th>
                     <th className="px-6 py-4">לקוח</th>
                     <th className="px-6 py-4">רכב</th>
                     <th className="px-6 py-4 text-center">לוחית רישוי</th>
@@ -244,18 +242,18 @@ export default async function DashboardPage() {
                           </Link>
                         </td>
                         <td className="px-6 py-5 text-on-surface font-medium">
-                          {order.customer?.full_name ?? '\u2014'}
+                          {order.customer?.full_name ?? '-'}
                         </td>
                         <td className="px-6 py-5 text-on-surface-variant text-sm">
                           {order.vehicle
                             ? `${order.vehicle.make} ${order.vehicle.model}`
-                            : '\u2014'}
+                            : '-'}
                         </td>
                         <td className="px-6 py-5">
                           {order.vehicle?.license_plate ? (
                             <LicensePlate plate={order.vehicle.license_plate} />
                           ) : (
-                            <span className="text-on-surface-variant">\u2014</span>
+                            <span className="text-on-surface-variant">-</span>
                           )}
                         </td>
                         <td className="px-6 py-5">
@@ -292,13 +290,13 @@ export default async function DashboardPage() {
                       <StatusBadge status={order.status} />
                     </div>
                     <p className="text-sm font-bold text-on-surface mb-1">
-                      {order.customer?.full_name ?? '\u2014'}
+                      {order.customer?.full_name ?? '-'}
                     </p>
                     <div className="flex items-center gap-2 text-xs text-on-surface-variant">
                       {order.vehicle && (
                         <>
                           <span className="bg-[#F5D015] text-[#221b00] px-1.5 py-0.5 rounded-sm text-[10px] font-black font-mono flex items-center">
-                            <span className="w-1.5 h-3 bg-blue-700 mr-1 rounded-px" />
+                            <span className="w-1.5 h-3 bg-primary-container mr-1 rounded-px" />
                             {order.vehicle.license_plate}
                           </span>
                           <span>{order.vehicle.make} {order.vehicle.model}</span>
@@ -331,7 +329,7 @@ export default async function DashboardPage() {
                 <Link href="/orders/new" className="block">
                   <button className="w-full bg-primary-container text-white p-4 rounded-lg flex flex-row-reverse items-center justify-between machined-button hover:brightness-110 active:scale-95 transition-all font-bold">
                     <Plus size={18} />
-                    <span>הזמנה חדשה</span>
+                    <span>כרטיס עבודה חדש</span>
                   </button>
                 </Link>
                 <button className="w-full bg-surface-highest text-on-surface p-4 rounded-lg flex flex-row-reverse items-center justify-between border border-outline-variant/30 hover:border-primary/50 active:scale-95 transition-all font-bold">

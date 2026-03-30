@@ -37,7 +37,7 @@ export default async function ReportsPage() {
           <Card>
             <CardHeader><CardTitle>הכנסות החודש</CardTitle></CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-[#22c55e]">{formatCurrency(monthRevenue)}</p>
+              <p className="text-2xl font-bold text-success">{formatCurrency(monthRevenue)}</p>
             </CardContent>
           </Card>
           <Card>
@@ -51,7 +51,7 @@ export default async function ReportsPage() {
             <CardHeader><CardTitle>ממוצע לעבודה</CardTitle></CardHeader>
             <CardContent>
               <p className="text-2xl font-bold text-on-surface">
-                {deliveredOrders > 0 ? formatCurrency(Math.round(monthRevenue / deliveredOrders)) : '—'}
+                {deliveredOrders > 0 ? formatCurrency(Math.round(monthRevenue / deliveredOrders)) : '-'}
               </p>
             </CardContent>
           </Card>
@@ -67,7 +67,7 @@ export default async function ReportsPage() {
                     <div className="flex items-center gap-3">
                       <span className="text-xs text-outline w-4">{i + 1}</span>
                       <span className="text-sm text-on-surface">
-                        {(row.customer as { full_name: string }[] | null)?.[0]?.full_name ?? '—'}
+                        {(row.customer as { full_name: string }[] | null)?.[0]?.full_name ?? '-'}
                       </span>
                     </div>
                     <span className="text-sm font-semibold text-on-surface tabular-nums">

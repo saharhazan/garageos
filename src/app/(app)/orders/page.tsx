@@ -37,7 +37,7 @@ const PRIORITY_LABEL: Record<string, { label: string; color: string }> = {
 function LicensePlate({ plate }: { plate: string }) {
   return (
     <div className="bg-[#F5D015] text-black w-28 h-8 rounded-sm flex items-center overflow-hidden shadow-[0_0_15px_rgba(232,196,0,0.2)] mx-auto border border-black/10">
-      <div className="bg-blue-700 w-4 h-full flex flex-col items-center justify-center text-[8px] text-white">
+      <div className="bg-primary-container w-4 h-full flex flex-col items-center justify-center text-[8px] text-white">
         <span>IL</span>
       </div>
       <div className="flex-grow text-center font-mono font-bold text-lg tracking-widest tabular-nums">{plate}</div>
@@ -175,18 +175,18 @@ export default function OrdersPage() {
                             </Link>
                           </TableCell>
                           <TableCell className="text-on-surface font-medium">
-                            {order.customer?.full_name ?? '\u2014'}
+                            {order.customer?.full_name ?? '-'}
                           </TableCell>
                           <TableCell>
                             {order.vehicle
                               ? `${order.vehicle.make} ${order.vehicle.model}`
-                              : '\u2014'}
+                              : '-'}
                           </TableCell>
                           <TableCell className="text-center">
                             {order.vehicle?.license_plate ? (
                               <LicensePlate plate={order.vehicle.license_plate} />
                             ) : (
-                              '\u2014'
+                              '-'
                             )}
                           </TableCell>
                           <TableCell>
@@ -248,13 +248,13 @@ export default function OrdersPage() {
                         </div>
                       </div>
                       <p className="text-sm font-bold text-on-surface mb-1">
-                        {order.customer?.full_name ?? '\u2014'}
+                        {order.customer?.full_name ?? '-'}
                       </p>
                       <div className="flex items-center gap-2 text-xs text-on-surface-variant">
                         {order.vehicle && (
                           <>
                             <span className="bg-[#F5D015] text-[#221b00] px-1.5 py-0.5 rounded-sm text-[10px] font-black font-mono flex items-center">
-                              <span className="w-1.5 h-3 bg-blue-700 mr-1 rounded-px" />
+                              <span className="w-1.5 h-3 bg-primary-container mr-1 rounded-px" />
                               {order.vehicle.license_plate}
                             </span>
                             <span>{order.vehicle.make} {order.vehicle.model}</span>

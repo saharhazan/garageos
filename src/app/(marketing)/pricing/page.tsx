@@ -54,7 +54,7 @@ const comparisonCategories: { category: string; rows: ComparisonRow[] }[] = [
     ],
   },
   {
-    category: 'ניהול הזמנות',
+    category: 'ניהול עבודות',
     rows: [
       { label: 'כרטיסי עבודה', boutique: true, pro: true, enterprise: true },
       { label: 'הצעות מחיר', boutique: false, pro: true, enterprise: true },
@@ -91,7 +91,7 @@ const comparisonCategories: { category: string; rows: ComparisonRow[] }[] = [
   {
     category: 'דוחות ואנליטיקה',
     rows: [
-      { label: 'דשבורד בסיסי', boutique: true, pro: true, enterprise: true },
+      { label: 'לוח בקרה בסיסי', boutique: true, pro: true, enterprise: true },
       { label: 'דוחות מתקדמים', boutique: false, pro: true, enterprise: true },
       { label: 'דוחות BI מותאמים', boutique: false, pro: false, enterprise: true },
       { label: 'ייצוא לאקסל', boutique: false, pro: true, enterprise: true },
@@ -176,11 +176,11 @@ export default function PricingPage() {
 
                 <Link href="/login" className="mt-auto">
                   {tier.highlighted ? (
-                    <button className="w-full py-4 bg-secondary text-on-secondary-container font-black rounded machined-button active:scale-95 transition-all">
+                    <button className="w-full py-4 bg-secondary text-on-secondary-container font-black rounded machined-button hover:brightness-110 active:scale-95 transition-all">
                       {tier.cta}
                     </button>
                   ) : (
-                    <button className="w-full py-4 border border-outline-variant font-bold rounded hover:bg-white/5 transition-all">
+                    <button className="w-full py-4 border border-outline-variant font-bold rounded hover:bg-white/5 transition-all active:scale-95">
                       {tier.cta}
                     </button>
                   )}
@@ -318,11 +318,11 @@ export default function PricingPage() {
 
                 <Link href="/login" className="block mt-6">
                   {tier.highlighted ? (
-                    <button className="w-full py-4 bg-secondary text-on-secondary-container font-black rounded machined-button active:scale-95 transition-all">
+                    <button className="w-full py-4 bg-secondary text-on-secondary-container font-black rounded machined-button hover:brightness-110 active:scale-95 transition-all">
                       {tier.cta}
                     </button>
                   ) : (
-                    <button className="w-full py-4 border border-outline-variant font-bold rounded hover:bg-white/5 transition-all">
+                    <button className="w-full py-4 border border-outline-variant font-bold rounded hover:bg-white/5 transition-all active:scale-95">
                       {tier.cta}
                     </button>
                   )}
@@ -352,7 +352,7 @@ export default function PricingPage() {
               },
               {
                 q: 'אפשר לבטל בכל זמן?',
-                a: 'כמובן. אין התחייבות. אפשר לשדרג, לשנמך או לבטל את המנוי בכל רגע.',
+                a: 'כמובן. אין התחייבות. אפשר לשדרג, להחליף תוכנית או לבטל את המנוי בכל רגע.',
               },
               {
                 q: 'האם המידע שלי מאובטח?',

@@ -28,7 +28,7 @@ interface CommandItem {
 }
 
 const navCommands: CommandItem[] = [
-  { id: 'dashboard', label: 'דשבורד', icon: LayoutDashboard, href: '/dashboard', group: 'ניווט' },
+  { id: 'dashboard', label: 'לוח בקרה', icon: LayoutDashboard, href: '/dashboard', group: 'ניווט' },
   { id: 'orders', label: 'עבודות', icon: Wrench, href: '/orders', group: 'ניווט' },
   { id: 'new-order', label: 'עבודה חדשה', description: 'פתח טופס עבודה חדש', icon: Plus, href: '/orders/new', group: 'פעולות מהירות' },
   { id: 'quotes', label: 'הצעות מחיר', icon: FileText, href: '/quotes', group: 'ניווט' },
@@ -125,7 +125,7 @@ function CommandPaletteContent({ open, onClose }: CommandPaletteProps) {
         onClick={onClose}
       />
 
-      {/* Panel — full-screen bottom sheet on mobile, floating on desktop */}
+      {/* Panel - full-screen bottom sheet on mobile, floating on desktop */}
       <div className={cn(
         'absolute inset-x-0 bottom-0 rounded-t-2xl bg-surface-high border-t border-white/5',
         'md:relative md:inset-auto md:rounded-xl md:border md:border-white/5 md:max-w-lg md:w-full md:mx-auto md:top-[20vh]',

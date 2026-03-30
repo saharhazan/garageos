@@ -154,7 +154,7 @@ export default function VerifyPage() {
               'w-11 h-12 text-center text-lg font-semibold rounded-[6px] border bg-surface-lowest text-on-surface',
               'outline-none transition-all',
               digit
-                ? 'border-primary/40 ring-2 ring-blue-500/10'
+                ? 'border-primary/40 ring-2 ring-primary/10'
                 : 'border-white/5',
               'focus:border-primary/40 focus:ring-2 focus:ring-primary/10',
             )}

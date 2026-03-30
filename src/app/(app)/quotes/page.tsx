@@ -32,7 +32,7 @@ const STATUS_COLORS: Record<QuoteStatus, { bg: string; text: string; label: stri
   sent: { bg: 'bg-primary/10', text: 'text-primary', label: 'נשלחה' },
   accepted: { bg: 'bg-success/10', text: 'text-success', label: 'אושרה' },
   rejected: { bg: 'bg-error/10', text: 'text-error', label: 'נדחתה' },
-  expired: { bg: 'bg-yellow-500/10', text: 'text-yellow-400', label: 'פג תוקף' },
+  expired: { bg: 'bg-tertiary/10', text: 'text-tertiary', label: 'פג תוקף' },
 }
 
 export default function QuotesPage() {
@@ -183,14 +183,14 @@ export default function QuotesPage() {
                               </Link>
                             </TableCell>
                             <TableCell className="text-on-surface font-medium">
-                              {quote.customer?.full_name ?? '—'}
+                              {quote.customer?.full_name ?? '-'}
                             </TableCell>
                             <TableCell>
                               {quote.vehicle ? (
                                 <span className="font-mono text-xs bg-surface-highest px-1.5 py-0.5 rounded">
                                   {quote.vehicle.license_plate}
                                 </span>
-                              ) : '—'}
+                              ) : '-'}
                             </TableCell>
                             <TableCell>
                               <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${status.bg} ${status.text}`}>
@@ -201,7 +201,7 @@ export default function QuotesPage() {
                               {formatCurrency(quote.total_amount)}
                             </TableCell>
                             <TableCell className="text-xs">
-                              {quote.valid_until ? formatDate(quote.valid_until) : '—'}
+                              {quote.valid_until ? formatDate(quote.valid_until) : '-'}
                             </TableCell>
                             <TableCell className="text-xs">
                               {formatDate(quote.created_at)}
@@ -239,7 +239,7 @@ export default function QuotesPage() {
                           </span>
                         </div>
                         <p className="text-sm font-semibold text-on-surface mb-0.5">
-                          {quote.customer?.full_name ?? '—'}
+                          {quote.customer?.full_name ?? '-'}
                         </p>
                         {quote.vehicle && (
                           <div className="flex items-center gap-2 text-xs text-outline">

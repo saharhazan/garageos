@@ -41,7 +41,7 @@ export default function SettingsPage() {
         <div className="px-4 py-4 max-w-lg mx-auto">
           <button
             onClick={() => setView('main')}
-            className="flex items-center gap-1 text-xs text-outline hover:text-on-surface-variant transition-colors mb-4"
+            className="flex items-center gap-1 text-xs text-on-surface-variant hover:text-on-surface transition-colors mb-4"
           >
             <ChevronLeft size={14} />
             חזרה להגדרות
@@ -422,8 +422,8 @@ function BillingSection() {
   }
 
   const plans = [
-    { name: 'חינם', price: '0₪', features: ['משתמש אחד', '50 עבודות לחודש', 'ניהול מלאי בסיסי'], plan: 'starter' },
-    { name: 'פרו', price: '149₪', features: ['5 משתמשים', 'עבודות ללא הגבלה', 'SMS + WhatsApp', 'דוחות מתקדמים'], plan: 'pro' },
+    { name: 'חינם', price: '0₪', features: ['משתמש אחד', '50 כרטיסי עבודה לחודש', 'ניהול מלאי בסיסי'], plan: 'starter' },
+    { name: 'מקצועי', price: '149₪', features: ['5 משתמשים', 'כרטיסי עבודה ללא הגבלה', 'SMS + WhatsApp', 'דוחות מתקדמים'], plan: 'pro' },
     { name: 'עסקי', price: '349₪', features: ['15 משתמשים', '3 מוסכים', 'API גישה', 'תמיכה מועדפת'], plan: 'business' },
   ]
 

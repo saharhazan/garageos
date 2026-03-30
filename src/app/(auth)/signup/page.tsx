@@ -70,8 +70,8 @@ export default function SignupPage() {
   return (
     <div className="rounded-xl border border-white/5 bg-surface-high p-6">
       <div className="mb-6">
-        <h1 className="text-lg font-semibold text-on-surface">יצירת חשבון חדש</h1>
-        <p className="text-sm text-on-surface-variant mt-1">הצטרף ל-GarageOS וניהול המוסך שלך</p>
+        <h1 className="text-lg font-black text-on-surface tracking-tight">יצירת חשבון חדש</h1>
+        <p className="text-sm text-on-surface-variant mt-1">הצטרף ל-GarageOS והתחל לנהל את המוסך</p>
       </div>
 
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
@@ -148,7 +148,7 @@ export default function SignupPage() {
           כבר יש לך חשבון?{' '}
           <Link
             href="/login"
-            className="text-primary hover:text-[#60a5fa] transition-colors"
+            className="text-primary hover:text-primary/80 transition-colors"
           >
             התחבר
           </Link>

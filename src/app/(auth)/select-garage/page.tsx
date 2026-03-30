@@ -41,7 +41,7 @@ export default function SelectGaragePage() {
         .select('garage_id, role, garage:garages(id, name, address, is_active)')
         .eq('id', user.id)
 
-      // Supabase returns joined relation as array — normalize to single object
+      // Supabase returns joined relation as array - normalize to single object
       const normalized: GarageMembership[] = (data ?? []).map((row) => ({
         ...row,
         garage: Array.isArray(row.garage) ? row.garage[0] : row.garage,

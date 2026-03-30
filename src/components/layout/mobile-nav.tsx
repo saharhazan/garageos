@@ -13,7 +13,7 @@ interface MobileNavItem {
 }
 
 const mobileNavItems: MobileNavItem[] = [
-  { href: '/dashboard', icon: LayoutDashboard, label: 'דשבורד' },
+  { href: '/dashboard', icon: LayoutDashboard, label: 'לוח בקרה' },
   { href: '/orders', icon: Wrench, label: 'עבודות' },
   { href: '/orders/new', icon: Plus, label: '', isMain: true },
   { href: '/customers', icon: Users, label: 'לקוחות' },

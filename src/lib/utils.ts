@@ -50,6 +50,6 @@ export const ROLE_LABELS: Record<string, string> = {
   super_admin: 'מנהל מערכת',
   manager: 'מנהל מוסך',
   receptionist: 'קבלה',
-  technician: 'טכנאי',
+  technician: 'מכונאי',
   viewer: 'צפייה בלבד',
 }

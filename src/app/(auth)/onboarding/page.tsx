@@ -10,19 +10,19 @@ type Plan = 'starter' | 'pro' | 'enterprise'
 const plans: { id: Plan; name: string; price: string; features: string[] }[] = [
   {
     id: 'starter',
-    name: 'Free',
+    name: 'חינם',
     price: 'חינם',
-    features: ['משתמש אחד', 'עד 50 הזמנות בחודש', 'ניהול לקוחות בסיסי'],
+    features: ['משתמש אחד', 'עד 50 כרטיסי עבודה בחודש', 'ניהול לקוחות בסיסי'],
   },
   {
     id: 'pro',
-    name: 'Pro',
+    name: 'מקצועי',
     price: '₪149/חודש',
-    features: ['עד 5 משתמשים', 'הזמנות ללא הגבלה', 'התראות SMS ו-WhatsApp', 'דוחות מתקדמים'],
+    features: ['עד 5 משתמשים', 'כרטיסי עבודה ללא הגבלה', 'התראות SMS ו-WhatsApp', 'דוחות מתקדמים'],
   },
   {
     id: 'enterprise',
-    name: 'Business',
+    name: 'עסקי',
     price: '₪399/חודש',
     features: ['עד 15 משתמשים', 'עד 3 סניפים', 'API מלא', 'תמיכה עדיפה', 'התאמה אישית'],
   },
@@ -112,7 +112,7 @@ export default function OnboardingPage() {
         <>
           <div className="mb-6">
             <h1 className="text-lg font-semibold text-on-surface">פרטי המוסך</h1>
-            <p className="text-sm text-on-surface-variant mt-1">ספר לנו על המוסך שלך</p>
+            <p className="text-sm text-on-surface-variant mt-1">מלא את הפרטים הבסיסיים של המוסך</p>
           </div>
 
           <div className="space-y-4">

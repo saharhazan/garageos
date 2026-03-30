@@ -90,7 +90,7 @@ export function Dialog({ open, onClose, title, description, children, className 
             </div>
             <button
               onClick={onClose}
-              className="shrink-0 rounded-md p-1 text-outline hover:text-on-surface-variant hover:bg-white/5 transition-colors"
+              className="shrink-0 rounded-md p-1 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-colors"
             >
               <X size={16} />
             </button>

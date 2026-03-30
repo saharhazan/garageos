@@ -14,7 +14,7 @@ const buttonVariants = cva(
         ghost:
           'text-on-surface-variant hover:text-on-surface hover:bg-white/5',
         destructive:
-          'bg-error-container/20 text-error border border-error/20 hover:bg-error-container/30',
+          'bg-error/10 text-error border border-error/20 hover:bg-error/15',
         teal:
           'bg-primary-container text-white machined-button hover:brightness-110',
       },

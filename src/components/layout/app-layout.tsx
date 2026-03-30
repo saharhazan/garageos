@@ -14,7 +14,7 @@ interface AppLayoutProps {
 export function AppLayout({ children, className, userName, userRole }: AppLayoutProps) {
   return (
     <div className={cn('flex h-dvh bg-surface', className)}>
-      {/* Desktop Sidebar — hidden on mobile */}
+      {/* Desktop Sidebar - hidden on mobile */}
       <Sidebar
         className="hidden md:flex"
         userName={userName}
@@ -26,7 +26,7 @@ export function AppLayout({ children, className, userName, userRole }: AppLayout
         {children}
       </main>
 
-      {/* Mobile bottom nav — hidden on desktop */}
+      {/* Mobile bottom nav - hidden on desktop */}
       <MobileNav className="md:hidden" />
     </div>
   )

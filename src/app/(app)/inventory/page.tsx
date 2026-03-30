@@ -42,9 +42,9 @@ export default function InventoryPage() {
 
       <div className="px-4 py-4 max-w-4xl mx-auto space-y-4">
         {lowStock.length > 0 && (
-          <div className="flex items-center gap-2.5 rounded-[8px] border border-yellow-500/20 bg-yellow-500/8 px-3 py-2.5">
-            <AlertTriangle size={14} className="text-yellow-400 shrink-0" />
-            <p className="text-sm text-yellow-400">
+          <div className="flex items-center gap-2.5 rounded-[8px] border border-tertiary/20 bg-tertiary/8 px-3 py-2.5">
+            <AlertTriangle size={14} className="text-tertiary shrink-0" />
+            <p className="text-sm text-tertiary">
               {lowStock.length} פריטים במלאי נמוך
             </p>
           </div>
@@ -95,10 +95,10 @@ export default function InventoryPage() {
                             )}
                           </div>
                         </td>
-                        <td className="px-4 h-11 text-on-surface-variant">{item.category ?? '—'}</td>
+                        <td className="px-4 h-11 text-on-surface-variant">{item.category ?? '-'}</td>
                         <td className="px-4 h-11">
                           <div className="flex items-center gap-2">
-                            <span className={isLow ? 'text-yellow-400 font-semibold' : 'text-on-surface'}>
+                            <span className={isLow ? 'text-tertiary font-semibold' : 'text-on-surface'}>
                               {item.quantity}
                             </span>
                             {isLow && (
@@ -109,7 +109,7 @@ export default function InventoryPage() {
                         <td className="px-4 h-11 text-on-surface-variant tabular-nums">
                           {formatCurrency(item.unit_price)}
                         </td>
-                        <td className="px-4 h-11 text-on-surface-variant">{item.supplier ?? '—'}</td>
+                        <td className="px-4 h-11 text-on-surface-variant">{item.supplier ?? '-'}</td>
                       </tr>
                     )
                   })

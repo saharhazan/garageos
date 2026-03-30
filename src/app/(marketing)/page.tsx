@@ -123,12 +123,12 @@ export default function LandingPage() {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row-reverse gap-4">
               <Link href="/login">
-                <button className="bg-secondary-container hover:bg-secondary-container/90 text-on-secondary-container px-10 py-5 text-xl font-black rounded-md shadow-[0_0_24px_rgba(232,114,12,0.2)] active:scale-95 transition-all">
+                <button className="bg-secondary-container hover:brightness-110 text-white px-10 py-5 text-xl font-black rounded-md machined-button shadow-[0_0_24px_rgba(232,114,12,0.2)] active:scale-95 transition-all">
                   התחל בחינם
                 </button>
               </Link>
               <Link href="#features">
-                <button className="border border-outline-variant hover:bg-white/5 text-on-surface px-10 py-5 text-xl font-bold rounded-md transition-all">
+                <button className="border border-outline-variant hover:bg-white/5 text-on-surface px-10 py-5 text-xl font-bold rounded-md transition-all active:scale-95">
                   צפה בהדגמה
                 </button>
               </Link>
@@ -140,7 +140,7 @@ export default function LandingPage() {
         <div className="absolute bottom-12 left-12 transform -rotate-3 hidden lg:block">
           <div className="bg-[#F5D015] text-black px-6 py-2 rounded-sm flex items-center gap-4 shadow-2xl border-2 border-black/10">
             <div className="flex flex-col items-center leading-none border-l-2 border-black/20 pl-4">
-              <div className="w-6 h-4 bg-blue-700 flex flex-col justify-around p-0.5">
+              <div className="w-6 h-4 bg-primary-container flex flex-col justify-around p-0.5">
                 <div className="w-full h-0.5 bg-white opacity-50" />
                 <span className="text-[6px] text-white font-bold leading-none">IL</span>
               </div>
@@ -263,11 +263,11 @@ export default function LandingPage() {
 
                 <Link href="/login" className="block">
                   {tier.highlighted ? (
-                    <button className="w-full py-4 bg-secondary text-on-secondary-container font-black rounded machined-button active:scale-95 transition-all">
+                    <button className="w-full py-4 bg-secondary text-on-secondary-container font-black rounded machined-button hover:brightness-110 active:scale-95 transition-all">
                       {tier.cta}
                     </button>
                   ) : (
-                    <button className="w-full py-4 border border-outline-variant font-bold rounded hover:bg-white/5 transition-all">
+                    <button className="w-full py-4 border border-outline-variant font-bold rounded hover:bg-white/5 transition-all active:scale-95">
                       {tier.cta}
                     </button>
                   )}
@@ -314,7 +314,7 @@ export default function LandingPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-3 mb-6">
                     <div className="bg-surface-container rounded-lg p-4 border-b-2 border-primary">
-                      <span className="block text-[10px] text-on-surface-variant mb-1">הזמנות פתוחות</span>
+                      <span className="block text-[10px] text-on-surface-variant mb-1">עבודות פתוחות</span>
                       <span className="text-2xl font-black tabular-nums">12</span>
                     </div>
                     <div className="bg-surface-container rounded-lg p-4 border-b-2 border-secondary">
@@ -325,7 +325,7 @@ export default function LandingPage() {
                   <div className="flex-1 bg-surface-container rounded-lg p-4">
                     <div className="flex items-center gap-2 flex-row-reverse mb-3">
                       <div className="w-2 h-2 rounded-full bg-primary" />
-                      <span className="text-xs text-on-surface-variant">סטטוס הזמנות</span>
+                      <span className="text-xs text-on-surface-variant">סטטוס עבודות</span>
                     </div>
                     <div className="flex gap-1 items-end h-16">
                       {[40, 65, 45, 80, 55, 70, 90, 60, 75, 50, 85, 65].map((h, i) => (

@@ -7,11 +7,11 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        blue: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-        green: 'bg-green-500/10 text-green-400 border-green-500/20',
-        yellow: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
-        red: 'bg-red-500/10 text-red-400 border-red-500/20',
-        gray: 'bg-zinc-500/10 text-zinc-400 border-zinc-700',
+        blue: 'bg-primary/10 text-primary border-primary/20',
+        green: 'bg-success/10 text-success border-success/20',
+        yellow: 'bg-tertiary/10 text-tertiary border-tertiary/20',
+        red: 'bg-error/10 text-error border-error/20',
+        gray: 'bg-on-surface-variant/10 text-on-surface-variant border-outline-variant',
       },
     },
     defaultVariants: { variant: 'gray' },
@@ -30,11 +30,11 @@ export function Badge({ className, variant, dot, children, ...props }: BadgeProp
       {dot && (
         <span
           className={cn('inline-block h-1.5 w-1.5 rounded-full shrink-0', {
-            'bg-blue-400': variant === 'blue',
-            'bg-green-400': variant === 'green',
-            'bg-yellow-400': variant === 'yellow',
-            'bg-red-400': variant === 'red',
-            'bg-zinc-400': variant === 'gray',
+            'bg-primary': variant === 'blue',
+            'bg-success': variant === 'green',
+            'bg-tertiary': variant === 'yellow',
+            'bg-error': variant === 'red',
+            'bg-on-surface-variant': variant === 'gray',
           })}
         />
       )}

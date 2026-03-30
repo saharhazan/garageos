@@ -30,7 +30,7 @@ const navItems: NavSection[] = [
   {
     section: 'ניהול',
     items: [
-      { href: '/dashboard', icon: LayoutDashboard, label: 'דשבורד' },
+      { href: '/dashboard', icon: LayoutDashboard, label: 'לוח בקרה' },
       { href: '/orders', icon: Wrench, label: 'עבודות' },
       { href: '/quotes', icon: FileText, label: 'הצעות מחיר' },
     ],
@@ -129,7 +129,7 @@ export function Sidebar({ className, userName = 'משתמש', userRole = 'מנה
       <div className="p-3">
         <Link
           href="/orders/new"
-          className="flex items-center justify-center gap-2 w-full bg-secondary-container text-on-secondary-container py-3.5 rounded-xl font-black machined-button hover:brightness-110 active:scale-95 transition-all"
+          className="flex items-center justify-center gap-2 w-full bg-secondary-container text-white py-3.5 rounded-xl font-black machined-button hover:brightness-110 active:scale-95 transition-all"
         >
           <Plus size={18} />
           <span>הוסף כרטיס עבודה</span>

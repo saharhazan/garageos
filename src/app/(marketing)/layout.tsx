@@ -52,7 +52,7 @@ export default async function MarketingLayout({
               </Button>
             </Link>
             <Link href="/login">
-              <button className="bg-primary-container text-white px-6 py-2 font-bold rounded-md machined-button active:scale-95 transition-transform">
+              <button className="bg-primary-container text-white px-6 py-2 font-bold rounded-md machined-button hover:brightness-110 active:scale-95 transition-all">
                 התחל בחינם
               </button>
             </Link>

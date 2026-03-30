@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import {
   MessageCircle,
-  FileDown,
   Edit3,
   Check,
   ArrowRight,
@@ -25,14 +24,6 @@ const STATUS_STEP_LABELS: Record<OrderStatus, string> = {
   cancelled: 'בוטל',
 }
 
-const STATUS_ICONS: Record<OrderStatus, string> = {
-  received: 'check',
-  in_progress: 'build',
-  ready: 'done_all',
-  delivered: 'local_shipping',
-  cancelled: 'cancel',
-}
-
 const NEXT_STATUS: Partial<Record<OrderStatus, OrderStatus>> = {
   received: 'in_progress',
   in_progress: 'ready',
@@ -48,7 +39,7 @@ const NEXT_STATUS_LABEL: Partial<Record<OrderStatus, string>> = {
 function LicensePlate({ plate }: { plate: string }) {
   return (
     <div className="bg-[#F5D015] text-black inline-flex items-center rounded-sm overflow-hidden shadow-[0_0_15px_rgba(232,196,0,0.2)] border border-black/10 h-10">
-      <div className="bg-blue-700 w-5 h-full flex flex-col items-center justify-center text-[8px] text-white font-bold">
+      <div className="bg-primary-container w-5 h-full flex flex-col items-center justify-center text-[8px] text-white font-bold">
         <span>IL</span>
       </div>
       <div className="px-3 text-center font-mono font-bold text-xl tracking-[0.15em] tabular-nums">{plate}</div>
@@ -129,7 +120,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
               </span>
               {typedOrder.technician && (
                 <span className="text-xs text-on-surface-variant">
-                  טכנאי: {typedOrder.technician.full_name}
+                  מכונאי: {typedOrder.technician.full_name}
                 </span>
               )}
             </div>
@@ -139,7 +130,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
           <div className="flex gap-3">
             <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
               <Button variant="default" size="default">
-                <MessageCircle size={14} className="text-emerald-400" />
+                <MessageCircle size={14} className="text-success" />
                 <span className="hidden md:inline">שלח WhatsApp</span>
               </Button>
             </a>
@@ -321,7 +312,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
               <div className="space-y-4">
                 <div className="text-right">
                   <h3 className="font-black text-xl text-on-surface">
-                    {typedOrder.customer?.full_name ?? '\u2014'}
+                    {typedOrder.customer?.full_name ?? '-'}
                   </h3>
                 </div>
                 <div className="space-y-3">
@@ -332,7 +323,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                       className="text-sm font-bold tabular-nums text-primary hover:underline"
                       dir="ltr"
                     >
-                      {typedOrder.customer?.phone ?? '\u2014'}
+                      {typedOrder.customer?.phone ?? '-'}
                     </a>
                   </div>
                   {typedOrder.customer?.email && (
