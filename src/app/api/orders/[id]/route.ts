@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getApiAuth } from '@/lib/api-auth'
 import type { OrderItem, OrderStatus } from '@/types'
 
 const TAX_RATE = 0.17
@@ -19,15 +20,11 @@ type RouteContext = { params: Promise<{ id: string }> }
 
 export async function GET(_request: NextRequest, context: RouteContext) {
   const { id } = await context.params
-  const supabase = await createClient()
+  const auth = await getApiAuth()
+  if (auth.error) return auth.error
+  const { profile } = auth
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
-  }
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('work_orders')
@@ -40,6 +37,7 @@ export async function GET(_request: NextRequest, context: RouteContext) {
       `
     )
     .eq('id', id)
+    .eq('garage_id', profile.garageId)
     .single()
 
   if (error) {
@@ -55,15 +53,11 @@ export async function GET(_request: NextRequest, context: RouteContext) {
 
 export async function PATCH(request: NextRequest, context: RouteContext) {
   const { id } = await context.params
-  const supabase = await createClient()
+  const auth = await getApiAuth()
+  if (auth.error) return auth.error
+  const { profile } = auth
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
-  }
+  const supabase = await createClient()
 
   let body: Partial<{
     status: OrderStatus
@@ -111,6 +105,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     .from('work_orders')
     .update(updates)
     .eq('id', id)
+    .eq('garage_id', profile.garageId)
     .select(
       `
       *,
@@ -147,28 +142,22 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
 
 export async function DELETE(_request: NextRequest, context: RouteContext) {
   const { id } = await context.params
-  const supabase = await createClient()
-
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
-  }
+  const auth = await getApiAuth()
+  if (auth.error) return auth.error
+  const { profile } = auth
 
   // Only manager+ can delete
-  const { data: profile } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  if (!profile || !['super_admin', 'manager'].includes(profile.role)) {
+  if (!['super_admin', 'manager'].includes(profile.role)) {
     return NextResponse.json({ error: 'אין הרשאה למחוק הזמנות' }, { status: 403 })
   }
 
-  const { error } = await supabase.from('work_orders').delete().eq('id', id)
+  const supabase = await createClient()
+
+  const { error } = await supabase
+    .from('work_orders')
+    .delete()
+    .eq('id', id)
+    .eq('garage_id', profile.garageId)
 
   if (error) {
     console.error('Error deleting order:', error)

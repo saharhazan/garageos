@@ -181,16 +181,7 @@ export default function NewOrderPage() {
         return
       }
 
-      // Generate job number
-      const year_now = new Date().getFullYear()
-      const { count } = await supabase
-        .from('work_orders')
-        .select('*', { count: 'exact', head: true })
-        .eq('garage_id', garageId)
-
-      const jobNumber = `WO-${year_now}-${String((count ?? 0) + 1).padStart(4, '0')}`
-
-      // Create work order
+      // Create work order via API (handles job number generation + tax calculation server-side)
       const orderItems = items
         .filter((i) => i.description.trim())
         .map((i) => ({
@@ -201,34 +192,28 @@ export default function NewOrderPage() {
           total: i.quantity * i.unit_price,
         }))
 
-      const { data: order, error: orderError } = await supabase
-        .from('work_orders')
-        .insert({
-          garage_id: garageId,
-          job_number: jobNumber,
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           customer_id: customer.id,
           vehicle_id: vehicle.id,
-          technician_id: technicianId || null,
-          status: isDraft ? 'received' : 'received',
+          technician_id: technicianId || undefined,
           priority,
           items: orderItems,
-          notes: notes.trim() || null,
-          mileage: mileage ? parseInt(mileage) : null,
-          subtotal,
-          tax_amount: taxAmount,
-          total_amount: total,
-          images: [],
-          signature_url: null,
-        })
-        .select()
-        .single()
+          notes: notes.trim() || undefined,
+          mileage: mileage ? parseInt(mileage) : undefined,
+        }),
+      })
 
-      if (orderError || !order) {
-        setErrors({ global: 'שגיאה ביצירת העבודה' })
+      const result = await res.json()
+
+      if (!res.ok || !result.data) {
+        setErrors({ global: result.error ?? 'שגיאה ביצירת העבודה' })
         return
       }
 
-      router.push(`/orders/${order.id}`)
+      router.push(`/orders/${result.data.id}`)
     } catch (e) {
       console.error(e)
       setErrors({ global: 'אירעה שגיאה. נסה שוב.' })

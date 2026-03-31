@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getApiAuth } from '@/lib/api-auth'
 import type { OrderItem } from '@/types'
 
 const TAX_RATE = 0.17
@@ -20,15 +21,11 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
-  const supabase = await createClient()
+  const auth = await getApiAuth()
+  if (auth.error) return auth.error
+  const { profile } = auth
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
-  }
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('quotes')
@@ -40,6 +37,7 @@ export async function GET(
       `
     )
     .eq('id', id)
+    .eq('garage_id', profile.garageId)
     .single()
 
   if (error) {
@@ -55,15 +53,11 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
-  const supabase = await createClient()
+  const auth = await getApiAuth()
+  if (auth.error) return auth.error
+  const { profile } = auth
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
-  }
+  const supabase = await createClient()
 
   let body: {
     items?: OrderItem[]
@@ -100,6 +94,7 @@ export async function PATCH(
     .from('quotes')
     .update(updates)
     .eq('id', id)
+    .eq('garage_id', profile.garageId)
     .select(
       `
       *,
@@ -122,15 +117,11 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
-  const supabase = await createClient()
+  const auth = await getApiAuth()
+  if (auth.error) return auth.error
+  const { profile } = auth
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
-  }
+  const supabase = await createClient()
 
   let body: { action: string }
 
@@ -144,11 +135,12 @@ export async function POST(
     return NextResponse.json({ error: 'פעולה לא נתמכת' }, { status: 400 })
   }
 
-  // Fetch the quote
+  // Fetch the quote — verify it belongs to this garage
   const { data: quote, error: fetchError } = await supabase
     .from('quotes')
     .select('*')
     .eq('id', id)
+    .eq('garage_id', profile.garageId)
     .single()
 
   if (fetchError || !quote) {
@@ -157,7 +149,7 @@ export async function POST(
 
   // Generate job number for the new work order
   const { data: seqData, error: seqError } = await supabase.rpc('next_job_number', {
-    p_garage_id: quote.garage_id,
+    p_garage_id: profile.garageId,
   })
   if (seqError || seqData === null) {
     console.error('Error generating job number:', seqError)
@@ -167,7 +159,7 @@ export async function POST(
   const { data: garage } = await supabase
     .from('garages')
     .select('settings')
-    .eq('id', quote.garage_id)
+    .eq('id', profile.garageId)
     .single()
 
   const settings = (garage?.settings as { job_prefix?: string }) ?? {}
@@ -179,7 +171,7 @@ export async function POST(
   const { data: order, error: orderError } = await supabase
     .from('work_orders')
     .insert({
-      garage_id: quote.garage_id,
+      garage_id: profile.garageId,
       job_number: jobNumber,
       customer_id: quote.customer_id,
       vehicle_id: quote.vehicle_id,
@@ -205,7 +197,11 @@ export async function POST(
   }
 
   // Mark quote as accepted
-  await supabase.from('quotes').update({ status: 'accepted' }).eq('id', id)
+  await supabase
+    .from('quotes')
+    .update({ status: 'accepted' })
+    .eq('id', id)
+    .eq('garage_id', profile.garageId)
 
   return NextResponse.json({ data: order }, { status: 201 })
 }

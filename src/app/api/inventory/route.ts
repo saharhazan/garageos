@@ -1,20 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getApiAuth } from '@/lib/api-auth'
 
 export async function GET(_request: NextRequest) {
-  const supabase = await createClient()
+  const auth = await getApiAuth()
+  if (auth.error) return auth.error
+  const { profile } = auth
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
-  }
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('inventory')
     .select('*')
+    .eq('garage_id', profile.garageId)
     .order('name', { ascending: true })
 
   if (error) {
@@ -26,15 +24,11 @@ export async function GET(_request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const supabase = await createClient()
+  const auth = await getApiAuth()
+  if (auth.error) return auth.error
+  const { profile } = auth
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
-  }
+  const supabase = await createClient()
 
   let body: {
     name: string
@@ -56,20 +50,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'חסר שם פריט' }, { status: 400 })
   }
 
-  const { data: profile } = await supabase
-    .from('users')
-    .select('garage_id')
-    .eq('id', user.id)
-    .single()
-
-  if (!profile) {
-    return NextResponse.json({ error: 'פרופיל משתמש לא נמצא' }, { status: 400 })
-  }
-
   const { data, error } = await supabase
     .from('inventory')
     .insert({
-      garage_id: profile.garage_id,
+      garage_id: profile.garageId,
       name: body.name,
       sku: body.sku ?? null,
       quantity: body.quantity ?? 0,

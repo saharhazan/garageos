@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getApiAuth } from '@/lib/api-auth'
 
 export async function PATCH(request: NextRequest) {
-  const supabase = await createClient()
+  const auth = await getApiAuth()
+  if (auth.error) return auth.error
+  const { profile } = auth
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
-  }
+  const supabase = await createClient()
 
   let body: { full_name?: string; phone?: string; avatar_url?: string }
 
@@ -32,7 +29,7 @@ export async function PATCH(request: NextRequest) {
   const { data, error } = await supabase
     .from('users')
     .update(updates)
-    .eq('id', user.id)
+    .eq('id', profile.userId)
     .select()
     .single()
 

@@ -1,24 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getApiAuth } from '@/lib/api-auth'
 
 type RouteContext = { params: Promise<{ id: string }> }
 
 export async function GET(_request: NextRequest, context: RouteContext) {
   const { id } = await context.params
-  const supabase = await createClient()
+  const auth = await getApiAuth()
+  if (auth.error) return auth.error
+  const { profile } = auth
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
-  }
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('inventory')
     .select('*')
     .eq('id', id)
+    .eq('garage_id', profile.garageId)
     .single()
 
   if (error) {
@@ -34,15 +32,11 @@ export async function GET(_request: NextRequest, context: RouteContext) {
 
 export async function PATCH(request: NextRequest, context: RouteContext) {
   const { id } = await context.params
-  const supabase = await createClient()
+  const auth = await getApiAuth()
+  if (auth.error) return auth.error
+  const { profile } = auth
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
-  }
+  const supabase = await createClient()
 
   let body: Partial<{
     name: string
@@ -77,6 +71,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     .from('inventory')
     .update(updates)
     .eq('id', id)
+    .eq('garage_id', profile.garageId)
     .select()
     .single()
 
@@ -93,27 +88,22 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
 
 export async function DELETE(_request: NextRequest, context: RouteContext) {
   const { id } = await context.params
-  const supabase = await createClient()
+  const auth = await getApiAuth()
+  if (auth.error) return auth.error
+  const { profile } = auth
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
-  }
-
-  const { data: profile } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  if (!profile || !['super_admin', 'manager'].includes(profile.role)) {
+  // Only manager+ can delete
+  if (!['super_admin', 'manager'].includes(profile.role)) {
     return NextResponse.json({ error: 'אין הרשאה למחוק פריטי מלאי' }, { status: 403 })
   }
 
-  const { error } = await supabase.from('inventory').delete().eq('id', id)
+  const supabase = await createClient()
+
+  const { error } = await supabase
+    .from('inventory')
+    .delete()
+    .eq('id', id)
+    .eq('garage_id', profile.garageId)
 
   if (error) {
     console.error('Error deleting inventory item:', error)

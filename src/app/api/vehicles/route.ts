@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getApiAuth } from '@/lib/api-auth'
 
 export async function GET(request: NextRequest) {
-  const supabase = await createClient()
+  const auth = await getApiAuth()
+  if (auth.error) return auth.error
+  const { profile } = auth
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
-  }
+  const supabase = await createClient()
 
   const { searchParams } = new URL(request.url)
   const plate = searchParams.get('plate')
@@ -19,6 +16,7 @@ export async function GET(request: NextRequest) {
   let query = supabase
     .from('vehicles')
     .select('*, customer:customers(id, full_name, phone, email)')
+    .eq('garage_id', profile.garageId)
     .order('created_at', { ascending: false })
 
   if (plate) {
@@ -41,15 +39,11 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const supabase = await createClient()
+  const auth = await getApiAuth()
+  if (auth.error) return auth.error
+  const { profile } = auth
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
-  }
+  const supabase = await createClient()
 
   let body: {
     customer_id: string
@@ -75,20 +69,10 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const { data: profile } = await supabase
-    .from('users')
-    .select('garage_id')
-    .eq('id', user.id)
-    .single()
-
-  if (!profile) {
-    return NextResponse.json({ error: 'פרופיל משתמש לא נמצא' }, { status: 400 })
-  }
-
   const { data, error } = await supabase
     .from('vehicles')
     .insert({
-      garage_id: profile.garage_id,
+      garage_id: profile.garageId,
       customer_id: body.customer_id,
       license_plate: body.license_plate,
       make: body.make,

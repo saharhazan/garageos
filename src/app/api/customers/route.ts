@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getApiAuth } from '@/lib/api-auth'
 
 export async function GET(request: NextRequest) {
-  const supabase = await createClient()
+  const auth = await getApiAuth()
+  if (auth.error) return auth.error
+  const { profile } = auth
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
-  }
+  const supabase = await createClient()
 
   const { searchParams } = new URL(request.url)
   const search = searchParams.get('search')
@@ -18,6 +15,7 @@ export async function GET(request: NextRequest) {
   let query = supabase
     .from('customers')
     .select('*')
+    .eq('garage_id', profile.garageId)
     .order('full_name', { ascending: true })
 
   if (search) {
@@ -35,15 +33,11 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const supabase = await createClient()
+  const auth = await getApiAuth()
+  if (auth.error) return auth.error
+  const { profile } = auth
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
-  }
+  const supabase = await createClient()
 
   let body: {
     full_name: string
@@ -62,20 +56,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'חסרים שדות חובה: full_name, phone' }, { status: 400 })
   }
 
-  const { data: profile } = await supabase
-    .from('users')
-    .select('garage_id')
-    .eq('id', user.id)
-    .single()
-
-  if (!profile) {
-    return NextResponse.json({ error: 'פרופיל משתמש לא נמצא' }, { status: 400 })
-  }
-
   const { data, error } = await supabase
     .from('customers')
     .insert({
-      garage_id: profile.garage_id,
+      garage_id: profile.garageId,
       full_name: body.full_name,
       phone: body.phone,
       email: body.email ?? null,

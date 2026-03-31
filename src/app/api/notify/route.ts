@@ -1,19 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getApiAuth } from '@/lib/api-auth'
 import { buildStatusMessage } from '@/lib/notifications'
 import type { OrderStatus, GarageSettings } from '@/types'
 
 export async function POST(request: NextRequest) {
-  const supabase = await createClient()
+  const auth = await getApiAuth()
+  if (auth.error) return auth.error
+  const { profile } = auth
 
-  // Auth check — only internal service calls or authenticated users
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
-  }
+  const supabase = await createClient()
 
   let body: { orderId: string; status: OrderStatus }
 
@@ -27,7 +23,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'חסרים שדות: orderId, status' }, { status: 400 })
   }
 
-  // Fetch order with customer and vehicle
+  // Fetch order with customer and vehicle — verify it belongs to this garage
   const { data: order, error: orderError } = await supabase
     .from('work_orders')
     .select(
@@ -40,6 +36,7 @@ export async function POST(request: NextRequest) {
       `
     )
     .eq('id', body.orderId)
+    .eq('garage_id', profile.garageId)
     .single()
 
   if (orderError || !order) {
@@ -50,7 +47,7 @@ export async function POST(request: NextRequest) {
   const { data: garage, error: garageError } = await supabase
     .from('garages')
     .select('name, settings')
-    .eq('id', order.garage_id)
+    .eq('id', profile.garageId)
     .single()
 
   if (garageError || !garage) {
@@ -102,7 +99,7 @@ export async function POST(request: NextRequest) {
 
   // Log notification to DB
   await supabase.from('notifications').insert({
-    garage_id: order.garage_id,
+    garage_id: profile.garageId,
     order_id: body.orderId,
     type: channelUsed,
     recipient: customer.phone,

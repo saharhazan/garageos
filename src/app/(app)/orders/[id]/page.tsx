@@ -4,7 +4,6 @@ import {
   MessageCircle,
   Edit3,
   Check,
-  ArrowRight,
   Phone,
   Mail,
   Car,
@@ -13,6 +12,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Topbar } from '@/components/layout/topbar'
 import { Button } from '@/components/ui/button'
 import { formatCurrency, formatDateTime, formatDate, PRIORITY_LABELS } from '@/lib/utils'
+import { StatusButton } from './status-button'
 import type { WorkOrder, OrderStatus } from '@/types'
 
 const STATUS_FLOW: OrderStatus[] = ['received', 'in_progress', 'ready', 'delivered']
@@ -22,18 +22,6 @@ const STATUS_STEP_LABELS: Record<OrderStatus, string> = {
   ready: 'מוכן לאיסוף',
   delivered: 'נמסר ללקוח',
   cancelled: 'בוטל',
-}
-
-const NEXT_STATUS: Partial<Record<OrderStatus, OrderStatus>> = {
-  received: 'in_progress',
-  in_progress: 'ready',
-  ready: 'delivered',
-}
-
-const NEXT_STATUS_LABEL: Partial<Record<OrderStatus, string>> = {
-  received: 'התחל טיפול',
-  in_progress: 'סמן כמוכן',
-  ready: 'מסור ללקוח',
 }
 
 function LicensePlate({ plate }: { plate: string }) {
@@ -72,8 +60,6 @@ export default async function OrderDetailPage({ params }: PageProps) {
   }
 
   const currentStepIndex = STATUS_FLOW.indexOf(typedOrder.status)
-  const nextStatus = NEXT_STATUS[typedOrder.status]
-  const nextLabel = NEXT_STATUS_LABEL[typedOrder.status]
 
   const whatsappMessage = encodeURIComponent(
     `שלום ${typedOrder.customer?.full_name}, עדכון לגבי הרכב שלך ${typedOrder.vehicle?.make} ${typedOrder.vehicle?.model} (${typedOrder.vehicle?.license_plate}):\n\nסטטוס עבודה ${typedOrder.job_number}: ${STATUS_STEP_LABELS[typedOrder.status]}\n\nלפרטים נוספים צור איתנו קשר.`
@@ -134,15 +120,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                 <span className="hidden md:inline">שלח WhatsApp</span>
               </Button>
             </a>
-            {nextStatus && nextLabel && (
-              <form action={`/api/orders/${id}/status`} method="POST">
-                <input type="hidden" name="status" value={nextStatus} />
-                <Button variant="primary" size="default" type="submit">
-                  <ArrowRight size={14} />
-                  {nextLabel}
-                </Button>
-              </form>
-            )}
+            <StatusButton orderId={id} currentStatus={typedOrder.status} />
           </div>
         </div>
 

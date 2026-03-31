@@ -1,24 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getApiAuth } from '@/lib/api-auth'
 
 type RouteContext = { params: Promise<{ id: string }> }
 
 export async function GET(_request: NextRequest, context: RouteContext) {
   const { id } = await context.params
-  const supabase = await createClient()
+  const auth = await getApiAuth()
+  if (auth.error) return auth.error
+  const { profile } = auth
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
-  }
+  const supabase = await createClient()
 
   const { data: customer, error: customerError } = await supabase
     .from('customers')
     .select('*')
     .eq('id', id)
+    .eq('garage_id', profile.garageId)
     .single()
 
   if (customerError) {
@@ -33,6 +31,7 @@ export async function GET(_request: NextRequest, context: RouteContext) {
     .from('vehicles')
     .select('*')
     .eq('customer_id', id)
+    .eq('garage_id', profile.garageId)
     .order('created_at', { ascending: false })
 
   if (vehiclesError) {
@@ -45,15 +44,11 @@ export async function GET(_request: NextRequest, context: RouteContext) {
 
 export async function PATCH(request: NextRequest, context: RouteContext) {
   const { id } = await context.params
-  const supabase = await createClient()
+  const auth = await getApiAuth()
+  if (auth.error) return auth.error
+  const { profile } = auth
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
-  }
+  const supabase = await createClient()
 
   let body: Partial<{
     full_name: string
@@ -82,6 +77,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     .from('customers')
     .update(updates)
     .eq('id', id)
+    .eq('garage_id', profile.garageId)
     .select()
     .single()
 

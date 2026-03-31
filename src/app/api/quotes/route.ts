@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getApiAuth } from '@/lib/api-auth'
 import type { OrderItem } from '@/types'
 
 const TAX_RATE = 0.17
@@ -17,15 +18,11 @@ function calculateTotals(items: OrderItem[]): {
 }
 
 export async function GET(request: NextRequest) {
-  const supabase = await createClient()
+  const auth = await getApiAuth()
+  if (auth.error) return auth.error
+  const { profile } = auth
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
-  }
+  const supabase = await createClient()
 
   const { searchParams } = new URL(request.url)
   const status = searchParams.get('status')
@@ -44,6 +41,7 @@ export async function GET(request: NextRequest) {
       `,
       { count: 'exact' }
     )
+    .eq('garage_id', profile.garageId)
     .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1)
 
@@ -68,15 +66,11 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const supabase = await createClient()
+  const auth = await getApiAuth()
+  if (auth.error) return auth.error
+  const { profile } = auth
 
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
-  }
+  const supabase = await createClient()
 
   let body: {
     customer_id: string
@@ -96,20 +90,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'חסרים שדות חובה: customer_id, vehicle_id' }, { status: 400 })
   }
 
-  // Get garage_id from user profile
-  const { data: profile } = await supabase
-    .from('users')
-    .select('garage_id')
-    .eq('id', user.id)
-    .single()
-
-  if (!profile) {
-    return NextResponse.json({ error: 'פרופיל משתמש לא נמצא' }, { status: 400 })
-  }
-
   // Generate quote number using DB function
   const { data: seqData, error: seqError } = await supabase.rpc('next_quote_number', {
-    p_garage_id: profile.garage_id,
+    p_garage_id: profile.garageId,
   })
   if (seqError || seqData === null) {
     console.error('Error generating quote number:', seqError)
@@ -120,7 +103,7 @@ export async function POST(request: NextRequest) {
   const { data: garage } = await supabase
     .from('garages')
     .select('settings')
-    .eq('id', profile.garage_id)
+    .eq('id', profile.garageId)
     .single()
 
   const settings = (garage?.settings as { job_prefix?: string }) ?? {}
@@ -132,7 +115,7 @@ export async function POST(request: NextRequest) {
   const totals = calculateTotals(items)
 
   const insertPayload = {
-    garage_id: profile.garage_id,
+    garage_id: profile.garageId,
     quote_number: quoteNumber,
     customer_id: body.customer_id,
     vehicle_id: body.vehicle_id,

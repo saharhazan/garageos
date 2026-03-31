@@ -1,31 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getApiAuth } from '@/lib/api-auth'
 
 export async function PATCH(request: NextRequest) {
-  const supabase = await createClient()
-
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'לא מורשה' }, { status: 401 })
-  }
+  const auth = await getApiAuth()
+  if (auth.error) return auth.error
+  const { profile } = auth
 
   // Verify user is super_admin or manager
-  const { data: profile } = await supabase
-    .from('users')
-    .select('garage_id, role')
-    .eq('id', user.id)
-    .single()
-
-  if (!profile) {
-    return NextResponse.json({ error: 'פרופיל משתמש לא נמצא' }, { status: 400 })
-  }
-
   if (!['super_admin', 'manager'].includes(profile.role)) {
     return NextResponse.json({ error: 'אין הרשאה לעדכון הגדרות מוסך' }, { status: 403 })
   }
+
+  const supabase = await createClient()
 
   let body: {
     name?: string
@@ -58,7 +45,7 @@ export async function PATCH(request: NextRequest) {
     const { data: currentGarage } = await supabase
       .from('garages')
       .select('settings')
-      .eq('id', profile.garage_id)
+      .eq('id', profile.garageId)
       .single()
 
     const currentSettings = (currentGarage?.settings as Record<string, unknown>) ?? {}
@@ -72,7 +59,7 @@ export async function PATCH(request: NextRequest) {
   const { data, error } = await supabase
     .from('garages')
     .update(updates)
-    .eq('id', profile.garage_id)
+    .eq('id', profile.garageId)
     .select()
     .single()
 
