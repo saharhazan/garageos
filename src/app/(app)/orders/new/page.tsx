@@ -27,7 +27,7 @@ interface CustomerResult {
   }[]
 }
 
-const TAX_RATE = 0.17
+const TAX_RATE = 0.18
 
 interface LineItem {
   id: string
@@ -559,7 +559,7 @@ export default function NewOrderPage() {
               <span className="text-on-surface tabular-nums">{formatCurrency(subtotal)}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-on-surface-variant">{"מע\"מ 17%"}</span>
+              <span className="text-on-surface-variant">{"מע\"מ 18%"}</span>
               <span className="text-on-surface tabular-nums">{formatCurrency(taxAmount)}</span>
             </div>
             <div className="flex items-center justify-between pt-3 border-t border-white/5">

@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import type { WorkOrder, OrderStatus, OrderItem } from '@/types'
 
-const TAX_RATE = 0.17
+const TAX_RATE = 0.18
 
 interface CreateOrderData {
   customer_id: string

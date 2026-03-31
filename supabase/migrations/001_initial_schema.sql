@@ -13,7 +13,7 @@ CREATE TABLE garages (
     "sms_enabled": false,
     "whatsapp_enabled": false,
     "auto_notify_on_status_change": true,
-    "tax_rate": 17,
+    "tax_rate": 18,
     "currency": "ILS",
     "job_prefix": "AK"
   }'::jsonb,

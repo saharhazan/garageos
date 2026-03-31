@@ -239,7 +239,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
                 </div>
                 <div className="flex justify-between text-sm text-on-surface-variant">
                   <span className="tabular-nums">{formatCurrency(typedOrder.tax_amount)}</span>
-                  <span>{"מע\"מ (17%):"}</span>
+                  <span>{"מע\"מ (18%):"}</span>
                 </div>
                 <div className="flex justify-between text-primary font-black text-2xl mt-2 border-t border-white/10 pt-3">
                   <span className="tabular-nums">{formatCurrency(typedOrder.total_amount)}</span>

@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getApiAuth } from '@/lib/api-auth'
 import type { OrderItem } from '@/types'
 
-const TAX_RATE = 0.17
+const TAX_RATE = 0.18
 const DEFAULT_LIMIT = 20
 
 function calculateTotals(items: OrderItem[]): {

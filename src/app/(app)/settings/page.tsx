@@ -376,7 +376,7 @@ function GarageForm({ garageId }: { garageId: string | null }) {
   const [name, setName] = useState('')
   const [address, setAddress] = useState('')
   const [phone, setPhone] = useState('')
-  const [taxRate, setTaxRate] = useState('17')
+  const [taxRate, setTaxRate] = useState('18')
   const [jobPrefix, setJobPrefix] = useState('')
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -390,7 +390,7 @@ function GarageForm({ garageId }: { garageId: string | null }) {
         setName(data.name ?? '')
         setAddress(data.address ?? '')
         setPhone(data.phone ?? '')
-        setTaxRate(String(data.settings?.tax_rate ?? 17))
+        setTaxRate(String(data.settings?.tax_rate ?? 18))
         setJobPrefix(data.settings?.job_prefix ?? '')
       }
       setLoading(false)
@@ -408,7 +408,7 @@ function GarageForm({ garageId }: { garageId: string | null }) {
         address,
         phone,
         settings: {
-          tax_rate: parseFloat(taxRate) || 17,
+          tax_rate: parseFloat(taxRate) || 18,
           job_prefix: jobPrefix,
         },
       }),

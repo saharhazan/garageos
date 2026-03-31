@@ -11,7 +11,7 @@ import { formatCurrency } from '@/lib/utils'
 import { useToastActions } from '@/hooks/use-toast'
 import type { OrderItem, WorkOrder } from '@/types'
 
-const TAX_RATE = 0.17
+const TAX_RATE = 0.18
 
 interface LineItem {
   id: string
@@ -295,7 +295,7 @@ export default function EditOrderPage({ params }: { params: Promise<{ id: string
               <span className="text-on-surface tabular-nums">{formatCurrency(subtotal)}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-on-surface-variant">{"מע\"מ 17%"}</span>
+              <span className="text-on-surface-variant">{"מע\"מ 18%"}</span>
               <span className="text-on-surface tabular-nums">{formatCurrency(taxAmount)}</span>
             </div>
             <div className="flex items-center justify-between pt-3 border-t border-white/5">
