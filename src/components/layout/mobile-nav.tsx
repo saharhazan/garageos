@@ -30,6 +30,8 @@ export function MobileNav({ className }: MobileNavProps) {
   const isActive = (href: string, isMain?: boolean) => {
     if (isMain) return false
     if (href === '/dashboard') return pathname === '/dashboard'
+    // For /orders, match /orders but NOT /orders/new
+    if (href === '/orders') return pathname === '/orders' || (pathname.startsWith('/orders/') && pathname !== '/orders/new')
     return pathname.startsWith(href)
   }
 

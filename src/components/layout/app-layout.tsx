@@ -22,7 +22,7 @@ export function AppLayout({ children, className, userName, userRole }: AppLayout
       />
 
       {/* Main content */}
-      <main className="flex-1 overflow-y-auto pb-16 md:pb-0 min-w-0">
+      <main className="flex-1 overflow-y-auto pb-20 md:pb-0 min-w-0">
         {children}
       </main>
 

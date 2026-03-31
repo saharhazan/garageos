@@ -1,8 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { ChevronRight, Bell } from 'lucide-react'
+import { ChevronRight, Bell, Search } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { openCommandPalette } from '@/components/command-palette'
 
 interface TopbarProps {
   title: string
@@ -32,8 +33,31 @@ export function Topbar({ title, actions, backHref, className }: TopbarProps) {
         <h1 className="text-sm font-bold text-on-surface truncate">{title}</h1>
       </div>
 
-      {/* Left side: actions + notifications */}
-      <div className="flex items-center gap-1 shrink-0">
+      {/* Left side: search + actions + notifications */}
+      <div className="flex items-center gap-1.5 shrink-0">
+        {/* Desktop search bar */}
+        <button
+          type="button"
+          onClick={openCommandPalette}
+          className="hidden md:flex items-center gap-2 bg-surface-lowest rounded-lg px-4 py-2 text-sm text-on-surface-variant hover:bg-surface-low hover:text-on-surface transition-colors cursor-pointer"
+        >
+          <Search size={14} className="shrink-0 text-outline" />
+          <span className="text-xs text-outline">חיפוש מהיר...</span>
+          <kbd className="flex items-center gap-0.5 text-[10px] text-outline bg-surface-highest rounded px-1.5 py-0.5 mr-2 font-mono">
+            ⌘K
+          </kbd>
+        </button>
+
+        {/* Mobile search icon */}
+        <button
+          type="button"
+          onClick={openCommandPalette}
+          className="flex md:hidden items-center justify-center w-8 h-8 rounded-md text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-colors"
+          aria-label="חיפוש"
+        >
+          <Search size={16} />
+        </button>
+
         {actions}
         <button
           className="flex items-center justify-center w-8 h-8 rounded-md text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-colors relative"

@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { AlertTriangle, Search, Download } from 'lucide-react'
+import Link from 'next/link'
+import { AlertTriangle, Search, Download, Plus } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Topbar } from '@/components/layout/topbar'
 import { Button } from '@/components/ui/button'
@@ -78,10 +79,18 @@ export default function InventoryPage() {
       <Topbar
         title="מלאי"
         actions={
-          <Button variant="default" size="sm" onClick={handleExport} disabled={exporting} loading={exporting}>
-            <Download size={14} />
-            ייצוא
-          </Button>
+          <div className="flex items-center gap-1.5">
+            <Button variant="default" size="sm" onClick={handleExport} disabled={exporting} loading={exporting}>
+              <Download size={14} />
+              ייצוא
+            </Button>
+            <Link href="/inventory/new">
+              <Button variant="primary" size="sm">
+                <Plus size={14} />
+                פריט חדש
+              </Button>
+            </Link>
+          </div>
         }
       />
 
