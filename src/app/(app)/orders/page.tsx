@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Plus, Search } from 'lucide-react'
+import { Plus, Search, Download } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Topbar } from '@/components/layout/topbar'
 import { Button } from '@/components/ui/button'
@@ -17,7 +17,8 @@ import {
   TableHead,
   TableCell,
 } from '@/components/ui/table'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { formatCurrency, formatDate, STATUS_LABELS } from '@/lib/utils'
+import { exportToExcel } from '@/lib/excel-export'
 import type { WorkOrder, OrderStatus } from '@/types'
 
 const STATUS_FILTERS: { label: string; value: OrderStatus | 'all' }[] = [
@@ -51,7 +52,48 @@ export default function OrdersPage() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<OrderStatus | 'all'>('all')
   const [page, setPage] = useState(0)
+  const [exporting, setExporting] = useState(false)
   const PAGE_SIZE = 20
+
+  async function handleExport() {
+    setExporting(true)
+    try {
+      const res = await fetch('/api/export?type=orders')
+      const json = await res.json()
+      if (!res.ok || !json.data) return
+
+      const rows = json.data.map((o: Record<string, unknown>) => {
+        const cust = Array.isArray(o.customer) ? o.customer[0] : o.customer
+        const veh = Array.isArray(o.vehicle) ? o.vehicle[0] : o.vehicle
+        return {
+          job_number: o.job_number ?? '',
+          customer_name: (cust as Record<string, unknown>)?.full_name ?? '',
+          customer_phone: (cust as Record<string, unknown>)?.phone ?? '',
+          vehicle: veh ? `${(veh as Record<string, unknown>).make ?? ''} ${(veh as Record<string, unknown>).model ?? ''}` : '',
+          license_plate: (veh as Record<string, unknown>)?.license_plate ?? '',
+          status: STATUS_LABELS[o.status as string] ?? o.status ?? '',
+          total_amount: o.total_amount ?? 0,
+          created_at: o.created_at ? formatDate(o.created_at as string) : '',
+        }
+      })
+
+      const today = new Date().toISOString().slice(0, 10)
+      exportToExcel(rows, [
+        { key: 'job_number', label: 'מספר עבודה' },
+        { key: 'customer_name', label: 'לקוח' },
+        { key: 'customer_phone', label: 'טלפון' },
+        { key: 'vehicle', label: 'רכב' },
+        { key: 'license_plate', label: 'לוחית' },
+        { key: 'status', label: 'סטטוס' },
+        { key: 'total_amount', label: 'סכום' },
+        { key: 'created_at', label: 'תאריך' },
+      ], `orders-${today}.xlsx`)
+    } catch (err) {
+      console.error('Export error:', err)
+    } finally {
+      setExporting(false)
+    }
+  }
 
   useEffect(() => {
     setPage(0)
@@ -91,12 +133,18 @@ export default function OrdersPage() {
       <Topbar
         title="עבודות"
         actions={
-          <Link href="/orders/new">
-            <Button variant="primary" size="sm">
-              <Plus size={14} />
-              עבודה חדשה
+          <div className="flex items-center gap-1.5">
+            <Button variant="default" size="sm" onClick={handleExport} disabled={exporting} loading={exporting}>
+              <Download size={14} />
+              ייצוא לאקסל
             </Button>
-          </Link>
+            <Link href="/orders/new">
+              <Button variant="primary" size="sm">
+                <Plus size={14} />
+                עבודה חדשה
+              </Button>
+            </Link>
+          </div>
         }
       />
 

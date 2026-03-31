@@ -1,18 +1,55 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { AlertTriangle, Search } from 'lucide-react'
+import { AlertTriangle, Search, Download } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Topbar } from '@/components/layout/topbar'
+import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Spinner } from '@/components/ui/spinner'
 import { formatCurrency } from '@/lib/utils'
+import { exportToExcel } from '@/lib/excel-export'
 import type { InventoryItem } from '@/types'
 
 export default function InventoryPage() {
   const [items, setItems] = useState<InventoryItem[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [exporting, setExporting] = useState(false)
+
+  async function handleExport() {
+    setExporting(true)
+    try {
+      const res = await fetch('/api/export?type=inventory')
+      const json = await res.json()
+      if (!res.ok || !json.data) return
+
+      const rows = json.data.map((item: Record<string, unknown>) => ({
+        name: item.name ?? '',
+        sku: item.sku ?? '',
+        quantity: item.quantity ?? 0,
+        min_quantity: item.min_quantity ?? 0,
+        unit_price: item.unit_price ?? 0,
+        supplier: item.supplier ?? '',
+        category: item.category ?? '',
+      }))
+
+      const today = new Date().toISOString().slice(0, 10)
+      exportToExcel(rows, [
+        { key: 'name', label: 'שם' },
+        { key: 'sku', label: 'מק"ט' },
+        { key: 'quantity', label: 'כמות' },
+        { key: 'min_quantity', label: 'מינימום' },
+        { key: 'unit_price', label: 'מחיר' },
+        { key: 'supplier', label: 'ספק' },
+        { key: 'category', label: 'קטגוריה' },
+      ], `inventory-${today}.xlsx`)
+    } catch (err) {
+      console.error('Export error:', err)
+    } finally {
+      setExporting(false)
+    }
+  }
 
   useEffect(() => {
     async function fetchItems() {
@@ -38,7 +75,15 @@ export default function InventoryPage() {
 
   return (
     <div className="min-h-full">
-      <Topbar title="מלאי" />
+      <Topbar
+        title="מלאי"
+        actions={
+          <Button variant="default" size="sm" onClick={handleExport} disabled={exporting} loading={exporting}>
+            <Download size={14} />
+            ייצוא
+          </Button>
+        }
+      />
 
       <div className="px-4 py-4 max-w-4xl mx-auto space-y-4">
         {lowStock.length > 0 && (

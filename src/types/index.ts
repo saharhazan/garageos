@@ -13,6 +13,7 @@ export interface Garage {
 export interface GarageSettings {
   sms_enabled: boolean
   whatsapp_enabled: boolean
+  email_enabled: boolean
   auto_notify_on_status_change: boolean
   tax_rate: number
   currency: string

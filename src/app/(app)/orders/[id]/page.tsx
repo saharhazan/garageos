@@ -14,6 +14,7 @@ import { Topbar } from '@/components/layout/topbar'
 import { Button } from '@/components/ui/button'
 import { formatCurrency, formatDateTime, formatDate, PRIORITY_LABELS } from '@/lib/utils'
 import { StatusButton } from './status-button'
+import { SignatureSection } from './signature-section'
 import type { WorkOrder, OrderStatus } from '@/types'
 
 const STATUS_FLOW: OrderStatus[] = ['received', 'in_progress', 'ready', 'delivered']
@@ -329,6 +330,13 @@ export default async function OrderDetailPage({ params }: PageProps) {
             </div>
           </div>
         </div>
+
+        {/* Customer Signature */}
+        <SignatureSection
+          orderId={id}
+          orderStatus={typedOrder.status}
+          signatureUrl={typedOrder.signature_url}
+        />
 
         {/* Metadata */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs text-on-surface-variant">

@@ -1,4 +1,5 @@
 import type { OrderStatus, GarageSettings } from '@/types'
+import { buildStatusEmailHtml, getStatusEmailSubject } from '@/lib/email-templates'
 
 /**
  * Build a Hebrew SMS/WhatsApp message for a given order status change.
@@ -27,22 +28,29 @@ export function buildStatusMessage(
 interface OrderForNotification {
   id: string
   garage_id: string
+  job_number: string
   customer: {
     phone: string
     full_name: string
+    email?: string | null
   }
   vehicle: {
     license_plate: string
+    make?: string
+    model?: string
   }
   garage: {
     name: string
+    address?: string | null
+    phone?: string | null
+    logo_url?: string | null
     settings: GarageSettings
   }
 }
 
 /**
  * Send a status notification for an order.
- * Fetches order details and dispatches to the appropriate channel.
+ * Dispatches to SMS, WhatsApp, and/or Email based on garage settings.
  */
 export async function sendOrderNotification(
   order: OrderForNotification,
@@ -54,8 +62,9 @@ export async function sendOrderNotification(
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? ''
 
   if (!settings.auto_notify_on_status_change) return
-  if (!settings.sms_enabled && !settings.whatsapp_enabled) return
+  if (!settings.sms_enabled && !settings.whatsapp_enabled && !settings.email_enabled) return
 
+  // SMS / WhatsApp (prefer WhatsApp)
   if (settings.whatsapp_enabled) {
     await fetch(`${baseUrl}/api/whatsapp`, {
       method: 'POST',
@@ -68,5 +77,27 @@ export async function sendOrderNotification(
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ to: customer.phone, message }),
     }).catch((err) => console.error('sendOrderNotification (sms) error:', err))
+  }
+
+  // Email
+  if (settings.email_enabled && customer.email) {
+    const subject = getStatusEmailSubject(status, garage.name)
+    const html = buildStatusEmailHtml(status, {
+      garageName: garage.name,
+      garageAddress: garage.address ?? undefined,
+      garagePhone: garage.phone ?? undefined,
+      garageLogo: garage.logo_url ?? undefined,
+      customerName: customer.full_name,
+      jobNumber: order.job_number,
+      vehicleMake: vehicle.make ?? undefined,
+      vehicleModel: vehicle.model ?? undefined,
+      vehiclePlate: vehicle.license_plate,
+    })
+
+    await fetch(`${baseUrl}/api/email`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to: customer.email, subject, html }),
+    }).catch((err) => console.error('sendOrderNotification (email) error:', err))
   }
 }

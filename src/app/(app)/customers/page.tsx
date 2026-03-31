@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Search, Phone, ChevronLeft, Car } from 'lucide-react'
+import { Search, Phone, ChevronLeft, Car, Download, FileSpreadsheet } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Topbar } from '@/components/layout/topbar'
+import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { formatDate } from '@/lib/utils'
+import { exportToExcel } from '@/lib/excel-export'
 import type { Customer } from '@/types'
 
 interface CustomerWithMeta extends Customer {
@@ -18,6 +20,37 @@ export default function CustomersPage() {
   const [customers, setCustomers] = useState<CustomerWithMeta[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [exporting, setExporting] = useState(false)
+
+  async function handleExport() {
+    setExporting(true)
+    try {
+      const res = await fetch('/api/export?type=customers')
+      const json = await res.json()
+      if (!res.ok || !json.data) return
+
+      const rows = json.data.map((c: Record<string, unknown>) => ({
+        full_name: c.full_name ?? '',
+        phone: c.phone ?? '',
+        email: c.email ?? '',
+        notes: c.notes ?? '',
+        created_at: c.created_at ? formatDate(c.created_at as string) : '',
+      }))
+
+      const today = new Date().toISOString().slice(0, 10)
+      exportToExcel(rows, [
+        { key: 'full_name', label: 'שם' },
+        { key: 'phone', label: 'טלפון' },
+        { key: 'email', label: 'אימייל' },
+        { key: 'notes', label: 'הערות' },
+        { key: 'created_at', label: 'תאריך הצטרפות' },
+      ], `customers-${today}.xlsx`)
+    } catch (err) {
+      console.error('Export error:', err)
+    } finally {
+      setExporting(false)
+    }
+  }
 
   useEffect(() => {
     async function fetchCustomers() {
@@ -50,7 +83,23 @@ export default function CustomersPage() {
 
   return (
     <div className="min-h-full">
-      <Topbar title="לקוחות" />
+      <Topbar
+        title="לקוחות"
+        actions={
+          <div className="flex gap-2">
+            <Link href="/customers/import">
+              <Button variant="teal" size="sm">
+                <FileSpreadsheet size={14} />
+                <span className="hidden md:inline">ייבוא מאקסל</span>
+              </Button>
+            </Link>
+            <Button variant="default" size="sm" onClick={handleExport} disabled={exporting} loading={exporting}>
+              <Download size={14} />
+              ייצוא
+            </Button>
+          </div>
+        }
+      />
 
       <div className="px-4 py-4 max-w-3xl mx-auto space-y-4">
         {/* Search */}
