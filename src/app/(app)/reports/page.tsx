@@ -15,6 +15,7 @@ import {
   Wrench,
   HardHat,
   Download,
+  Printer,
 } from 'lucide-react'
 import { Topbar } from '@/components/layout/topbar'
 import { Chip } from '@/components/ui/chip'

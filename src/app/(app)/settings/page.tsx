@@ -4,15 +4,16 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   LogOut, User, Bell, Building2, Shield, CreditCard,
-  ChevronLeft, Save, Loader2, FileText
+  ChevronLeft, Save, Loader2, FileText, Users
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/use-auth-context'
+import { useToastActions } from '@/hooks/use-toast'
 import { Topbar } from '@/components/layout/topbar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
-type SettingsView = 'main' | 'profile' | 'notifications' | 'security' | 'garage' | 'billing' | 'documents'
+type SettingsView = 'main' | 'profile' | 'notifications' | 'security' | 'garage' | 'billing' | 'documents' | 'team'
 
 export default function SettingsPage() {
   const router = useRouter()
@@ -27,16 +28,21 @@ export default function SettingsPage() {
     router.push('/login')
   }
 
-  // Navigate to documents settings page
+  // Navigate to sub-settings pages
   useEffect(() => {
     if (view === 'documents') {
       router.push('/settings/documents')
       // eslint-disable-next-line react-hooks/set-state-in-effect -- redirect cleanup
       setView('main')
     }
+    if (view === 'team') {
+      router.push('/settings/team')
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- redirect cleanup
+      setView('main')
+    }
   }, [view, router])
 
-  if (view !== 'main' && view !== 'documents') {
+  if (view !== 'main' && view !== 'documents' && view !== 'team') {
     return (
       <div className="min-h-full">
         <Topbar
@@ -80,6 +86,7 @@ export default function SettingsPage() {
       title: 'מוסך',
       items: [
         { icon: Building2, label: 'פרטי המוסך', description: 'שם, כתובת, טלפון', view: 'garage' as SettingsView },
+        { icon: Users, label: 'צוות', description: 'הזמן ונהל את הצוות', view: 'team' as SettingsView },
         { icon: FileText, label: 'מסמכים ומיתוג', description: 'לוגו, צבעים, שדות מותאמים', view: 'documents' as SettingsView },
         { icon: CreditCard, label: 'מנוי וחיוב', description: 'נהל את המנוי שלך', view: 'billing' as SettingsView },
       ],
@@ -150,10 +157,10 @@ export default function SettingsPage() {
 
 // ─── Profile Form ──────────────────────────────────────
 function ProfileForm({ garageId }: { garageId: string | null }) {
+  const { toast } = useToastActions()
   const [fullName, setFullName] = useState('')
   const [phone, setPhone] = useState('')
   const [saving, setSaving] = useState(false)
-  const [saved, setSaved] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -179,14 +186,17 @@ function ProfileForm({ garageId }: { garageId: string | null }) {
 
   async function handleSave() {
     setSaving(true)
-    setSaved(false)
     const res = await fetch('/api/settings/profile', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ full_name: fullName, phone }),
     })
     setSaving(false)
-    if (res.ok) setSaved(true)
+    if (res.ok) {
+      toast.success('הפרופיל נשמר בהצלחה')
+    } else {
+      toast.error('שגיאה בשמירת הפרופיל')
+    }
   }
 
   if (loading) return <FormSkeleton />
@@ -197,7 +207,7 @@ function ProfileForm({ garageId }: { garageId: string | null }) {
       <Input label="טלפון" value={phone} onChange={(e) => setPhone(e.target.value)} dir="ltr" inputMode="tel" />
       <Button variant="primary" size="lg" className="w-full" onClick={handleSave} loading={saving}>
         <Save size={14} />
-        {saved ? 'נשמר!' : 'שמור שינויים'}
+        שמור שינויים
       </Button>
     </div>
   )
@@ -205,6 +215,7 @@ function ProfileForm({ garageId }: { garageId: string | null }) {
 
 // ─── Notification Settings ─────────────────────────────
 function NotificationSettings({ garageId }: { garageId: string | null }) {
+  const { toast } = useToastActions()
   const [settings, setSettings] = useState({
     sms_enabled: false,
     whatsapp_enabled: false,
@@ -238,12 +249,17 @@ function NotificationSettings({ garageId }: { garageId: string | null }) {
 
   async function handleSave() {
     setSaving(true)
-    await fetch('/api/settings/garage', {
+    const res = await fetch('/api/settings/garage', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ settings }),
     })
     setSaving(false)
+    if (res.ok) {
+      toast.success('ההגדרות נשמרו')
+    } else {
+      toast.error('שגיאה בשמירת ההגדרות')
+    }
   }
 
   if (loading) return <FormSkeleton />
@@ -356,6 +372,7 @@ function SecurityForm() {
 
 // ─── Garage Form ───────────────────────────────────────
 function GarageForm({ garageId }: { garageId: string | null }) {
+  const { toast } = useToastActions()
   const [name, setName] = useState('')
   const [address, setAddress] = useState('')
   const [phone, setPhone] = useState('')
@@ -383,7 +400,7 @@ function GarageForm({ garageId }: { garageId: string | null }) {
 
   async function handleSave() {
     setSaving(true)
-    await fetch('/api/settings/garage', {
+    const res = await fetch('/api/settings/garage', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -397,6 +414,11 @@ function GarageForm({ garageId }: { garageId: string | null }) {
       }),
     })
     setSaving(false)
+    if (res.ok) {
+      toast.success('פרטי המוסך נשמרו')
+    } else {
+      toast.error('שגיאה בשמירת פרטי המוסך')
+    }
   }
 
   if (loading) return <FormSkeleton />

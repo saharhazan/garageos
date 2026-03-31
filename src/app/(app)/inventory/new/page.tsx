@@ -5,9 +5,11 @@ import { useRouter } from 'next/navigation'
 import { Topbar } from '@/components/layout/topbar'
 import { Button } from '@/components/ui/button'
 import { Input, Textarea, Select } from '@/components/ui/input'
+import { useToastActions } from '@/hooks/use-toast'
 
 export default function NewInventoryItemPage() {
   const router = useRouter()
+  const { toast } = useToastActions()
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
@@ -51,13 +53,17 @@ export default function NewInventoryItemPage() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        setError(data.error ?? 'שגיאה ביצירת פריט מלאי')
+        const msg = data.error ?? 'שגיאה ביצירת פריט מלאי'
+        setError(msg)
+        toast.error(msg)
         return
       }
 
+      toast.success('פריט נוסף למלאי')
       router.push('/inventory')
     } catch {
       setError('אירעה שגיאה. נסה שוב.')
+      toast.error('אירעה שגיאה. נסה שוב.')
     } finally {
       setSaving(false)
     }

@@ -5,12 +5,14 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Topbar } from '@/components/layout/topbar'
 import { Button } from '@/components/ui/button'
 import { Input, Textarea } from '@/components/ui/input'
+import { useToastActions } from '@/hooks/use-toast'
 
 export default function NewVehiclePage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const customerId = searchParams.get('customer_id')
 
+  const { toast } = useToastActions()
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
@@ -61,14 +63,18 @@ export default function NewVehiclePage() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        setError(data.error ?? 'שגיאה בהוספת רכב')
+        const msg = data.error ?? 'שגיאה בהוספת רכב'
+        setError(msg)
+        toast.error(msg)
         return
       }
 
+      toast.success('רכב נוסף בהצלחה')
       router.push(`/customers/${customerId}`)
       router.refresh()
     } catch {
       setError('אירעה שגיאה. נסה שוב.')
+      toast.error('אירעה שגיאה. נסה שוב.')
     } finally {
       setSaving(false)
     }

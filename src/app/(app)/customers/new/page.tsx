@@ -6,10 +6,12 @@ import { Topbar } from '@/components/layout/topbar'
 import { Button } from '@/components/ui/button'
 import { Input, Textarea } from '@/components/ui/input'
 import { useAuth } from '@/hooks/use-auth-context'
+import { useToastActions } from '@/hooks/use-toast'
 
 export default function NewCustomerPage() {
   const router = useRouter()
   const { garageId } = useAuth()
+  const { toast } = useToastActions()
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
@@ -48,14 +50,18 @@ export default function NewCustomerPage() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        setError(data.error ?? 'שגיאה ביצירת לקוח')
+        const msg = data.error ?? 'שגיאה ביצירת לקוח'
+        setError(msg)
+        toast.error(msg)
         return
       }
 
       const { data } = await res.json()
+      toast.success('לקוח נוצר בהצלחה')
       router.push(`/customers/${data.id}`)
     } catch {
       setError('אירעה שגיאה. נסה שוב.')
+      toast.error('אירעה שגיאה. נסה שוב.')
     } finally {
       setSaving(false)
     }

@@ -1,10 +1,12 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
   Wrench,
+  CalendarDays,
   Plus,
   FileText,
   Users,
@@ -12,8 +14,12 @@ import {
   Package,
   BarChart2,
   Settings,
+  Zap,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/hooks/use-auth-context'
+import { PLAN_DISPLAY_NAMES } from '@/lib/plan-limits'
 
 interface NavItem {
   href: string
@@ -33,6 +39,7 @@ const navItems: NavSection[] = [
     items: [
       { href: '/dashboard', icon: LayoutDashboard, label: 'לוח בקרה' },
       { href: '/orders', icon: Wrench, label: 'עבודות' },
+      { href: '/appointments', icon: CalendarDays, label: 'לוח זמנים' },
       { href: '/quotes', icon: FileText, label: 'הצעות מחיר' },
     ],
   },
@@ -52,6 +59,14 @@ const navItems: NavSection[] = [
   },
 ]
 
+const ROLE_LABELS: Record<string, string> = {
+  super_admin: 'מנהל ראשי',
+  manager: 'מנהל',
+  receptionist: 'קבלה',
+  technician: 'טכנאי',
+  viewer: 'צופה',
+}
+
 interface SidebarProps {
   className?: string
   userName?: string
@@ -60,6 +75,22 @@ interface SidebarProps {
 
 export function Sidebar({ className, userName = 'משתמש', userRole = 'מנהל' }: SidebarProps) {
   const pathname = usePathname()
+  const { garageId } = useAuth()
+  const [plan, setPlan] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchPlan() {
+      if (!garageId) return
+      const supabase = createClient()
+      const { data } = await supabase
+        .from('garages')
+        .select('subscription_plan')
+        .eq('id', garageId)
+        .single()
+      if (data) setPlan(data.subscription_plan ?? 'starter')
+    }
+    fetchPlan()
+  }, [garageId])
 
   const isActive = (href: string) => {
     if (href === '/dashboard') return pathname === '/dashboard'
@@ -138,12 +169,32 @@ export function Sidebar({ className, userName = 'משתמש', userRole = 'מנה
         </Link>
       </div>
 
+      {/* Plan Badge */}
+      {plan && (
+        <div className="px-3 pb-2">
+          <div className="flex items-center justify-between rounded-lg bg-surface-low px-3 py-2">
+            <span className="text-xs font-bold text-on-surface-variant">
+              {PLAN_DISPLAY_NAMES[plan] ?? plan}
+            </span>
+            {plan === 'starter' && (
+              <Link
+                href="/settings"
+                className="flex items-center gap-1 text-xs font-bold text-secondary hover:text-secondary/80 transition-colors"
+              >
+                <Zap size={12} />
+                שדרג
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Footer: user info + settings */}
       <div className="p-3 pt-0">
         <div className="flex items-center gap-2.5">
           <div className="flex-1 min-w-0">
             <p className="text-xs font-bold text-on-surface truncate">{userName}</p>
-            <p className="text-[10px] text-outline truncate">{userRole}</p>
+            <p className="text-[10px] text-outline truncate">{ROLE_LABELS[userRole] ?? userRole}</p>
           </div>
           <Link
             href="/settings"

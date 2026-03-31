@@ -11,6 +11,8 @@ import {
   QrCode,
   Package,
   AlertTriangle,
+  CalendarDays,
+  Clock,
 } from 'lucide-react'
 import { Topbar } from '@/components/layout/topbar'
 import { StatusBadge } from '@/components/ui/status-badge'
@@ -146,6 +148,34 @@ export default async function DashboardPage() {
     }
   }
 
+  // Fetch today's appointments
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let todayAppointments: { id: string; scheduled_at: string; customer_name: string | null; customer: any; service_type: string | null; status: string }[] = []
+  if (garageId) {
+    const todayStart = new Date()
+    todayStart.setHours(0, 0, 0, 0)
+    const todayEnd = new Date()
+    todayEnd.setHours(23, 59, 59, 999)
+
+    const { data: apptData } = await supabase
+      .from('appointments')
+      .select('id, scheduled_at, customer_name, customer:customers(full_name), service_type, status')
+      .eq('garage_id', garageId)
+      .gte('scheduled_at', todayStart.toISOString())
+      .lte('scheduled_at', todayEnd.toISOString())
+      .neq('status', 'cancelled')
+      .order('scheduled_at', { ascending: true })
+
+    if (apptData) {
+      todayAppointments = apptData.map((a) => ({
+        ...a,
+        customer: Array.isArray(a.customer) ? a.customer[0] ?? null : a.customer,
+      })) as typeof todayAppointments
+    }
+  }
+
+  const nextAppointment = todayAppointments.find((a) => new Date(a.scheduled_at) > new Date())
+
   const stats: DashboardStats = {
     open_orders: openCount,
     in_progress: openOrders?.filter((o) => o.status === 'in_progress').length ?? 0,
@@ -154,7 +184,7 @@ export default async function DashboardPage() {
     revenue_today: 0,
     revenue_week: weekRevenue,
     revenue_month: 0,
-    appointments_today: 0,
+    appointments_today: todayAppointments.length,
   }
 
   const greeting = getGreeting(userName)
@@ -260,6 +290,86 @@ export default async function DashboardPage() {
             </div>
           </div>
         )}
+
+        {/* Today's Appointments */}
+        <div className="bg-surface-high rounded-xl overflow-hidden shadow-lg border-r-4 border-primary">
+          <div className="p-5 flex flex-row-reverse justify-between items-center">
+            <div className="flex items-center gap-2">
+              <CalendarDays size={18} className="text-primary" />
+              <h3 className="font-black text-base text-on-surface">
+                {"תורים היום"}
+              </h3>
+              <span className="bg-primary/10 text-primary text-xs font-bold px-2 py-0.5 rounded-full">
+                {todayAppointments.length}
+              </span>
+            </div>
+            <Link
+              href="/appointments"
+              className="flex items-center gap-1 text-xs text-on-surface-variant hover:text-primary transition-colors"
+            >
+              {"לוח זמנים"}
+              <ArrowLeft size={12} />
+            </Link>
+          </div>
+          <div className="px-5 pb-5">
+            {todayAppointments.length === 0 ? (
+              <p className="text-sm text-on-surface-variant">{"אין תורים מתוזמנים להיום"}</p>
+            ) : (
+              <div className="space-y-2">
+                {nextAppointment && (
+                  <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                      <Clock size={18} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-primary font-bold">{"התור הבא"}</p>
+                      <p className="text-sm font-bold text-on-surface truncate">
+                        {(() => {
+                          const c = nextAppointment.customer
+                          const cArr = Array.isArray(c) ? c[0] : c
+                          return (cArr as { full_name?: string })?.full_name ?? nextAppointment.customer_name ?? 'ללא שם'
+                        })()}
+                      </p>
+                      <p className="text-xs text-on-surface-variant">
+                        {new Date(nextAppointment.scheduled_at).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                        {nextAppointment.service_type ? ` - ${nextAppointment.service_type}` : ''}
+                      </p>
+                    </div>
+                  </div>
+                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                  {todayAppointments.slice(0, 6).map((appt) => {
+                    const c = appt.customer
+                    const cArr = Array.isArray(c) ? c[0] : c
+                    const displayName = (cArr as { full_name?: string })?.full_name ?? appt.customer_name ?? 'ללא שם'
+                    const time = new Date(appt.scheduled_at).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', hour12: false })
+                    return (
+                      <Link
+                        key={appt.id}
+                        href="/appointments"
+                        className="bg-surface-low rounded-lg p-3 border border-white/5 hover:border-primary/20 transition-all flex items-center justify-between gap-2"
+                      >
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold text-on-surface truncate">{displayName}</p>
+                          <p className="text-xs text-on-surface-variant">{appt.service_type ?? ''}</p>
+                        </div>
+                        <span className="text-xs font-bold text-primary tabular-nums shrink-0">{time}</span>
+                      </Link>
+                    )
+                  })}
+                </div>
+                {todayAppointments.length > 6 && (
+                  <Link
+                    href="/appointments"
+                    className="block text-center text-xs text-primary hover:underline pt-1"
+                  >
+                    {`ועוד ${todayAppointments.length - 6} תורים...`}
+                  </Link>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
 
         {/* Dashboard Layout: Recent Orders & Quick Actions */}
         <div className="grid grid-cols-12 gap-6">

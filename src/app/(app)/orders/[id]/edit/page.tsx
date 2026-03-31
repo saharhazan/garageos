@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input, Textarea, Select } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
 import { formatCurrency } from '@/lib/utils'
+import { useToastActions } from '@/hooks/use-toast'
 import type { OrderItem, WorkOrder } from '@/types'
 
 const TAX_RATE = 0.17
@@ -34,6 +35,7 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 export default function EditOrderPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
+  const { toast } = useToastActions()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -147,13 +149,17 @@ export default function EditOrderPage({ params }: { params: Promise<{ id: string
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        setError(data.error ?? 'שגיאה בעדכון הזמנה')
+        const msg = data.error ?? 'שגיאה בעדכון הזמנה'
+        setError(msg)
+        toast.error(msg)
         return
       }
 
+      toast.success('השינויים נשמרו')
       router.push(`/orders/${id}`)
     } catch {
       setError('אירעה שגיאה. נסה שוב.')
+      toast.error('אירעה שגיאה. נסה שוב.')
     } finally {
       setSaving(false)
     }

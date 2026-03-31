@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Input, Textarea, Select } from '@/components/ui/input'
 import { AutocompleteInput, type AutocompleteSuggestion } from '@/components/ui/autocomplete-input'
 import { formatCurrency } from '@/lib/utils'
+import { useToastActions } from '@/hooks/use-toast'
 
 interface CustomerResult {
   id: string
@@ -50,6 +51,7 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 export default function NewOrderPage() {
   const router = useRouter()
   const { garageId } = useAuth()
+  const { toast } = useToastActions()
   const [saving, setSaving] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const plateInputRef = useRef<HTMLInputElement>(null)
@@ -292,14 +294,18 @@ export default function NewOrderPage() {
       const result = await res.json()
 
       if (!res.ok || !result.data) {
-        setErrors({ global: result.error ?? 'שגיאה ביצירת העבודה' })
+        const msg = result.error ?? 'שגיאה ביצירת העבודה'
+        setErrors({ global: msg })
+        toast.error(msg)
         return
       }
 
+      toast.success('כרטיס עבודה נוצר בהצלחה')
       router.push(`/orders/${result.data.id}`)
     } catch (e) {
       console.error(e)
       setErrors({ global: 'אירעה שגיאה. נסה שוב.' })
+      toast.error('אירעה שגיאה. נסה שוב.')
     } finally {
       setter(false)
     }

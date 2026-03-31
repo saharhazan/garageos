@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useToastActions } from '@/hooks/use-toast'
 import type { OrderStatus } from '@/types'
 
 const NEXT_STATUS: Partial<Record<OrderStatus, OrderStatus>> = {
@@ -27,6 +28,7 @@ interface StatusButtonProps {
 
 export function StatusButton({ orderId, currentStatus }: StatusButtonProps) {
   const router = useRouter()
+  const { toast } = useToastActions()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -49,13 +51,17 @@ export function StatusButton({ orderId, currentStatus }: StatusButtonProps) {
       const result = await res.json()
 
       if (!res.ok) {
-        setError(result.error ?? 'שגיאה בעדכון סטטוס')
+        const msg = result.error ?? 'שגיאה בעדכון סטטוס'
+        setError(msg)
+        toast.error(msg)
         return
       }
 
+      toast.success('הסטטוס עודכן')
       router.refresh()
     } catch {
       setError('אירעה שגיאה. נסה שוב.')
+      toast.error('אירעה שגיאה. נסה שוב.')
     } finally {
       setLoading(false)
     }

@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Input, Textarea } from '@/components/ui/input'
 import { AutocompleteInput, type AutocompleteSuggestion } from '@/components/ui/autocomplete-input'
 import { formatCurrency } from '@/lib/utils'
+import { useToastActions } from '@/hooks/use-toast'
 
 interface CustomerResult {
   id: string
@@ -50,6 +51,7 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 export default function NewQuotePage() {
   const router = useRouter()
   const { garageId } = useAuth()
+  const { toast } = useToastActions()
   const [submitting, setSubmitting] = useState(false)
   const plateInputRef = useRef<HTMLInputElement>(null)
 
@@ -288,14 +290,17 @@ export default function NewQuotePage() {
 
       if (!res.ok) {
         setErrors({ global: 'שגיאה ביצירת הצעת מחיר' })
+        toast.error('שגיאה ביצירת הצעת מחיר')
         return
       }
 
       const { data: quote } = await res.json()
+      toast.success('הצעת מחיר נוצרה')
       router.push(`/quotes/${quote.id}`)
     } catch (e) {
       console.error(e)
       setErrors({ global: 'אירעה שגיאה. נסה שוב.' })
+      toast.error('אירעה שגיאה. נסה שוב.')
     } finally {
       setSubmitting(false)
     }

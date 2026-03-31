@@ -260,6 +260,27 @@ export interface DocumentData {
   parts_type?: string // new/refurbished
 }
 
+// ─── Appointment ──────────────────────────────────────
+export type AppointmentStatus = 'scheduled' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled' | 'no_show'
+
+export interface Appointment {
+  id: string
+  garage_id: string
+  customer_id: string | null
+  vehicle_id: string | null
+  scheduled_at: string
+  duration_minutes: number
+  service_type: string | null
+  notes: string | null
+  status: AppointmentStatus
+  customer_name: string | null
+  customer_phone: string | null
+  created_at: string
+  updated_at: string
+  customer?: Customer
+  vehicle?: Vehicle
+}
+
 // ─── Dashboard ─────────────────────────────────────────
 export interface DashboardStats {
   open_orders: number

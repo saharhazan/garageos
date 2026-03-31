@@ -71,3 +71,44 @@ input, select, textarea { font-size: 16px; }
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.05em;
 }
+
+/* ─── Print Styles ─── */
+@media print {
+  /* Hide navigation and non-essential elements */
+  aside, nav, header, .no-print, [data-no-print] {
+    display: none !important;
+  }
+
+  /* Full width content */
+  main {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  /* White background for printing */
+  body, html {
+    background: white !important;
+    color: black !important;
+  }
+
+  /* Cards should have borders for print */
+  .print-card {
+    border: 1px solid #ddd !important;
+    break-inside: avoid;
+  }
+
+  /* Ensure text is dark */
+  * {
+    color: black !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Keep colored status badges */
+  [data-print-color] {
+    color: inherit !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getApiAuth } from '@/lib/api-auth'
+import { checkOrderLimit } from '@/lib/plan-limits'
 import type { OrderItem } from '@/types'
 
 const TAX_RATE = 0.17
@@ -94,6 +95,25 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'חסרים שדות חובה: customer_id, vehicle_id' }, { status: 400 })
   }
 
+  // Fetch garage for plan check and settings
+  const { data: garage } = await supabase
+    .from('garages')
+    .select('subscription_plan, settings')
+    .eq('id', profile.garageId)
+    .single()
+
+  const plan = garage?.subscription_plan ?? 'starter'
+  const orderLimit = await checkOrderLimit(supabase, profile.garageId, plan)
+  if (!orderLimit.allowed) {
+    return NextResponse.json(
+      {
+        error: 'הגעת למגבלת כרטיסי העבודה בתוכנית שלך. שדרג לתוכנית מקצועי.',
+        upgrade: true,
+      },
+      { status: 403 }
+    )
+  }
+
   // Generate job number using DB function
   const { data: seqData, error: seqError } = await supabase.rpc('next_job_number', {
     p_garage_id: profile.garageId,
@@ -102,13 +122,6 @@ export async function POST(request: NextRequest) {
     console.error('Error generating job number:', seqError)
     return NextResponse.json({ error: 'שגיאה ביצירת מספר עבודה' }, { status: 500 })
   }
-
-  // Fetch garage settings for prefix
-  const { data: garage } = await supabase
-    .from('garages')
-    .select('settings')
-    .eq('id', profile.garageId)
-    .single()
 
   const settings = (garage?.settings as { job_prefix?: string }) ?? {}
   const prefix = settings.job_prefix ?? 'AK'
