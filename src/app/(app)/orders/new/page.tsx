@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus, Trash2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -8,7 +8,23 @@ import { useAuth } from '@/hooks/use-auth-context'
 import { Topbar } from '@/components/layout/topbar'
 import { Button } from '@/components/ui/button'
 import { Input, Textarea, Select } from '@/components/ui/input'
+import { AutocompleteInput, type AutocompleteSuggestion } from '@/components/ui/autocomplete-input'
 import { formatCurrency } from '@/lib/utils'
+
+interface CustomerResult {
+  id: string
+  full_name: string
+  phone: string
+  email: string | null
+  vehicles: {
+    id: string
+    license_plate: string
+    make: string | null
+    model: string | null
+    year: number | null
+    color: string | null
+  }[]
+}
 
 const TAX_RATE = 0.17
 
@@ -64,6 +80,73 @@ export default function NewOrderPage() {
 
   // Errors
   const [errors, setErrors] = useState<Record<string, string>>({})
+
+  // Customer autocomplete
+  const [customerSuggestions, setCustomerSuggestions] = useState<AutocompleteSuggestion[]>([])
+  const [customerResults, setCustomerResults] = useState<CustomerResult[]>([])
+  const [customerSearchLoading, setCustomerSearchLoading] = useState(false)
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
+
+  const searchCustomers = useCallback((query: string) => {
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current)
+    if (query.length < 2) {
+      setCustomerSuggestions([])
+      setCustomerResults([])
+      return
+    }
+    searchTimeoutRef.current = setTimeout(async () => {
+      setCustomerSearchLoading(true)
+      try {
+        const supabase = createClient()
+        const { data } = await supabase
+          .from('customers')
+          .select('*, vehicles(*)')
+          .or(`full_name.ilike.%${query}%,phone.ilike.%${query}%`)
+          .limit(5)
+
+        const results = (data ?? []) as CustomerResult[]
+        setCustomerResults(results)
+        setCustomerSuggestions(
+          results.map((c) => ({
+            id: c.id,
+            label: c.full_name,
+            secondary: c.phone,
+          }))
+        )
+      } catch {
+        // ignore
+      } finally {
+        setCustomerSearchLoading(false)
+      }
+    }, 300)
+  }, [])
+
+  function handleCustomerSelect(suggestion: AutocompleteSuggestion) {
+    const customer = customerResults.find((c) => c.id === suggestion.id)
+    if (!customer) return
+    setCustomerName(customer.full_name)
+    setCustomerPhone(customer.phone)
+    setCustomerEmail(customer.email ?? '')
+    setCustomerSuggestions([])
+    setCustomerResults([])
+
+    // Auto-fill first vehicle if exists
+    if (customer.vehicles?.length > 0) {
+      const v = customer.vehicles[0]
+      setLicensePlate(v.license_plate ?? '')
+      setMake(v.make ?? '')
+      setModel(v.model ?? '')
+      setYear(v.year?.toString() ?? '')
+      setColor(v.color ?? '')
+    }
+  }
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current)
+    }
+  }, [])
 
   // Computed totals
   const subtotal = items.reduce((sum, item) => sum + item.quantity * item.unit_price, 0)
@@ -322,19 +405,31 @@ export default function NewOrderPage() {
         <section>
           <SectionTitle>לקוח</SectionTitle>
           <div className="space-y-4">
-            <Input
+            <AutocompleteInput
               label="שם מלא *"
               placeholder="ישראל ישראלי"
               value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
+              onChange={(e) => {
+                setCustomerName(e.target.value)
+                searchCustomers(e.target.value)
+              }}
+              onSelect={handleCustomerSelect}
+              suggestions={customerSuggestions}
+              loading={customerSearchLoading}
               error={errors.customerName}
             />
             <div className="grid grid-cols-2 gap-3">
-              <Input
+              <AutocompleteInput
                 label="טלפון *"
                 placeholder="050-0000000"
                 value={customerPhone}
-                onChange={(e) => setCustomerPhone(e.target.value)}
+                onChange={(e) => {
+                  setCustomerPhone(e.target.value)
+                  searchCustomers(e.target.value)
+                }}
+                onSelect={handleCustomerSelect}
+                suggestions={customerSuggestions}
+                loading={customerSearchLoading}
                 error={errors.customerPhone}
                 type="tel"
                 dir="ltr"

@@ -10,6 +10,7 @@ import {
   Key,
   QrCode,
   Package,
+  AlertTriangle,
 } from 'lucide-react'
 import { Topbar } from '@/components/layout/topbar'
 import { StatusBadge } from '@/components/ui/status-badge'
@@ -130,6 +131,21 @@ export default async function DashboardPage() {
   if (garageId) recentOrdersQuery = recentOrdersQuery.eq('garage_id', garageId)
   const { data: recentOrders } = await recentOrdersQuery
 
+  // Fetch low stock inventory items
+  let lowStockItems: { id: string; name: string; quantity: number; min_quantity: number }[] = []
+  if (garageId) {
+    const { data: inventoryData } = await supabase
+      .from('inventory_items')
+      .select('id, name, quantity, min_quantity')
+      .eq('garage_id', garageId)
+      .gt('min_quantity', 0)
+      .order('quantity', { ascending: true })
+
+    if (inventoryData) {
+      lowStockItems = inventoryData.filter((item) => item.quantity <= item.min_quantity)
+    }
+  }
+
   const stats: DashboardStats = {
     open_orders: openCount,
     in_progress: openOrders?.filter((o) => o.status === 'in_progress').length ?? 0,
@@ -194,6 +210,56 @@ export default async function DashboardPage() {
             sub="רכבים"
           />
         </div>
+
+        {/* Low Stock Alerts */}
+        {lowStockItems.length > 0 && (
+          <div className="bg-surface-high rounded-xl overflow-hidden shadow-lg border-r-4 border-tertiary">
+            <div className="p-5 flex flex-row-reverse justify-between items-center">
+              <div className="flex items-center gap-2">
+                <AlertTriangle size={18} className="text-tertiary" />
+                <h3 className="font-black text-base text-on-surface">
+                  {"התראות מלאי"}
+                </h3>
+                <span className="bg-tertiary/10 text-tertiary text-xs font-bold px-2 py-0.5 rounded-full">
+                  {lowStockItems.length}
+                </span>
+              </div>
+              <Link
+                href="/inventory"
+                className="flex items-center gap-1 text-xs text-on-surface-variant hover:text-primary transition-colors"
+              >
+                {"צפה במלאי"}
+                <ArrowLeft size={12} />
+              </Link>
+            </div>
+            <div className="px-5 pb-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {lowStockItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="bg-surface-low rounded-lg p-3 border border-white/5 flex items-center justify-between gap-3"
+                  >
+                    <div className="text-right min-w-0">
+                      <p className="text-sm font-bold text-on-surface truncate">{item.name}</p>
+                      <p className="text-xs text-on-surface-variant">
+                        {"מינימום: "}
+                        <span className="tabular-nums">{item.min_quantity}</span>
+                      </p>
+                    </div>
+                    <div className="shrink-0 text-center">
+                      <span className={`text-xl font-black tabular-nums ${
+                        item.quantity === 0 ? 'text-error' : 'text-secondary'
+                      }`}>
+                        {item.quantity}
+                      </span>
+                      <p className="text-[10px] text-on-surface-variant">{"במלאי"}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Dashboard Layout: Recent Orders & Quick Actions */}
         <div className="grid grid-cols-12 gap-6">

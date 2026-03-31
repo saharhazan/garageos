@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { AlertTriangle, Search, Download, Plus } from 'lucide-react'
+import { AlertTriangle, Search, Download, Plus, Trash2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Topbar } from '@/components/layout/topbar'
 import { Button } from '@/components/ui/button'
@@ -10,6 +10,8 @@ import { Badge } from '@/components/ui/badge'
 import { Spinner } from '@/components/ui/spinner'
 import { formatCurrency } from '@/lib/utils'
 import { exportToExcel } from '@/lib/excel-export'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
+import { useToastActions } from '@/hooks/use-toast'
 import type { InventoryItem } from '@/types'
 
 export default function InventoryPage() {
@@ -17,6 +19,9 @@ export default function InventoryPage() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [exporting, setExporting] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState<InventoryItem | null>(null)
+  const [deleting, setDeleting] = useState(false)
+  const { toast } = useToastActions()
 
   async function handleExport() {
     setExporting(true)
@@ -52,25 +57,46 @@ export default function InventoryPage() {
     }
   }
 
-  useEffect(() => {
-    async function fetchItems() {
-      setLoading(true)
-      const supabase = createClient()
-      let query = supabase
-        .from('inventory_items')
-        .select('*')
-        .order('name')
+  const fetchItems = useCallback(async () => {
+    setLoading(true)
+    const supabase = createClient()
+    let query = supabase
+      .from('inventory_items')
+      .select('*')
+      .order('name')
 
-      if (search.trim()) {
-        query = query.ilike('name', `%${search}%`)
-      }
-
-      const { data } = await query
-      setItems(data ?? [])
-      setLoading(false)
+    if (search.trim()) {
+      query = query.ilike('name', `%${search}%`)
     }
-    fetchItems()
+
+    const { data } = await query
+    setItems(data ?? [])
+    setLoading(false)
   }, [search])
+
+  useEffect(() => {
+    fetchItems()
+  }, [fetchItems])
+
+  async function handleDeleteItem() {
+    if (!deleteTarget) return
+    setDeleting(true)
+    try {
+      const res = await fetch(`/api/inventory/${deleteTarget.id}`, { method: 'DELETE' })
+      if (!res.ok) {
+        const json = await res.json()
+        toast.error(json.error ?? 'שגיאה במחיקת פריט')
+        return
+      }
+      toast.success('הפריט נמחק')
+      fetchItems()
+    } catch {
+      toast.error('שגיאה במחיקת פריט')
+    } finally {
+      setDeleting(false)
+      setDeleteTarget(null)
+    }
+  }
 
   const lowStock = items.filter((i) => i.quantity <= i.min_quantity)
 
@@ -127,12 +153,13 @@ export default function InventoryPage() {
                   <th className="text-right px-4 h-9 text-xs font-medium text-outline">מלאי</th>
                   <th className="text-right px-4 h-9 text-xs font-medium text-outline">מחיר</th>
                   <th className="text-right px-4 h-9 text-xs font-medium text-outline">ספק</th>
+                  <th className="w-10" />
                 </tr>
               </thead>
               <tbody>
                 {items.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-10 text-center text-sm text-outline">
+                    <td colSpan={6} className="px-4 py-10 text-center text-sm text-outline">
                       {search ? 'לא נמצאו פריטים' : 'אין פריטים במלאי'}
                     </td>
                   </tr>
@@ -164,6 +191,16 @@ export default function InventoryPage() {
                           {formatCurrency(item.unit_price)}
                         </td>
                         <td className="px-4 h-11 text-on-surface-variant">{item.supplier ?? '-'}</td>
+                        <td className="px-2 h-11">
+                          <button
+                            type="button"
+                            onClick={() => setDeleteTarget(item)}
+                            className="flex items-center justify-center w-8 h-8 rounded-md text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors"
+                            title="מחק פריט"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </td>
                       </tr>
                     )
                   })
@@ -173,6 +210,16 @@ export default function InventoryPage() {
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleDeleteItem}
+        title="מחיקת פריט מלאי"
+        description={`האם למחוק את "${deleteTarget?.name ?? ''}"? פעולה זו לא ניתנת לביטול.`}
+        confirmLabel="מחק פריט"
+        loading={deleting}
+      />
     </div>
   )
 }

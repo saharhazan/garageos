@@ -25,7 +25,7 @@ export async function updateSession(request: NextRequest) {
 
   const { pathname } = request.nextUrl
   const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/signup') || pathname.startsWith('/verify') || pathname.startsWith('/select-garage') || pathname.startsWith('/onboarding') || pathname.startsWith('/forgot-password')
-  const isPublicRoute = pathname === '/' || pathname === '/pricing' || pathname === '/about' || pathname === '/support' || pathname === '/privacy' || pathname === '/terms'
+  const isPublicRoute = pathname === '/' || pathname === '/pricing' || pathname === '/about' || pathname === '/support' || pathname === '/privacy' || pathname === '/terms' || pathname.startsWith('/status')
 
   const { data: { user } } = await supabase.auth.getUser()
 

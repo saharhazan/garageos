@@ -91,3 +91,25 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
 
   return NextResponse.json({ data })
 }
+
+export async function DELETE(_request: NextRequest, context: RouteContext) {
+  const { id } = await context.params
+  const auth = await getApiAuth()
+  if (auth.error) return auth.error
+  const { profile } = auth
+
+  const supabase = await createClient()
+
+  const { error } = await supabase
+    .from('customers')
+    .delete()
+    .eq('id', id)
+    .eq('garage_id', profile.garageId)
+
+  if (error) {
+    console.error('Error deleting customer:', error)
+    return NextResponse.json({ error: 'שגיאה במחיקת לקוח' }, { status: 500 })
+  }
+
+  return NextResponse.json({ data: { success: true } })
+}

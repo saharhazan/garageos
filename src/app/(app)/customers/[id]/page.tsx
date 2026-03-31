@@ -15,6 +15,7 @@ import { Topbar } from '@/components/layout/topbar'
 import { Button } from '@/components/ui/button'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { formatCurrency, formatDate } from '@/lib/utils'
+import { DeleteCustomerButton } from './delete-button'
 import type { OrderStatus } from '@/types'
 
 // ─── License Plate (Israeli yellow style) ─────────────────
@@ -95,12 +96,15 @@ export default async function CustomerDetailPage({ params }: PageProps) {
         title={customer.full_name}
         backHref="/customers"
         actions={
-          <Link href={`/customers/${id}/edit`}>
-            <Button variant="default" size="sm">
-              <Edit3 size={14} />
-              <span className="hidden md:inline">עריכה</span>
-            </Button>
-          </Link>
+          <div className="flex gap-2">
+            <DeleteCustomerButton customerId={id} />
+            <Link href={`/customers/${id}/edit`}>
+              <Button variant="default" size="sm">
+                <Edit3 size={14} />
+                <span className="hidden md:inline">עריכה</span>
+              </Button>
+            </Link>
+          </div>
         }
       />
 

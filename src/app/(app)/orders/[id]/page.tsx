@@ -15,6 +15,8 @@ import { Button } from '@/components/ui/button'
 import { formatCurrency, formatDateTime, formatDate, PRIORITY_LABELS } from '@/lib/utils'
 import { StatusButton } from './status-button'
 import { SignatureSection } from './signature-section'
+import { DeleteOrderButton } from './delete-button'
+import { ShareStatusButton } from './share-status-button'
 import type { WorkOrder, OrderStatus } from '@/types'
 
 const STATUS_FLOW: OrderStatus[] = ['received', 'in_progress', 'ready', 'delivered']
@@ -82,6 +84,8 @@ export default async function OrderDetailPage({ params }: PageProps) {
         backHref="/orders"
         actions={
           <div className="flex gap-2">
+            <ShareStatusButton orderId={id} />
+            <DeleteOrderButton orderId={id} />
             <Link href={`/orders/${id}/document`}>
               <Button variant="teal" size="sm">
                 <FileText size={14} />
