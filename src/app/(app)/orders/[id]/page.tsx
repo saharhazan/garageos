@@ -58,7 +58,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
   const { data: order } = await supabase
     .from('work_orders')
     .select(
-      '*, customer:customers(full_name, phone, email), vehicle:vehicles(license_plate, make, model, year, color, mileage), technician:garage_users(full_name)'
+      '*, customer:customers(full_name, phone, email), vehicle:vehicles(license_plate, make, model, year, color, mileage), technician:users(full_name)'
     )
     .eq('id', id)
     .single()

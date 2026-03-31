@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { getAuthProfile } from '@/lib/auth'
 import Link from 'next/link'
 import {
   Wrench,
@@ -90,16 +91,10 @@ function LicensePlate({ plate }: { plate: string }) {
 
 export default async function DashboardPage() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const authProfile = await getAuthProfile()
 
-  // Fetch user profile
-  const { data: profile } = await supabase
-    .from('garage_users')
-    .select('full_name, role')
-    .eq('id', user?.id ?? '')
-    .single()
-
-  const userName = profile?.full_name?.split(' ')[0] ?? 'משתמש'
+  const userName = authProfile?.fullName?.split(' ')[0] ?? 'משתמש'
+  const garageId = authProfile?.garageId
 
   // Fetch stats
   const today = new Date()
@@ -107,27 +102,33 @@ export default async function DashboardPage() {
   const weekStart = new Date(today)
   weekStart.setDate(weekStart.getDate() - 7)
 
-  const { data: openOrders } = await supabase
+  let openOrdersQuery = supabase
     .from('work_orders')
     .select('id, status')
     .in('status', ['received', 'in_progress', 'ready'])
+  if (garageId) openOrdersQuery = openOrdersQuery.eq('garage_id', garageId)
+  const { data: openOrders } = await openOrdersQuery
 
-  const { data: weekOrders } = await supabase
+  let weekOrdersQuery = supabase
     .from('work_orders')
     .select('total_amount')
     .gte('created_at', weekStart.toISOString())
     .eq('status', 'delivered')
+  if (garageId) weekOrdersQuery = weekOrdersQuery.eq('garage_id', garageId)
+  const { data: weekOrders } = await weekOrdersQuery
 
   const weekRevenue = weekOrders?.reduce((sum, o) => sum + (o.total_amount ?? 0), 0) ?? 0
   const openCount = openOrders?.length ?? 0
   const readyCount = openOrders?.filter((o) => o.status === 'ready').length ?? 0
 
   // Fetch recent orders
-  const { data: recentOrders } = await supabase
+  let recentOrdersQuery = supabase
     .from('work_orders')
     .select('*, customer:customers(full_name, phone), vehicle:vehicles(license_plate, make, model)')
     .order('created_at', { ascending: false })
     .limit(10)
+  if (garageId) recentOrdersQuery = recentOrdersQuery.eq('garage_id', garageId)
+  const { data: recentOrders } = await recentOrdersQuery
 
   const stats: DashboardStats = {
     open_orders: openCount,

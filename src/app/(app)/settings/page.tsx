@@ -7,6 +7,7 @@ import {
   ChevronLeft, Save, Loader2
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/hooks/use-auth-context'
 import { Topbar } from '@/components/layout/topbar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -15,6 +16,7 @@ type SettingsView = 'main' | 'profile' | 'notifications' | 'security' | 'garage'
 
 export default function SettingsPage() {
   const router = useRouter()
+  const { garageId } = useAuth()
   const [signingOut, setSigningOut] = useState(false)
   const [view, setView] = useState<SettingsView>('main')
 
@@ -22,7 +24,6 @@ export default function SettingsPage() {
     setSigningOut(true)
     const supabase = createClient()
     await supabase.auth.signOut()
-    localStorage.removeItem('selected_garage_id')
     router.push('/login')
   }
 
@@ -47,10 +48,10 @@ export default function SettingsPage() {
             חזרה להגדרות
           </button>
 
-          {view === 'profile' && <ProfileForm />}
-          {view === 'notifications' && <NotificationSettings />}
+          {view === 'profile' && <ProfileForm garageId={garageId} />}
+          {view === 'notifications' && <NotificationSettings garageId={garageId} />}
           {view === 'security' && <SecurityForm />}
-          {view === 'garage' && <GarageForm />}
+          {view === 'garage' && <GarageForm garageId={garageId} />}
           {view === 'billing' && <BillingSection />}
         </div>
       </div>
@@ -138,7 +139,7 @@ export default function SettingsPage() {
 }
 
 // ─── Profile Form ──────────────────────────────────────
-function ProfileForm() {
+function ProfileForm({ garageId }: { garageId: string | null }) {
   const [fullName, setFullName] = useState('')
   const [phone, setPhone] = useState('')
   const [saving, setSaving] = useState(false)
@@ -150,7 +151,6 @@ function ProfileForm() {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
-      const garageId = localStorage.getItem('selected_garage_id')
       if (!garageId) return
       const { data } = await supabase
         .from('users')
@@ -165,7 +165,7 @@ function ProfileForm() {
       setLoading(false)
     }
     load()
-  }, [])
+  }, [garageId])
 
   async function handleSave() {
     setSaving(true)
@@ -194,7 +194,7 @@ function ProfileForm() {
 }
 
 // ─── Notification Settings ─────────────────────────────
-function NotificationSettings() {
+function NotificationSettings({ garageId }: { garageId: string | null }) {
   const [settings, setSettings] = useState({
     sms_enabled: false,
     whatsapp_enabled: false,
@@ -206,7 +206,6 @@ function NotificationSettings() {
   useEffect(() => {
     async function load() {
       const supabase = createClient()
-      const garageId = localStorage.getItem('selected_garage_id')
       if (!garageId) return
       const { data } = await supabase
         .from('garages')
@@ -223,7 +222,7 @@ function NotificationSettings() {
       setLoading(false)
     }
     load()
-  }, [])
+  }, [garageId])
 
   async function handleSave() {
     setSaving(true)
@@ -343,7 +342,7 @@ function SecurityForm() {
 }
 
 // ─── Garage Form ───────────────────────────────────────
-function GarageForm() {
+function GarageForm({ garageId }: { garageId: string | null }) {
   const [name, setName] = useState('')
   const [address, setAddress] = useState('')
   const [phone, setPhone] = useState('')
@@ -355,7 +354,6 @@ function GarageForm() {
   useEffect(() => {
     async function load() {
       const supabase = createClient()
-      const garageId = localStorage.getItem('selected_garage_id')
       if (!garageId) return
       const { data } = await supabase.from('garages').select('*').eq('id', garageId).single()
       if (data) {
@@ -368,7 +366,7 @@ function GarageForm() {
       setLoading(false)
     }
     load()
-  }, [])
+  }, [garageId])
 
   async function handleSave() {
     setSaving(true)

@@ -37,7 +37,7 @@ export default function SelectGaragePage() {
       }
 
       const { data } = await supabase
-        .from('garage_users')
+        .from('users')
         .select('garage_id, role, garage:garages(id, name, address, is_active)')
         .eq('id', user.id)
 
@@ -60,7 +60,7 @@ export default function SelectGaragePage() {
 
   async function handleSelect(membership: GarageMembership, silent = false) {
     if (!silent) setSelecting(membership.garage_id)
-    localStorage.setItem('selected_garage_id', membership.garage_id)
+    // garage_id is now resolved server-side from the users table via auth context
     router.push('/dashboard')
   }
 

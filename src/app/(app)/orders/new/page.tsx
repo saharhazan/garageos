@@ -4,6 +4,7 @@ import { useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus, Trash2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/hooks/use-auth-context'
 import { Topbar } from '@/components/layout/topbar'
 import { Button } from '@/components/ui/button'
 import { Input, Textarea, Select } from '@/components/ui/input'
@@ -32,6 +33,7 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 
 export default function NewOrderPage() {
   const router = useRouter()
+  const { garageId } = useAuth()
   const [saving, setSaving] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const plateInputRef = useRef<HTMLInputElement>(null)
@@ -134,7 +136,6 @@ export default function NewOrderPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
-      const garageId = localStorage.getItem('selected_garage_id')
       if (!garageId) return
 
       // Upsert customer

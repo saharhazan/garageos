@@ -4,6 +4,7 @@ import { useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus, Trash2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/hooks/use-auth-context'
 import { Topbar } from '@/components/layout/topbar'
 import { Button } from '@/components/ui/button'
 import { Input, Textarea } from '@/components/ui/input'
@@ -32,6 +33,7 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 
 export default function NewQuotePage() {
   const router = useRouter()
+  const { garageId } = useAuth()
   const [submitting, setSubmitting] = useState(false)
   const plateInputRef = useRef<HTMLInputElement>(null)
 
@@ -130,7 +132,6 @@ export default function NewQuotePage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
-      const garageId = localStorage.getItem('selected_garage_id')
       if (!garageId) return
 
       // Upsert customer
