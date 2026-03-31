@@ -29,7 +29,7 @@ export default async function MarketingLayout({
           {/* Logo + Nav */}
           <div className="flex items-center gap-10 flex-row-reverse">
             <Link href="/">
-              <img src="/logo.png" alt="GarageOS" className="h-12 w-auto object-contain" />
+              <img src="/logo.png" alt="GarageOS" className="h-16 w-auto object-contain" />
             </Link>
             <nav className="hidden md:flex flex-row-reverse gap-8 items-center">
               {navLinks.map((link) => (
@@ -69,7 +69,7 @@ export default async function MarketingLayout({
           <div className="flex flex-col md:flex-row-reverse justify-between items-center gap-8">
             {/* Logo */}
             <Link href="/">
-              <img src="/logo.png" alt="GarageOS" className="h-14 w-auto object-contain" />
+              <img src="/logo.png" alt="GarageOS" className="h-20 w-auto object-contain" />
             </Link>
 
             {/* Footer links */}
@@ -100,12 +100,8 @@ export default async function MarketingLayout({
 
             {/* Copyright */}
             <div className="text-center md:text-right">
-              <p className="text-on-surface-variant mb-2">
+              <p className="text-on-surface-variant text-sm">
                 {'\u00A9'} {new Date().getFullYear()} GarageOS. כל הזכויות שמורות.
-              </p>
-              <p className="font-bold text-on-surface flex items-center justify-center md:justify-end gap-2">
-                <span>נבנה בישראל</span>
-                <span className="text-lg">🇮🇱</span>
               </p>
             </div>
           </div>

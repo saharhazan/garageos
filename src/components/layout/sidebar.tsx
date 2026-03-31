@@ -73,7 +73,7 @@ export function Sidebar({ className, userName = 'משתמש', userRole = 'מנה
     >
       {/* Logo + Profile */}
       <div className="flex items-center justify-between px-4 pt-6 pb-4">
-        <img src="/logo.png" alt="GarageOS" className="h-10 w-auto object-contain" />
+        <img src="/logo.png" alt="GarageOS" className="h-14 w-auto object-contain" />
         <div className="w-10 h-10 rounded-xl overflow-hidden bg-surface-highest shrink-0">
           <div className="w-full h-full flex items-center justify-center text-on-surface-variant text-sm font-bold">
             {userName
