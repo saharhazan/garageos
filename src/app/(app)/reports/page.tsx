@@ -367,10 +367,10 @@ export default function ReportsPage() {
             </Button>
             <button
               onClick={() => window.print()}
-              className="flex items-center justify-center w-8 h-8 rounded-md text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-colors"
+              className="flex items-center justify-center w-8 h-8 rounded-md text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-colors no-print"
               title="הדפסה"
             >
-              <Download size={16} />
+              <Printer size={16} />
             </button>
           </div>
         }
