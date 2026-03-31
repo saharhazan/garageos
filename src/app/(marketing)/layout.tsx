@@ -28,8 +28,9 @@ export default async function MarketingLayout({
         <div className="w-full max-w-7xl mx-auto flex flex-row-reverse justify-between items-center">
           {/* Logo + Nav */}
           <div className="flex items-center gap-6 flex-row-reverse">
-            <Link href="/" className="text-2xl font-black text-brand uppercase tracking-tighter">
-              GarageOS
+            <Link href="/" className="flex items-center gap-2">
+              <img src="/logo.png" alt="GarageOS" className="w-8 h-8 object-contain" />
+              <span className="text-2xl font-black text-brand uppercase tracking-tighter">GarageOS</span>
             </Link>
             <nav className="hidden md:flex flex-row-reverse gap-8 items-center">
               {navLinks.map((link) => (
@@ -68,8 +69,9 @@ export default async function MarketingLayout({
         <div className="max-w-7xl mx-auto px-6 md:px-8">
           <div className="flex flex-col md:flex-row-reverse justify-between items-center gap-8">
             {/* Logo */}
-            <Link href="/" className="text-2xl font-black text-brand uppercase tracking-tighter">
-              GarageOS
+            <Link href="/" className="flex items-center gap-2">
+              <img src="/logo.png" alt="GarageOS" className="w-8 h-8 object-contain" />
+              <span className="text-2xl font-black text-brand uppercase tracking-tighter">GarageOS</span>
             </Link>
 
             {/* Footer links */}
@@ -85,9 +87,15 @@ export default async function MarketingLayout({
               <div>
                 <h5 className="font-bold text-on-surface mb-4">חברה</h5>
                 <ul className="text-on-surface-variant space-y-2 text-sm">
-                  <li><Link className="hover:text-primary transition-colors" href="#">עלינו</Link></li>
-                  <li><Link className="hover:text-primary transition-colors" href="#">תמיכה</Link></li>
-                  <li><Link className="hover:text-primary transition-colors" href="#">בלוג</Link></li>
+                  <li><Link className="hover:text-primary transition-colors" href="/about">עלינו</Link></li>
+                  <li><Link className="hover:text-primary transition-colors" href="/support">תמיכה</Link></li>
+                </ul>
+              </div>
+              <div>
+                <h5 className="font-bold text-on-surface mb-4">משפטי</h5>
+                <ul className="text-on-surface-variant space-y-2 text-sm">
+                  <li><Link className="hover:text-primary transition-colors" href="/privacy">מדיניות פרטיות</Link></li>
+                  <li><Link className="hover:text-primary transition-colors" href="/terms">תנאי שימוש</Link></li>
                 </ul>
               </div>
             </div>

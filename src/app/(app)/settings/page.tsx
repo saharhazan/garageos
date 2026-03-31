@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   LogOut, User, Bell, Building2, Shield, CreditCard,
-  ChevronLeft, Save, Loader2
+  ChevronLeft, Save, Loader2, FileText
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/use-auth-context'
@@ -12,7 +12,7 @@ import { Topbar } from '@/components/layout/topbar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
-type SettingsView = 'main' | 'profile' | 'notifications' | 'security' | 'garage' | 'billing'
+type SettingsView = 'main' | 'profile' | 'notifications' | 'security' | 'garage' | 'billing' | 'documents'
 
 export default function SettingsPage() {
   const router = useRouter()
@@ -27,7 +27,16 @@ export default function SettingsPage() {
     router.push('/login')
   }
 
-  if (view !== 'main') {
+  // Navigate to documents settings page
+  useEffect(() => {
+    if (view === 'documents') {
+      router.push('/settings/documents')
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- redirect cleanup
+      setView('main')
+    }
+  }, [view, router])
+
+  if (view !== 'main' && view !== 'documents') {
     return (
       <div className="min-h-full">
         <Topbar
@@ -71,6 +80,7 @@ export default function SettingsPage() {
       title: 'מוסך',
       items: [
         { icon: Building2, label: 'פרטי המוסך', description: 'שם, כתובת, טלפון', view: 'garage' as SettingsView },
+        { icon: FileText, label: 'מסמכים ומיתוג', description: 'לוגו, צבעים, שדות מותאמים', view: 'documents' as SettingsView },
         { icon: CreditCard, label: 'מנוי וחיוב', description: 'נהל את המנוי שלך', view: 'billing' as SettingsView },
       ],
     },

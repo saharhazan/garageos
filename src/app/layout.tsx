@@ -10,9 +10,40 @@ const heebo = Heebo({
 })
 
 export const metadata: Metadata = {
-  title: 'GarageOS',
-  description: 'מערכת ניהול מוסך מקצועית',
+  title: {
+    default: 'GarageOS - מערכת ניהול מוסך חכמה',
+    template: '%s | GarageOS',
+  },
+  description: 'מערכת ניהול המוסך החכמה של ישראל. נהלו כרטיסי עבודה, לקוחות, מלאי והתראות - הכל ממקום אחד, בעברית, מכל מכשיר.',
   manifest: '/manifest.json',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: '32x32' },
+    ],
+    apple: '/icon-192.png',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'he_IL',
+    siteName: 'GarageOS',
+    title: 'GarageOS - המוסך שלך. סוף סוף בסדר.',
+    description: 'מערכת ניהול המוסך היחידה שנבנתה עבור המכונאים, מנהלי העבודה ובעלי המוסכים של ישראל. התחילו בחינם.',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'GarageOS - מערכת ניהול מוסך',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'GarageOS - המוסך שלך. סוף סוף בסדר.',
+    description: 'מערכת ניהול המוסך היחידה שנבנתה עבור המכונאים של ישראל. התחילו בחינם.',
+    images: ['/og-image.png'],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',

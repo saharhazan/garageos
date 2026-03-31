@@ -7,6 +7,7 @@ import {
   Phone,
   Mail,
   Car,
+  FileText,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Topbar } from '@/components/layout/topbar'
@@ -79,12 +80,20 @@ export default async function OrderDetailPage({ params }: PageProps) {
         title={typedOrder.job_number}
         backHref="/orders"
         actions={
-          <Link href={`/orders/${id}/edit`}>
-            <Button variant="default" size="sm">
-              <Edit3 size={14} />
-              <span className="hidden md:inline">עריכה</span>
-            </Button>
-          </Link>
+          <div className="flex gap-2">
+            <Link href={`/orders/${id}/document`}>
+              <Button variant="teal" size="sm">
+                <FileText size={14} />
+                <span className="hidden md:inline">מסמכים</span>
+              </Button>
+            </Link>
+            <Link href={`/orders/${id}/edit`}>
+              <Button variant="default" size="sm">
+                <Edit3 size={14} />
+                <span className="hidden md:inline">עריכה</span>
+              </Button>
+            </Link>
+          </div>
         }
       />
 

@@ -1,23 +1,23 @@
 {
-  "name": "GarageOS",
+  "name": "GarageOS - מערכת ניהול מוסך",
   "short_name": "GarageOS",
-  "description": "מערכת ניהול מוסכים מקצועית",
-  "start_url": "/",
+  "description": "מערכת ניהול המוסך החכמה של ישראל",
+  "start_url": "/dashboard",
   "display": "standalone",
-  "background_color": "#09090b",
-  "theme_color": "#09090b",
+  "background_color": "#121414",
+  "theme_color": "#121414",
   "orientation": "portrait-primary",
   "lang": "he",
   "dir": "rtl",
   "icons": [
     {
-      "src": "/icons/icon-192.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -25,14 +25,14 @@
   ],
   "shortcuts": [
     {
-      "name": "עבודה חדשה",
+      "name": "כרטיס עבודה חדש",
       "url": "/orders/new",
-      "description": "פתח פקודת עבודה חדשה"
+      "description": "פתח כרטיס עבודה חדש"
     },
     {
-      "name": "דשבורד",
+      "name": "לוח בקרה",
       "url": "/dashboard",
-      "description": "חזרה לדשבורד"
+      "description": "חזרה ללוח הבקרה"
     }
   ]
 }

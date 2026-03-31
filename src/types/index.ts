@@ -136,6 +136,129 @@ export interface Quote {
   vehicle?: Vehicle
 }
 
+// ─── Documents ────────────────────────────────────────
+export type DocType = 'invoice' | 'receipt' | 'invoice_receipt' | 'quote' | 'work_order' | 'intake' | 'release' | 'warranty'
+
+export const DOC_TYPE_LABELS: Record<DocType, string> = {
+  invoice: 'חשבונית מס',
+  receipt: 'קבלה',
+  invoice_receipt: 'חשבונית מס / קבלה',
+  quote: 'הצעת מחיר',
+  work_order: 'כרטיס עבודה',
+  intake: 'טופס קבלת רכב',
+  release: 'טופס מסירת רכב',
+  warranty: 'תעודת אחריות',
+}
+
+export interface GarageBusinessDetails {
+  legal_name?: string
+  osek_number?: string
+  address?: string
+  phone?: string
+  email?: string
+  logo_url?: string
+  stamp_url?: string
+  manager_name?: string
+  manager_license?: string
+  bank_name?: string
+  bank_branch?: string
+  bank_account?: string
+  primary_color?: string
+  secondary_color?: string
+}
+
+export interface DocumentRecord {
+  id: string
+  garage_id: string
+  order_id: string | null
+  quote_id: string | null
+  doc_type: DocType
+  doc_number: string
+  data: Record<string, unknown>
+  total_amount: number | null
+  pdf_url: string | null
+  created_at: string
+}
+
+export interface CustomField {
+  id: string
+  garage_id: string
+  doc_type: string
+  field_name: string
+  field_label: string
+  field_type: 'text' | 'number' | 'date' | 'checkbox' | 'select'
+  options: string[] | null
+  required: boolean
+  sort_order: number
+  created_at: string
+}
+
+export interface DocumentData {
+  doc_type: DocType
+  doc_number: string
+  date: string
+  garage: {
+    name: string
+    legal_name?: string
+    osek_number?: string
+    address?: string
+    phone?: string
+    email?: string
+    logo_url?: string
+    stamp_url?: string
+    manager_name?: string
+    manager_license?: string
+    bank_name?: string
+    bank_branch?: string
+    bank_account?: string
+    primary_color?: string
+    secondary_color?: string
+  }
+  customer?: {
+    full_name: string
+    phone: string
+    email?: string | null
+  }
+  vehicle?: {
+    license_plate: string
+    make: string
+    model: string
+    year?: number | null
+    color?: string | null
+    vin?: string | null
+  }
+  order?: {
+    job_number: string
+    status: string
+    priority: string
+    notes?: string | null
+    mileage?: number | null
+    created_at: string
+    updated_at: string
+    completed_at?: string | null
+    technician_name?: string | null
+  }
+  items: OrderItem[]
+  subtotal: number
+  tax_rate: number
+  tax_amount: number
+  total_amount: number
+  custom_fields?: Record<string, string>
+  custom_field_definitions?: CustomField[]
+  // Quote-specific
+  valid_until?: string | null
+  quote_number?: string
+  // Intake-specific
+  fuel_level?: string
+  existing_damage?: string
+  personal_belongings?: string
+  keys_count?: string
+  // Warranty-specific
+  warranty_period?: string
+  warranty_conditions?: string
+  parts_type?: string // new/refurbished
+}
+
 // ─── Dashboard ─────────────────────────────────────────
 export interface DashboardStats {
   open_orders: number
