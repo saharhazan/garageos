@@ -27,17 +27,17 @@ export default async function MarketingLayout({
       <header className="fixed top-0 right-0 left-0 h-16 z-50 bg-surface/80 backdrop-blur-md border-b border-white/5 flex items-center px-6 md:px-8">
         <div className="w-full max-w-7xl mx-auto flex flex-row-reverse justify-between items-center">
           {/* Logo + Nav */}
-          <div className="flex items-center gap-6 flex-row-reverse">
-            <Link href="/" className="flex items-center gap-2">
-              <img src="/logo.png" alt="GarageOS" className="w-8 h-8 object-contain" />
+          <div className="flex items-center gap-10 flex-row-reverse">
+            <Link href="/" className="flex items-center gap-3">
               <span className="text-2xl font-black text-brand uppercase tracking-tighter">GarageOS</span>
+              <img src="/logo.png" alt="" className="w-10 h-10 object-contain" />
             </Link>
             <nav className="hidden md:flex flex-row-reverse gap-8 items-center">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="font-bold text-lg text-on-surface-variant/60 hover:text-primary transition-colors"
+                  className="font-bold text-sm text-on-surface-variant/60 hover:text-primary transition-colors"
                 >
                   {link.label}
                 </Link>
