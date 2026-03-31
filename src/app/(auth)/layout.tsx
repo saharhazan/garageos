@@ -3,7 +3,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     <div className="min-h-dvh flex flex-col items-center justify-center bg-surface px-4">
       {/* Logo */}
       <div className="flex justify-center mb-8">
-        <img src="/logo.png" alt="GarageOS" className="h-20 w-auto object-contain" />
+        <img src="/logo.png" alt="GarageOS" className="h-28 w-auto object-contain" />
       </div>
 
       {/* Content card */}

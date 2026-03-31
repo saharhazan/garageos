@@ -208,6 +208,7 @@ function NotificationSettings({ garageId }: { garageId: string | null }) {
   const [settings, setSettings] = useState({
     sms_enabled: false,
     whatsapp_enabled: false,
+    email_enabled: false,
     auto_notify_on_status_change: false,
   })
   const [saving, setSaving] = useState(false)
@@ -226,6 +227,7 @@ function NotificationSettings({ garageId }: { garageId: string | null }) {
         setSettings({
           sms_enabled: data.settings.sms_enabled ?? false,
           whatsapp_enabled: data.settings.whatsapp_enabled ?? false,
+          email_enabled: data.settings.email_enabled ?? false,
           auto_notify_on_status_change: data.settings.auto_notify_on_status_change ?? false,
         })
       }
@@ -249,6 +251,7 @@ function NotificationSettings({ garageId }: { garageId: string | null }) {
   const toggles = [
     { key: 'sms_enabled' as const, label: 'הודעות SMS', desc: 'שלח SMS ללקוח על שינוי סטטוס' },
     { key: 'whatsapp_enabled' as const, label: 'הודעות WhatsApp', desc: 'שלח WhatsApp ללקוח על שינוי סטטוס' },
+    { key: 'email_enabled' as const, label: 'הודעות אימייל', desc: 'שלח אימייל ללקוח על שינוי סטטוס' },
     { key: 'auto_notify_on_status_change' as const, label: 'התראה אוטומטית', desc: 'שלח הודעה אוטומטית בכל שינוי סטטוס' },
   ]
 

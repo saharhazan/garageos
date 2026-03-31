@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Search, Phone, ChevronLeft, Car, Download, FileSpreadsheet } from 'lucide-react'
+import { Search, Phone, ChevronLeft, Car, Download, FileSpreadsheet, Plus } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Topbar } from '@/components/layout/topbar'
 import { Button } from '@/components/ui/button'
@@ -87,10 +87,16 @@ export default function CustomersPage() {
         title="לקוחות"
         actions={
           <div className="flex gap-2">
+            <Link href="/customers/new">
+              <Button variant="primary" size="sm">
+                <Plus size={14} />
+                לקוח חדש
+              </Button>
+            </Link>
             <Link href="/customers/import">
               <Button variant="teal" size="sm">
                 <FileSpreadsheet size={14} />
-                <span className="hidden md:inline">ייבוא מאקסל</span>
+                <span className="hidden md:inline">ייבוא</span>
               </Button>
             </Link>
             <Button variant="default" size="sm" onClick={handleExport} disabled={exporting} loading={exporting}>

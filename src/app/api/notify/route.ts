@@ -3,8 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getApiAuth } from '@/lib/api-auth'
 import { buildStatusMessage } from '@/lib/notifications'
 import { buildStatusEmailHtml, getStatusEmailSubject } from '@/lib/email-templates'
-import type { OrderItem } from '@/types'
-import type { OrderStatus, GarageSettings, GarageBusinessDetails } from '@/types'
+import type { OrderItem, OrderStatus, GarageSettings, GarageBusinessDetails } from '@/types'
 
 export async function POST(request: NextRequest) {
   const auth = await getApiAuth()

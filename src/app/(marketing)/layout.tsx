@@ -24,12 +24,12 @@ export default async function MarketingLayout({
   return (
     <div className="min-h-dvh flex flex-col bg-surface">
       {/* Navbar */}
-      <header className="fixed top-0 right-0 left-0 h-16 z-50 bg-surface/80 backdrop-blur-md border-b border-white/5 flex items-center px-6 md:px-8">
+      <header className="fixed top-0 right-0 left-0 h-20 z-50 bg-surface/80 backdrop-blur-md border-b border-white/5 flex items-center px-6 md:px-8">
         <div className="w-full max-w-7xl mx-auto flex flex-row-reverse justify-between items-center">
           {/* Logo + Nav */}
           <div className="flex items-center gap-10 flex-row-reverse">
             <Link href="/">
-              <img src="/logo.png" alt="GarageOS" className="h-16 w-auto object-contain" />
+              <img src="/logo.png" alt="GarageOS" className="h-24 w-auto object-contain" />
             </Link>
             <nav className="hidden md:flex flex-row-reverse gap-8 items-center">
               {navLinks.map((link) => (
@@ -69,7 +69,7 @@ export default async function MarketingLayout({
           <div className="flex flex-col md:flex-row-reverse justify-between items-center gap-8">
             {/* Logo */}
             <Link href="/">
-              <img src="/logo.png" alt="GarageOS" className="h-20 w-auto object-contain" />
+              <img src="/logo.png" alt="GarageOS" className="h-28 w-auto object-contain" />
             </Link>
 
             {/* Footer links */}
