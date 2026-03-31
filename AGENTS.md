@@ -4,343 +4,164 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
-# GarageOS — Work Items
+# GarageOS — Sprint Work Items
 
-## Project Overview
-GarageOS is a multi-tenant SaaS for auto repair shop management (Hebrew-first, RTL).
-Stack: Next.js 16 + Supabase + TailwindCSS 4 + React Query + PWA.
-Design: Iron Amber industrial premium theme.
+## Current State
+- 55 pages, 16+ API routes, 6 document templates, 6 migrations
+- Iron Amber design system, Hebrew RTL
+- Real Supabase (Frankfurt), Vercel production deploy
+- Auth context, RLS working, server-side garage validation
 
 ---
 
-## P0 — CRITICAL BUGS (App doesn't work without these)
+## SPRINT: Next 15 Work Items
 
-### BUG-001: Fix `garage_users` → `users` table mismatch
-**Status:** NOT STARTED
-**Impact:** Dashboard, settings, order detail, select-garage all crash
-**Details:** Multiple pages query `garage_users` table which does not exist. The actual table is `users`.
-**Files to fix:**
-- [ ] `src/app/(app)/dashboard/page.tsx` — line querying `garage_users`
-- [ ] `src/app/(app)/orders/[id]/page.tsx` — technician join uses `garage_users`
-- [ ] `src/app/(auth)/select-garage/page.tsx` — queries `garage_users`
-- [ ] `src/app/(app)/settings/page.tsx` — profile load queries `garage_users`
-**Test:** Dashboard loads without error after login
+### WI-01: Add Vehicles to sidebar navigation
+**Priority:** HIGH | **Effort:** 5 min
+**Why:** Vehicles page exists at `/vehicles` but is unreachable from sidebar.
+**Fix:** Add vehicles nav item to sidebar between "לקוחות" and "מלאי"
+**Files:** `src/components/layout/sidebar.tsx`
 
-### BUG-002: Fix RLS — garage_id not in JWT
-**Status:** NOT STARTED
-**Impact:** ALL RLS policies silently fail, data leaks between tenants
-**Details:** `auth_garage_id()` reads `auth.jwt() ->> 'garage_id'` but Supabase doesn't add custom claims automatically. Returns NULL → all policies evaluate to `garage_id = NULL` → no rows returned.
-**Fix options:**
-- [ ] Option A: Create a Supabase Auth Hook (Postgres function) that adds garage_id to JWT on login
-- [ ] Option B: Rewrite RLS policies to join `users` table instead of reading JWT
-- [ ] Option C: Bypass RLS entirely, enforce at API layer with service role
-**Recommended:** Option B — most reliable, no JWT customization needed
-**Migration needed:** Replace `auth_garage_id()` with a function that queries users table
+### WI-02: Team member management (invite users)
+**Priority:** HIGH | **Effort:** 2-3 hours
+**Why:** A garage has multiple employees. Currently only the owner exists. Can't add technicians, receptionists, or managers.
+**Build:**
+- [ ] Settings page: "צוות" section with team member list
+- [ ] Invite form: email + role selection
+- [ ] `POST /api/team/invite` — creates auth user + users record
+- [ ] Team list with role badges, edit role, deactivate member
+- [ ] `src/app/(app)/settings/team/page.tsx`
 
-### BUG-003: Remove localStorage garage_id dependency
-**Status:** NOT STARTED
-**Impact:** Security vulnerability — user can modify localStorage to access other garages
-**Details:** `orders/new`, `settings`, `quotes/new` all use `localStorage.getItem('selected_garage_id')` to determine which garage to write data to. This is client-side and insecure.
+### WI-03: Delete functionality (customers, vehicles, quotes)
+**Priority:** HIGH | **Effort:** 1 hour
+**Why:** Users can create but can't delete. Need delete buttons + confirmation dialogs.
+**Build:**
+- [ ] Delete button on customer detail page → `DELETE /api/customers/[id]`
+- [ ] Delete button on vehicle (in customer detail) → `DELETE /api/vehicles/[id]`
+- [ ] Delete button on quote detail → `DELETE /api/quotes/[id]`
+- [ ] Delete button on order detail (manager+ only) → `DELETE /api/orders/[id]`
+- [ ] Confirmation dialog: "האם למחוק? פעולה זו לא ניתנת לביטול"
+- [ ] Use existing Dialog component
+
+### WI-04: Custom 404 page
+**Priority:** MEDIUM | **Effort:** 15 min
+**Why:** Default Next.js 404 looks broken. Need branded page.
+**Build:**
+- [ ] `src/app/not-found.tsx` — Iron Amber styled, "הדף לא נמצא" message, link to dashboard
+- [ ] Logo, "חזרה לדף הראשי" button
+
+### WI-05: Documents list page (generated documents)
+**Priority:** MEDIUM | **Effort:** 1 hour
+**Why:** Users generate invoices/quotes but can't see a list or re-download them.
+**Build:**
+- [ ] `src/app/(app)/documents/page.tsx` — list all generated documents
+- [ ] Filter by type (invoice, quote, work order, etc.)
+- [ ] Show: doc number, type, customer, amount, date
+- [ ] Click to re-open/download
+- [ ] Add "מסמכים" to sidebar nav
+
+### WI-06: Notification feedback + toast integration
+**Priority:** MEDIUM | **Effort:** 30 min
+**Why:** Actions like saving settings, creating orders, changing status don't show feedback.
+**Build:**
+- [ ] After order creation → `toast.success('כרטיס עבודה נוצר בהצלחה')`
+- [ ] After status update → `toast.success('סטטוס עודכן')`
+- [ ] After settings save → `toast.success('ההגדרות נשמרו')`
+- [ ] After customer/vehicle creation → success toast
+- [ ] After delete → `toast.info('נמחק בהצלחה')`
+- [ ] On API errors → `toast.error('שגיאה: ...')`
+
+### WI-07: Onboarding → session fix
+**Priority:** MEDIUM | **Effort:** 30 min
+**Why:** After onboarding creates a garage, the AuthProvider doesn't refresh. User sees empty dashboard.
 **Fix:**
-- [ ] Create a server-side utility `getAuthGarageId(supabase)` that fetches garage_id from `users` table
-- [ ] Replace all localStorage reads with this utility
-- [ ] For client components, use a React context that fetches garage_id once on mount
-**Files to fix:**
-- [ ] `src/app/(app)/orders/new/page.tsx`
-- [ ] `src/app/(app)/quotes/new/page.tsx`
-- [ ] `src/app/(app)/settings/page.tsx`
-- [ ] `src/app/(auth)/select-garage/page.tsx`
+- [ ] After `/api/onboarding` success, call `router.refresh()` to re-run server components
+- [ ] Or add a `refetch()` method to AuthProvider
+- [ ] Verify the full flow: signup → onboarding → dashboard with data
 
-### BUG-004: Dashboard stats query broken
-**Status:** NOT STARTED
-**Impact:** Dashboard shows wrong or no data
-**Details:** Dashboard page manually queries `work_orders` without garage_id filter, and uses wrong table name for user profile.
-**Fix:**
-- [ ] Fix table name `garage_users` → `users`
-- [ ] Add `.eq('garage_id', garageId)` to all work_orders queries
-- [ ] Use `dashboard_stats` view instead of manual aggregation
+### WI-08: Appointment scheduling (calendar view)
+**Priority:** HIGH | **Effort:** 4-6 hours
+**Why:** Every garage needs appointment booking. This is the #1 missing competitive feature.
+**Build:**
+- [ ] `appointments` table migration (garage_id, customer_id, vehicle_id, scheduled_at, duration_minutes, notes, status)
+- [ ] `src/app/(app)/appointments/page.tsx` — calendar view (week/day)
+- [ ] Create appointment form (customer, vehicle, date/time, service type)
+- [ ] `/api/appointments` CRUD routes
+- [ ] Color-coded by status (scheduled, confirmed, in-progress, completed, cancelled)
+- [ ] Add "לוח זמנים" to sidebar nav
 
----
+### WI-09: Customer-facing order status page (public)
+**Priority:** HIGH | **Effort:** 2 hours
+**Why:** Customers call to ask "is my car ready?" A public status page eliminates these calls.
+**Build:**
+- [ ] `src/app/status/[id]/page.tsx` — public page (no auth required)
+- [ ] Shows: garage name, vehicle info, status timeline, estimated completion
+- [ ] Shareable via WhatsApp/SMS link
+- [ ] Add link to notification messages: "צפה בסטטוס: {url}"
+- [ ] Add to middleware as public route
 
-## P1 — SECURITY (Must fix before any real users)
+### WI-10: Dashboard real-time updates
+**Priority:** MEDIUM | **Effort:** 1 hour
+**Why:** Dashboard shows stale data. When another user updates an order, dashboard doesn't reflect it.
+**Build:**
+- [ ] Supabase Realtime subscription on `work_orders` table
+- [ ] Auto-refresh KPI cards when orders change
+- [ ] Visual indicator for new/updated orders ("חדש" badge)
+- [ ] Or: simple polling every 30 seconds with React Query refetchInterval
 
-### SEC-001: Server-side garage_id validation on all API routes
-**Status:** NOT STARTED
-**Details:** API routes trust client-sent garage_id. Must verify user belongs to requested garage.
-- [ ] Create shared utility: `getAuthProfile(supabase)` → returns `{ user_id, garage_id, role }`
-- [ ] Add to ALL API routes: verify `profile.garage_id === requestedGarageId`
-- [ ] Return 403 if mismatch
-**Routes to fix:**
-- [ ] `/api/orders/route.ts`
-- [ ] `/api/orders/[id]/route.ts`
-- [ ] `/api/customers/route.ts`
-- [ ] `/api/customers/[id]/route.ts`
-- [ ] `/api/vehicles/route.ts`
-- [ ] `/api/vehicles/[id]/route.ts`
-- [ ] `/api/inventory/route.ts`
-- [ ] `/api/inventory/[id]/route.ts`
-- [ ] `/api/quotes/route.ts`
-- [ ] `/api/quotes/[id]/route.ts`
-- [ ] `/api/settings/profile/route.ts`
-- [ ] `/api/settings/garage/route.ts`
-- [ ] `/api/notify/route.ts`
-- [ ] `/api/dashboard/stats/route.ts`
+### WI-11: Bulk operations on orders
+**Priority:** MEDIUM | **Effort:** 1.5 hours
+**Why:** Shops with 20+ open orders need to update multiple at once.
+**Build:**
+- [ ] Checkbox selection on orders list (desktop)
+- [ ] Bulk actions bar: "עדכן סטטוס", "שלח הודעה", "ייצוא"
+- [ ] `PATCH /api/orders/bulk` endpoint
+- [ ] Select all / deselect all
 
-### SEC-002: Remove demo mode bypass
-**Status:** NOT STARTED
-**Details:** Middleware and layout check for `placeholder` in URL to skip auth. Now that we have real credentials, remove this.
-- [ ] `src/lib/supabase/middleware.ts` — remove `isDemo` check
-- [ ] `src/app/(app)/layout.tsx` — remove `isDemo` check
+### WI-12: Low stock alerts on dashboard
+**Priority:** MEDIUM | **Effort:** 30 min
+**Why:** Inventory items below min_quantity should show a warning on the dashboard.
+**Build:**
+- [ ] Dashboard: "התראות מלאי" card showing items where quantity <= min_quantity
+- [ ] Red/amber badge with count
+- [ ] Click to navigate to inventory page filtered by low stock
+- [ ] Optional: notification when item drops below minimum
 
-### SEC-003: Rate limiting on auth endpoints
-**Status:** NOT STARTED
-- [ ] Add rate limiting to `/api/auth/*` endpoints
-- [ ] Add rate limiting to `/api/stripe/webhook`
+### WI-13: Customer search in order creation
+**Priority:** HIGH | **Effort:** 1 hour
+**Why:** When creating a new order, the user types customer name/phone. Should show autocomplete suggestions.
+**Build:**
+- [ ] Autocomplete dropdown on customer name and phone fields in `/orders/new`
+- [ ] Debounced search via Supabase (by name or phone)
+- [ ] Click suggestion → auto-fill all customer + vehicle fields
+- [ ] Same for quotes/new page
 
----
+### WI-14: Print-friendly views
+**Priority:** MEDIUM | **Effort:** 45 min
+**Why:** Garages still print work orders and invoices on paper.
+**Build:**
+- [ ] CSS `@media print` styles
+- [ ] Order detail: hide nav, show only order content with garage header
+- [ ] Print button on order detail page
+- [ ] Invoice/quote: already has PDF, but also add direct print button
 
-## P2 — CORE FUNCTIONALITY (Make the app actually usable)
-
-### CORE-001: Fix order creation flow
-**Status:** NOT STARTED
-**Details:** New order page creates orders client-side via Supabase direct insert. Should use API route.
-- [ ] Move order creation to `/api/orders` POST (already exists)
-- [ ] Use server-side `next_job_number()` RPC for job numbers (not client-side count)
-- [ ] Remove manual job number generation from `orders/new/page.tsx`
-- [ ] Add notification trigger after order creation
-
-### CORE-002: Create auth context provider
-**Status:** NOT STARTED
-**Details:** Need a shared React context for auth user + garage_id + role.
-- [ ] Create `src/hooks/use-auth-context.tsx` — provider + hook
-- [ ] Fetch user profile (garage_id, role, full_name) once on mount
-- [ ] Expose `garageId`, `userId`, `role`, `userName` to all components
-- [ ] Replace all localStorage.getItem + individual auth queries
-
-### CORE-003: Fix onboarding → dashboard flow
-**Status:** NOT STARTED
-**Details:** After onboarding creates a garage, user needs garage_id in their session.
-- [ ] After `/api/onboarding` success, store garage_id in context/session
-- [ ] Redirect to `/dashboard` with garage context
-- [ ] Handle case where user has no garages (show onboarding)
-
-### CORE-004: Create forgot-password page
-**Status:** NOT STARTED
-**Details:** Login links to `/forgot-password` but page doesn't exist.
-- [ ] Create `src/app/(auth)/forgot-password/page.tsx`
-- [ ] Use `supabase.auth.resetPasswordForEmail()`
-- [ ] Match Iron Amber auth page style
-
-### CORE-005: Wire up order status updates
-**Status:** NOT STARTED
-**Details:** Order detail page has "עדכן סטטוס" button but status update flow is incomplete.
-- [ ] Verify PATCH `/api/orders/[id]` handles status transitions
-- [ ] Add status transition validation (can't go backwards)
-- [ ] Trigger notification on status change (SMS/WhatsApp)
-- [ ] Update status timeline UI to reflect changes immediately
-
-### CORE-006: Complete customer detail page
-**Status:** NOT STARTED
-- [ ] Create `src/app/(app)/customers/[id]/page.tsx`
-- [ ] Show customer info, vehicles, order history
-- [ ] Allow editing customer details
-- [ ] Link to create new order for this customer
-
-### CORE-007: Fix reports page with real data
-**Status:** NOT STARTED
-**Details:** Reports page may use hardcoded or incorrect queries.
-- [ ] Verify queries filter by garage_id
-- [ ] Add date range picker (this month, last month, custom)
-- [ ] Revenue chart (daily/weekly/monthly)
-- [ ] Top customers by revenue
-- [ ] Orders by status breakdown
+### WI-15: Plan enforcement (free tier limits)
+**Priority:** HIGH | **Effort:** 2 hours
+**Why:** Pricing page promises limits (2 workstations, 3 users for boutique plan) but nothing enforces them.
+**Build:**
+- [ ] Middleware/utility: `checkPlanLimits(garageId, action)`
+- [ ] Check on: user invite (max users), order creation (max per month for free)
+- [ ] Show upgrade prompt when limit reached: "שדרגו לתוכנית מקצועי כדי להוסיף עוד משתמשים"
+- [ ] `/api/stripe/checkout` integration for upgrade flow
+- [ ] Add plan badge to sidebar footer
 
 ---
 
-## P3 — BACKEND FEATURES
+## Priorities Summary
 
-### BE-001: Wire up SMS notifications (Twilio)
-**Status:** NOT STARTED
-- [ ] Add Twilio env vars to .env.local and Vercel
-- [ ] Test `/api/sms` route with real Twilio credentials
-- [ ] Trigger SMS on status change (received → in_progress → ready → delivered)
-- [ ] Hebrew SMS templates
+| Priority | Items | Total Effort |
+|----------|-------|-------------|
+| **HIGH** | WI-01, 02, 03, 08, 09, 13, 15 | ~13 hours |
+| **MEDIUM** | WI-04, 05, 06, 07, 10, 11, 12, 14 | ~6 hours |
 
-### BE-002: Wire up WhatsApp notifications (Evolution API)
-**Status:** NOT STARTED
-- [ ] Add Evolution API env vars
-- [ ] Test `/api/whatsapp` route
-- [ ] Send order status updates via WhatsApp
-- [ ] Send quote PDFs via WhatsApp
-
-### BE-003: Complete Stripe billing flow
-**Status:** NOT STARTED
-- [ ] Create Stripe products/prices for 3 tiers
-- [ ] Add STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET env vars
-- [ ] Test checkout flow end-to-end
-- [ ] Test webhook handling (subscription created, cancelled, updated)
-- [ ] Enforce plan limits (max users, max orders/month)
-
-### BE-004: PDF invoice generation
-**Status:** NOT STARTED
-- [ ] Generate work order PDF with garage branding
-- [ ] Hebrew RTL support in PDF
-- [ ] Include items, totals, tax breakdown
-- [ ] Store PDFs in Supabase Storage
-- [ ] Download button on order detail page
-
-### BE-005: File uploads (images, signatures)
-**Status:** NOT STARTED
-- [ ] Set up Supabase Storage bucket for vehicle images
-- [ ] Add image upload to order creation/edit
-- [ ] Add signature capture component
-- [ ] Store URLs in work_orders.images[] and .signature_url
-
-### BE-006: Audit logging
-**Status:** NOT STARTED
-- [ ] Create `audit_log` table (user_id, action, resource_type, resource_id, changes, timestamp)
-- [ ] Log all create/update/delete operations
-- [ ] Admin view for audit log
-
----
-
-## P4 — FRONTEND POLISH
-
-### FE-001: Toast notification system
-**Status:** NOT STARTED
-- [ ] Create toast component (success, error, info)
-- [ ] Show toast after order creation, status update, settings save
-- [ ] Position: bottom-left (RTL), auto-dismiss 4s
-
-### FE-002: Empty states with illustrations
-**Status:** NOT STARTED
-- [ ] Orders page: "אין כרטיסי עבודה" with illustration
-- [ ] Customers page: "אין לקוחות" with CTA
-- [ ] Inventory page: "מלאי ריק" with add button
-- [ ] Quotes page: "אין הצעות מחיר"
-
-### FE-003: Loading skeletons for all pages
-**Status:** NOT STARTED
-- [ ] Dashboard: skeleton KPI cards + table
-- [ ] Orders list: skeleton rows
-- [ ] Order detail: skeleton layout
-- [ ] Use `loading.tsx` per route segment
-
-### FE-004: Keyboard shortcuts (command palette)
-**Status:** NOT STARTED
-**Details:** Command palette component exists but needs wiring.
-- [ ] Cmd+K to open command palette
-- [ ] Quick nav to pages
-- [ ] Search orders, customers, vehicles
-- [ ] Quick actions (new order, new customer)
-
-### FE-005: Print-friendly order view
-**Status:** NOT STARTED
-- [ ] CSS @media print styles for order detail
-- [ ] Hide navigation, show only order content
-- [ ] Include garage header/logo, customer info, items, totals
-
-### FE-006: Responsive table improvements
-**Status:** NOT STARTED
-- [ ] Test all tables on 375px screen
-- [ ] Verify mobile card views work correctly
-- [ ] Fix any overflow issues
-- [ ] Swipe-to-action on mobile order cards
-
----
-
-## P5 — COMPETITIVE FEATURES (International expansion)
-
-### COMP-001: i18n framework + English translation
-**Status:** NOT STARTED
-- [ ] Install `next-intl` or similar
-- [ ] Extract all Hebrew strings to translation files
-- [ ] Create English translation
-- [ ] RTL ↔ LTR dynamic switching
-- [ ] Language picker in settings
-
-### COMP-002: Appointment scheduling / calendar
-**Status:** NOT STARTED
-- [ ] Create `appointments` table
-- [ ] Calendar view (week/day)
-- [ ] Online booking page (public)
-- [ ] SMS/WhatsApp reminders
-
-### COMP-003: Digital Vehicle Inspection (DVI)
-**Status:** NOT STARTED
-- [ ] Multi-point inspection checklist
-- [ ] Photo capture with annotations
-- [ ] Red/Yellow/Green condition indicators
-- [ ] Customer-facing inspection report (shareable link)
-- [ ] Inspection → estimate conversion
-
-### COMP-004: Customer portal
-**Status:** NOT STARTED
-- [ ] Public page for customers to view order status
-- [ ] Approve/decline quotes online
-- [ ] View inspection reports
-- [ ] Payment link
-
-### COMP-005: Accounting integration (QuickBooks / Xero)
-**Status:** NOT STARTED
-- [ ] QuickBooks Online OAuth + API
-- [ ] Sync invoices to QuickBooks
-- [ ] Xero integration (UK market)
-
-### COMP-006: Two-way customer communication
-**Status:** NOT STARTED
-- [ ] Upgrade from one-way notifications to conversational
-- [ ] WhatsApp Business API two-way messaging
-- [ ] SMS two-way (Twilio)
-- [ ] In-app chat thread per order
-
-### COMP-007: Technician time tracking
-**Status:** NOT STARTED
-- [ ] Clock in/out per order
-- [ ] Track hours per job
-- [ ] Labor rate calculation
-- [ ] Technician performance dashboard
-
-### COMP-008: Multi-currency + tax localization
-**Status:** NOT STARTED
-- [ ] Currency selector per garage (ILS, USD, EUR, GBP)
-- [ ] Tax rate per country/region
-- [ ] Proper invoice formatting per locale
-
----
-
-## Database Migration Queue
-
-### MIG-004: Fix RLS policies
-- Replace `auth_garage_id()` with direct `users` table join
-- Add proper RLS for quotes table
-
-### MIG-005: Add audit_log table
-- user_id, action, resource_type, resource_id, changes JSONB, created_at
-
-### MIG-006: Add appointments table
-- garage_id, customer_id, vehicle_id, scheduled_at, duration, notes, status
-
-### MIG-007: Add inspections table (DVI)
-- garage_id, order_id, vehicle_id, checklist JSONB, photos[], status, created_by
-
----
-
-## Environment Variables Needed
-
-| Variable | Status | Purpose |
-|----------|--------|---------|
-| NEXT_PUBLIC_SUPABASE_URL | ✅ SET | Supabase project URL |
-| NEXT_PUBLIC_SUPABASE_ANON_KEY | ✅ SET | Supabase anon key |
-| SUPABASE_SERVICE_ROLE_KEY | ✅ SET | Supabase service role |
-| STRIPE_SECRET_KEY | ❌ MISSING | Stripe payments |
-| STRIPE_WEBHOOK_SECRET | ❌ MISSING | Stripe webhook verification |
-| STRIPE_PRICE_PRO | ❌ MISSING | Pro plan price ID |
-| STRIPE_PRICE_BUSINESS | ❌ MISSING | Business plan price ID |
-| TWILIO_ACCOUNT_SID | ❌ MISSING | SMS notifications |
-| TWILIO_AUTH_TOKEN | ❌ MISSING | SMS auth |
-| TWILIO_PHONE_NUMBER | ❌ MISSING | SMS sender number |
-| EVOLUTION_API_URL | ❌ MISSING | WhatsApp API |
-| EVOLUTION_API_KEY | ❌ MISSING | WhatsApp auth |
-| EVOLUTION_INSTANCE | ❌ MISSING | WhatsApp instance |
-| NEXT_PUBLIC_APP_URL | ❌ MISSING | App URL for callbacks |
+**Recommended order:** WI-01 → WI-03 → WI-04 → WI-06 → WI-13 → WI-02 → WI-09 → WI-08 → WI-15
