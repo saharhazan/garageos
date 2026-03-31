@@ -28,9 +28,8 @@ export default async function MarketingLayout({
         <div className="w-full max-w-7xl mx-auto flex flex-row-reverse justify-between items-center">
           {/* Logo + Nav */}
           <div className="flex items-center gap-10 flex-row-reverse">
-            <Link href="/" className="flex items-center gap-3">
-              <span className="text-2xl font-black text-brand uppercase tracking-tighter">GarageOS</span>
-              <img src="/logo.png" alt="" className="w-10 h-10 object-contain" />
+            <Link href="/">
+              <img src="/logo.png" alt="GarageOS" className="h-12 w-auto object-contain" />
             </Link>
             <nav className="hidden md:flex flex-row-reverse gap-8 items-center">
               {navLinks.map((link) => (
@@ -69,9 +68,8 @@ export default async function MarketingLayout({
         <div className="max-w-7xl mx-auto px-6 md:px-8">
           <div className="flex flex-col md:flex-row-reverse justify-between items-center gap-8">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2">
-              <img src="/logo.png" alt="GarageOS" className="w-8 h-8 object-contain" />
-              <span className="text-2xl font-black text-brand uppercase tracking-tighter">GarageOS</span>
+            <Link href="/">
+              <img src="/logo.png" alt="GarageOS" className="h-14 w-auto object-contain" />
             </Link>
 
             {/* Footer links */}
