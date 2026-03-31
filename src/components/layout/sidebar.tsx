@@ -8,6 +8,7 @@ import {
   Plus,
   FileText,
   Users,
+  Car,
   Package,
   BarChart2,
   Settings,
@@ -39,6 +40,7 @@ const navItems: NavSection[] = [
     section: 'CRM',
     items: [
       { href: '/customers', icon: Users, label: 'לקוחות' },
+      { href: '/vehicles', icon: Car, label: 'רכבים' },
       { href: '/inventory', icon: Package, label: 'מלאי' },
     ],
   },
