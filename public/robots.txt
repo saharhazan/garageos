@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /orders
+Disallow: /customers
+Disallow: /vehicles
+Disallow: /inventory
+Disallow: /quotes
+Disallow: /reports
+Disallow: /appointments
+Disallow: /settings
+Disallow: /api/
+Disallow: /select-garage
+Disallow: /onboarding
+Disallow: /verify
+
+Sitemap: https://garageos.co.il/sitemap.xml

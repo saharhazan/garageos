@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import {
   ClipboardCheck,
@@ -90,9 +91,41 @@ const previewFeatures = [
   },
 ]
 
+export const metadata: Metadata = {
+  title: 'GarageOS - מערכת ניהול מוסך חכמה | המוסך שלך. סוף סוף בסדר.',
+  description: 'מערכת ניהול המוסך היחידה שנבנתה עבור המכונאים, מנהלי העבודה ובעלי המוסכים של ישראל. ניהול כרטיסי עבודה, לקוחות, מלאי, חשבוניות והתראות WhatsApp - הכל ממקום אחד.',
+  keywords: ['מערכת ניהול מוסך', 'תוכנה לניהול מוסך', 'ניהול מוסך', 'תוכנת מוסך', 'כרטיסי עבודה מוסך', 'GarageOS', 'מוסך דיגיטלי', 'ניהול מלאי מוסך', 'חשבונית מוסך', 'הצעת מחיר מוסך'],
+}
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'GarageOS',
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web',
+  offers: {
+    '@type': 'AggregateOffer',
+    priceCurrency: 'ILS',
+    lowPrice: '0',
+    highPrice: '999',
+    offerCount: '3',
+  },
+  description: 'מערכת ניהול מוסך חכמה לבעלי מוסכים בישראל',
+  inLanguage: 'he',
+  author: {
+    '@type': 'Organization',
+    name: 'GarageOS',
+    url: 'https://garageos.co.il',
+  },
+}
+
 export default function LandingPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* ═══════════════ Hero Section ═══════════════ */}
       <section className="relative h-[90vh] min-h-[600px] flex items-center overflow-hidden">
         {/* Background image placeholder with gradient overlay */}
